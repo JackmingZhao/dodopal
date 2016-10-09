@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.product.business.dao.LoadOrderMapper">
+	<resultMap type="LoadOrder" id="loadOrderResultMap">
+		<result property="id" column="ID" />
+		<result property="orderNum" column="ORDER_NUM" />
+		<result property="orderTime" column="ORDER_TIME" />
+		<result property="extMerOrderNum" column="EXTMER_ORDER_NUM" />
+		<result property="extMerOrderTime" column="EXTMER_ORDER_TIME" />
+		<result property="cardFaceNum" column="CARD_FACENUM" />
+		<result property="exchangedCardNum" column="EXCHANGED_CARD_NUM" />
+		<result property="productCode" column="PRODUCT_CODE" />
+		<result property="productName" column="PRODUCT_NAME" />
+		<result property="cityCode" column="CITY_CODE" />
+		<result property="cityName" column="CITY_NAME" />
+		<result property="yktCode" column="YKT_CODE" />
+		<result property="yktName" column="YKT_NAME" />
+		<result property="customerCode" column="CUSTOMER_CODE" />
+		<result property="customerName" column="CUSTOMER_NAME" />
+		<result property="customerType" column="CUSTOMER_TYPE" />
+		<result property="loadRate" column="LOAD_RATE" />
+		<result property="loadRateType" column="LOAD_RATE_TYPE" />
+		<result property="loadAmt" column="LOAD_AMT" />
+		<result property="customerPayAmt" column="CUSTOMER_PAY_AMT" />
+		<result property="customerGain" column="CUSTOMER_GAIN" />
+		<result property="paywayId" column="PAYWAY_ID" />
+		<result property="paywayName" column="PAYWAY_NAME" />
+		<result property="payType" column="PAY_TYPE" />
+		<result property="payServiceType" column="PAY_SERVICE_TYPE" />
+		<result property="payServiceRate" column="PAY_SERVICE_RATE" />
+		<result property="status" column="STATUS" />
+		<result property="source" column="SOURCE" />
+		<result property="comments" column="COMMENTS" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+	</resultMap>
+</mapper>
+

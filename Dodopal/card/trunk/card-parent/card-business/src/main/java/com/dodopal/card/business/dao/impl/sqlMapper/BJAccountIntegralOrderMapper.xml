@@ -1,0 +1,223 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.BJAccountIntegralOrderMapper">
+
+	<sql id="sqlColumn">
+		t.ID,
+		t.CRD_ACC_INT_ORDER_NUM,
+		t.PRO_ORDER_NUM,
+		t.PRO_CODE,
+		t.MER_CODE,
+		t.CRD_ORDER_STATES,
+		t.CRD_BEFOREORDER_STATES,
+		t.RESP_CODE,
+  		t.TRAN_DATE_TIME,
+  		t.BUSINESS_TYPE,
+  		t.CITY_CODE,
+  		t.MER_TYPE,
+
+  		t.POS_TYPE,
+  		t.POS_CODE,
+  		t.OPER_ID,
+  		t.SETT_DATE,
+  		t.COM_SEQ,
+  		t.IC_SEQ,
+  		t.ACC_SEQ,  
+  		t.BATCH_ID,
+  		t.DATE_TIME,  
+  		t.CARD_NO,  
+  		t.ACCOUNT_NO,  
+  		t.TXN_AMT,
+  		t.PREAUTHE_AMT,
+  		t.PRIVI_MSG,
+  		t.ACC_NUM,
+  		t.ACC_INFO,   
+  		t.RESERVED,  
+  		t.POS_SEQ,
+  		t.TXN_TYPE,
+  		t.TXN_DATE,
+  		t.TXN_TIME,
+  		t.CARD_BAL,
+  		t.TXN_SEQ_NO,
+  		t.SPECIAL_CONSOME,   
+  		t.SPECIAL_CONSOME_BACK,  
+  		t.SPECIAL_SEND, 
+  		t.SPECIAL_SEND_BACK,   
+  		t.SPECIAL_REVOKE, 
+  		t.SPECIAL_REVOKE_BACK,
+  	 
+  		t.CREATE_USER,
+  		t.CREATE_DATE,
+  		t.UPDATE_USER,
+  		t.UPDATE_DATE 
+	</sql>
+
+	
+	<select id="findBJAccountIntegralOrder" resultMap="BJAccountIntegralOrderResultMap"  resultType="BJAccountIntegralOrder" parameterType="BJAccountIntegralOrder">
+		select <include refid="sqlColumn"/> from BJ_ACC_INT_CONSUME_ORDER t
+		<where>
+			<if test="proOrderNum != null and proOrderNum !=''">
+			 	t.PRO_ORDER_NUM = #{proOrderNum,jdbcType=VARCHAR}
+			</if>
+			<if test="crdOrderStates != null and crdOrderStates !=''">
+			 	and t.CRD_ORDER_STATES = #{crdOrderStates,jdbcType=VARCHAR}
+			</if>
+			<if test="businessType != null and businessType !=''">
+			 	and t.BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR}
+			</if>
+			<if test="posSeq != null and posSeq !=''">
+			 	and t.POS_SEQ = #{posSeq,jdbcType=VARCHAR}
+			</if>
+			<if test="txnSeqNo != null and txnSeqNo !=''">
+			 	and t.TXN_SEQ_NO = #{txnSeqNo,jdbcType=VARCHAR}
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+	
+	<select id="getBJAccIntConsOrderCodeSeq" resultType="String">
+		SELECT BJ_ACC_INT_CONS_ORDERCODE_SEQ.Nextval from dual
+	</select>
+
+	<insert id="saveBJAccountIntegralOrder" parameterType="BJAccountIntegralOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select BJ_ACC_INT_CONSUME_ORD_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO BJ_ACC_INT_CONSUME_ORDER
+			(ID,
+			CRD_ACC_INT_ORDER_NUM,
+			PRO_ORDER_NUM,
+			PRO_CODE,
+			MER_CODE,
+			CRD_ORDER_STATES,
+			CRD_BEFOREORDER_STATES,
+			RESP_CODE,
+  			TRAN_DATE_TIME,
+  			BUSINESS_TYPE,
+  			CITY_CODE,
+  			MER_TYPE,
+  			POS_TYPE,
+  			POS_CODE,
+  			OPER_ID,
+  			SETT_DATE,
+  			COM_SEQ,
+  			IC_SEQ,
+  			ACC_SEQ,  
+  			BATCH_ID,
+  			DATE_TIME,  
+  			CARD_NO,  
+  			ACCOUNT_NO,  
+  			TXN_AMT,
+  			PREAUTHE_AMT,
+  			PRIVI_MSG,
+  			ACC_NUM,
+  			ACC_INFO,   
+  			RESERVED,
+  			POS_SEQ,
+  			TXN_TYPE,
+  			TXN_DATE,
+  			TXN_TIME,
+  			CARD_BAL,
+  			TXN_SEQ_NO,  
+  			SPECIAL_CONSOME,   
+  			SPECIAL_CONSOME_BACK,  
+  			SPECIAL_SEND, 
+  			SPECIAL_SEND_BACK,   
+  			SPECIAL_REVOKE, 
+  			SPECIAL_REVOKE_BACK,
+  			CREATE_USER,
+  			CREATE_DATE,
+  			UPDATE_USER,
+  			UPDATE_DATE )
+			VALUES (
+			#{id, jdbcType=VARCHAR},
+			#{crdAccIntOrderNum,jdbcType=VARCHAR},
+			#{proOrderNum,jdbcType=VARCHAR},
+			#{proCode,jdbcType=VARCHAR},
+			#{merCode,jdbcType=VARCHAR},
+			#{crdOrderStates, jdbcType=VARCHAR},
+			#{crdBeforeorderStates,jdbcType=VARCHAR},
+			#{respCode,jdbcType=VARCHAR},
+			#{tranDateTime, jdbcType=VARCHAR},
+			#{businessType,jdbcType=VARCHAR},
+			#{cityCode,jdbcType=VARCHAR},
+			#{merType,jdbcType=VARCHAR},
+			#{posType,jdbcType=VARCHAR},
+			#{posCode,jdbcType=VARCHAR},
+			#{operId,jdbcType=VARCHAR},
+			#{settDate,jdbcType=VARCHAR},
+			#{comSeq,jdbcType=VARCHAR},
+			#{icseq,jdbcType=VARCHAR},
+			#{accSeq, jdbcType=VARCHAR},
+			#{batchId,jdbcType=VARCHAR},
+			#{dateTime,jdbcType=VARCHAR},
+			#{cardNo,jdbcType=VARCHAR},
+			#{accountNo,jdbcType=VARCHAR},
+			#{txnAmt,jdbcType=VARCHAR},
+			#{preautheAmt,jdbcType=VARCHAR},
+			#{priviMsg,jdbcType=VARCHAR},
+			#{accNum, jdbcType=VARCHAR},
+			#{accInfo,jdbcType=VARCHAR},
+			#{reserved,jdbcType=VARCHAR},
+			#{posSeq,jdbcType=VARCHAR},
+			#{txnType,jdbcType=VARCHAR},
+			#{txnDate,jdbcType=VARCHAR},
+			#{txnTime,jdbcType=VARCHAR},
+			#{cardBal,jdbcType=VARCHAR},
+			#{txnSeqNo,jdbcType=VARCHAR},
+			#{specialConsome,jdbcType=VARCHAR},
+			#{specialConsomeBack,jdbcType=VARCHAR},
+			#{specialSend,jdbcType=VARCHAR},
+			#{specialSendBack,jdbcType=VARCHAR},
+			#{specialRevoke,jdbcType=VARCHAR},
+			#{specialRevokeBack,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},SYSDATE,
+			#{updateUser, jdbcType=VARCHAR},SYSDATE)
+	</insert>
+	
+	<update id="updateBJAccountIntegralOrderByProOrderNum" parameterType="BJAccountIntegralOrder">
+		UPDATE BJ_ACC_INT_CONSUME_ORDER
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="crdOrderStates != null and crdOrderStates !=''">
+				CRD_ORDER_STATES=#{crdOrderStates,jdbcType=VARCHAR},
+			</if>
+			<if test="crdBeforeorderStates != null and crdBeforeorderStates !=''">
+				CRD_BEFOREORDER_STATES=#{crdBeforeorderStates,jdbcType=VARCHAR},
+			</if>
+			<if test="respCode != null and respCode !=''">
+				RESP_CODE=#{respCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tranDateTime != null and tranDateTime !=''">
+				TRAN_DATE_TIME=#{tranDateTime, jdbcType=VARCHAR},
+			</if>
+			<if test="priviMsg != null and priviMsg !=''">
+				PRIVI_MSG=#{priviMsg,jdbcType=VARCHAR},
+			</if>
+			<if test="specialConsome != null and specialConsome !=''">
+				SPECIAL_CONSOME=#{specialConsome,jdbcType=VARCHAR},
+			</if>
+			<if test="specialConsomeBack != null and specialConsomeBack !=''">
+				SPECIAL_CONSOME_BACK=#{specialConsomeBack,jdbcType=VARCHAR},
+			</if>
+			<if test="specialSend != null and specialSend !=''">
+				SPECIAL_SEND=#{specialSend,jdbcType=VARCHAR},
+			</if>
+			<if test="specialSendBack != null and specialSendBack !=''">
+				SPECIAL_SEND_BACK=#{specialSendBack,jdbcType=VARCHAR},
+			</if>
+			<if test="specialRevoke != null and specialRevoke !=''">
+				SPECIAL_REVOKE=#{specialRevoke,jdbcType=VARCHAR},
+			</if>
+			<if test="specialRevokeBack != null and specialRevokeBack !=''">
+				SPECIAL_REVOKE_BACK=#{specialRevokeBack,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null and updateUser !=''">
+				UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			</if>
+			UPDATE_DATE = SYSDATE
+		</trim>
+		where PRO_ORDER_NUM=#{proOrderNum, jdbcType=VARCHAR}
+	</update>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.ProxyinfotbMapper">
+	<select id="findProxyinfotbById" parameterType="java.lang.String"
+		resultType="Proxyinfotb">
+		select * from icpay.proxyinfotb t
+		<where>
+			<!--  (t.trans_flag != '0' or t.trans_flag is null)-->
+			<if test="proxyid !=null and proxyid !=''">
+               t.proxyId = #{proxyid}
+			</if>
+		</where>
+	</select>
+
+	<select id="findProxyInfoTbByCitynoAndProxytypeid" resultType="Proxyinfotb"><!-- Mikaelyan 增加 -->
+		select * from icpay.proxyinfotb t
+		<where>
+			(t.trans_flag != '0' or t.trans_flag is null)
+			and t.proxyid not in (select proxyid from icpay.groupinproxytb) <!-- Mikaelyan 增加 青岛 不属于集团网点的个人网点 -->
+			<if test="proxytypeid !=null and proxytypeid !=''">
+				and t.proxytypeid = #{proxytypeid}
+			</if>
+			<if test="cityno !=null and cityno !=''">
+				and t.cityno = #{cityno}
+			</if>
+		</where>
+	</select>
+
+	<!-- 更新迁移标识 -->
+	<update id="updateTransFlag" parameterType="java.lang.String">
+		update icpay.proxyinfotb set trans_flag='0'
+		 where proxyid=#{proxyid}
+	</update>
+</mapper>

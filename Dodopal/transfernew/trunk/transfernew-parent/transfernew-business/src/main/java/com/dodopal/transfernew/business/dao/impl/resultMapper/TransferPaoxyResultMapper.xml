@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.TransferProxyMapper">
+	<resultMap type="TransferProxy" id="transferProxyResultMap">
+		<result property="cityNo" column="city_no" />
+		<result property="proxyId" column="proxy_id" />
+		<result property="transferType" column="transfer_type" />
+		<result property="transferMerType" column="transfer_mer_type" />
+	</resultMap>
+</mapper>

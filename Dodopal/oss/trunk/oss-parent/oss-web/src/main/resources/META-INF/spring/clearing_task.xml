@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+       <!-- 线程执行器配置，用于任务注册 -->
+       <bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+              <property name="corePoolSize" value="10" />
+              <property name="maxPoolSize" value="100" />
+              <property name="queueCapacity" value="500" />
+       </bean>
+
+       <!-- 业务对象 -->
+       <bean id="clearingTask" class="com.dodopal.oss.business.task.ClearingTask" />
+       <bean id="profitTask" class="com.dodopal.oss.business.task.ProfitTask" />
+       <bean id="settlementTask" class="com.dodopal.oss.business.task.SettlementTask" />
+       <bean id="yktRepairTask" class="com.dodopal.oss.business.task.YktRechargeRepairOrderTask" />
+       <bean id="accRepairTask" class="com.dodopal.oss.business.task.AccountRechargeTask" />
+
+       <!-- 一卡通充值job -->
+       <bean id="YKTRechargeJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="clearingTask" />
+              <property name="targetMethod" value="YKTRechargeClearingData" />
+              <property name="concurrent" value="false" />
+       </bean>
+
+       <!-- 一卡通充值触发器 -->
+       <bean id="YKTRechargeTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="YKTRechargeJob" />
+              <property name="cronExpression" value="0 30 0 * * ?" />
+              <!--<property name="cronExpression" value="0 0/60 * * * ?" />-->
+       </bean>
+
+       <!-- 账户充值job -->
+       <bean id="AccountRechargeJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="clearingTask" />
+              <property name="targetMethod" value="accountRechargeClearingData" />
+              <property name="concurrent" value="false" />
+       </bean>
+
+       <!-- 账户充值触发器 -->
+       <bean id="AccountRechargeTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="AccountRechargeJob" />
+              <property name="cronExpression" value="0 30 0 * * ?" />
+              <!--<property name="cronExpression" value="0 0/60 * * * ?" />-->
+       </bean>
+
+       <!-- 一卡通消费job -->
+       <bean id="YKTPurchaseJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="clearingTask" />
+              <property name="targetMethod" value="YKTPurchaseClearingData" />
+              <property name="concurrent" value="false" />
+       </bean>
+
+       <!-- 一卡通消费触发器 -->
+       <bean id="YKTPurchaseTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="YKTPurchaseJob" />
+              <property name="cronExpression" value="0 30 0 * * ?" />
+              <!--<property name="cronExpression" value="0 0/60 * * * ?" />-->
+       </bean>
+       
+       <!-- 清算 -->
+       <bean id="SettlementJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="settlementTask" />
+              <property name="targetMethod" value="distributionData" />
+       </bean>
+
+       <bean id="SettlementTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="SettlementJob" />
+              <property name="cronExpression" value="0 0/60 * * * ?" />
+       </bean>
+       <!-- 分润 -->
+       <bean id="profitJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="profitTask" />
+              <property name="targetMethod" value="profit" />
+              <property name="concurrent" value="false" />
+       </bean>
+
+       <bean id="profitTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="profitJob" />
+              <property name="cronExpression" value="0 40 0 * * ?" />
+              <!--<property name="cronExpression" value="0 0/60 * * * ?" />-->
+       </bean>
+       <!-- 分润汇总 -->
+       <bean id="profitCollectJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="settlementTask" />
+              <property name="targetMethod" value="profitCollect" />
+              <property name="concurrent" value="false" />
+       </bean>
+
+       <bean id="profitCollectTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="profitCollectJob" />
+              <property name="cronExpression" value="0 50 0 * * ?" />
+              <!--<property name="cronExpression" value="0 0/60 * * * ?" />-->
+       </bean>
+       
+       <!-- 一卡通补单 -->
+       <bean id="yktRepairJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="yktRepairTask" />
+              <property name="targetMethod" value="repairPrdOrder" />
+       </bean>
+
+       <bean id="yktRepairTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="yktRepairJob" />
+              <property name="cronExpression" value="0 0/60 * * * ?" />
+       </bean>
+       
+       <!-- 账户补单 -->
+       <bean id="accRepairJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+              <property name="targetObject" ref="accRepairTask" />
+              <property name="targetMethod" value="accountRecharge" />
+       </bean>
+
+       <bean id="accRepairTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+              <property name="jobDetail" ref="accRepairJob" />
+              <property name="cronExpression" value="0 0/30 * * * ?" />
+       </bean>
+
+       <!-- 设置调度 -->
+       <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+              <property name="triggers">
+                     <list>
+<!--                             <ref bean="YKTRechargeTaskTrigger" />
+                            <ref bean="AccountRechargeTaskTrigger" />
+                            <ref bean="YKTPurchaseTaskTrigger" />
+                            <ref bean="profitTrigger" />
+                            <ref bean="profitCollectTrigger" />
+                            <ref bean="SettlementTaskTrigger" />
+                           <ref bean="yktRepairTaskTrigger" />
+                           <ref bean="accRepairTaskTrigger" /> -->
+                     </list>
+              </property>
+              <property name="taskExecutor" ref="executor" />
+              <property name="waitForJobsToCompleteOnShutdown" value="true" />
+       </bean>
+</beans>

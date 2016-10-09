@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PaymentMapper">
+	<sql id="payMentColumn">
+		t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,t.TRAN_CODE,t.PAY_STATUS,t.PAY_TYPE,t.PAY_WAY_KIND,t.PAY_WAY_ID,t.PAY_SERVICE_RATE,
+		t.PAY_SERVICE_FEE,t.PAY_MONEY,t.PAGE_CALLBACK_STATUS,t.PAGE_CALLBACK_DATE,t.SERVICE_NOTICE_STATUS,
+		t.SEND_CIPHERTEXT,t.ACCEPT_CIPHERTEXT,t.SERVICE_NOTICE_DATE,t.TRADE_NO
+	</sql>
+	<select id="findPayMentByPage" resultType="Payment" resultMap="paymentMapperResultMap" parameterType="Payment">
+		select <include refid="payMentColumn" /> ,p.PAY_WAY_NAME from pay_payment t
+		left join (select * from(
+		select
+		pg.id as id,
+		pc.pay_way_name as PAY_WAY_NAME,
+		'GW_ALL' as pay_way
+		from PAY_WAY_GENERAL pg
+		left join PAY_CONFIG pc
+		on pg.pay_config_id = pc.id
+
+		union
+
+		select
+		pe.id as id,
+		pc.pay_way_name as PAY_WAY_NAME,
+		'GW_OUT' as pay_way
+		from PAY_WAY_EXTERNAL pe
+		left join PAY_CONFIG pc
+		on pe.pay_config_id = pc.id
+
+
+		))  p
+		on t.pay_way_id = p.id
+		and t.pay_way_kind =p.pay_way
+
+		<where>
+			<if test="tranCode != null and tranCode !=''">
+				t.TRAN_CODE like '%'||#{tranCode}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and t.PAY_TYPE = #{payType}
+			</if>
+			<if test="payWayName != null and payWayName !=''">
+				and p.pay_way_name like '%'||#{payWayName}||'%'
+			</if>
+			<if test="payStatus != null and payStatus !=''">
+				and t.PAY_STATUS = #{payStatus}
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+
+	<select id="findPaymentById" resultType="Payment" resultMap="paymentMapperResultMap" parameterType="java.lang.String">
+		select <include refid="payMentColumn" />,p.PAY_WAY_NAME from pay_payment t
+		left join (select * from(
+		select
+		pg.id as id,
+		pc.pay_way_name as PAY_WAY_NAME,
+		'GW_ALL' as pay_way
+		from PAY_WAY_GENERAL pg
+		left join PAY_CONFIG pc
+		on pg.pay_config_id = pc.id
+
+		union
+
+		select
+		pe.id as id,
+		pc.pay_way_name as PAY_WAY_NAME,
+		'GW_OUT' as pay_way
+		from PAY_WAY_EXTERNAL pe
+		left join PAY_CONFIG pc
+		on pe.pay_config_id = pc.id
+
+
+		))  p
+		on t.pay_way_id = p.id
+		and t.pay_way_kind =p.pay_way  where t.id=#{id}
+	</select>
+	
+	<select id="findPaymentByTranCode" resultType="Payment" resultMap="paymentMapperResultMap" parameterType="java.lang.String">
+		select <include refid="payMentColumn" /> from pay_payment t where t.TRAN_CODE = #{tranCode} order by t.id desc
+	</select>
+	
+	<insert id="addPayment" parameterType="Payment">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+			SELECT PAY_PAYMENT_ID_SEQ.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO PAY_PAYMENT(ID,TRAN_CODE,PAY_STATUS,PAY_TYPE,PAY_WAY_KIND,PAY_WAY_ID,PAY_SERVICE_RATE,PAY_SERVICE_FEE,PAY_MONEY,PAGE_CALLBACK_STATUS,PAGE_CALLBACK_DATE,SERVICE_NOTICE_STATUS,SERVICE_NOTICE_DATE,SEND_CIPHERTEXT,ACCEPT_CIPHERTEXT,CREATE_USER,CREATE_DATE)
+		VALUES(#{id},#{tranCode,jdbcType=VARCHAR},#{payStatus,jdbcType=VARCHAR},#{payType,jdbcType=VARCHAR},#{payWayKind,jdbcType=VARCHAR},#{payWayId,jdbcType=VARCHAR},#{payServiceRate,jdbcType=DOUBLE},#{payServiceFee,jdbcType=DOUBLE},#{payMoney,jdbcType=DOUBLE},
+		#{pageCallbackStatus,jdbcType=VARCHAR},#{pageCallbackDate,jdbcType=DATE},#{serviceNoticeStatus,jdbcType=VARCHAR},#{serviceNoticeDate,jdbcType=DATE},#{sendCiphertext,jdbcType=VARCHAR},#{acceptCiphertext,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	<!-- 根据所传参数更改表记录-->
+	<update id="modifyPayment" parameterType="Payment">
+		UPDATE PAY_PAYMENT SET
+		<if test="payStatus != null and payStatus !=''">
+			PAY_STATUS=#{payStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="pageCallbackStatus != null and pageCallbackStatus !=''">
+			PAGE_CALLBACK_STATUS=#{pageCallbackStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="pageCallbackDate != null and pageCallbackDate !=''">
+			PAGE_CALLBACK_DATE=sysdate,
+		</if>
+		<if test="serviceNoticeStatus != null and serviceNoticeStatus !=''">
+			SERVICE_NOTICE_STATUS=#{serviceNoticeStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="serviceNoticeDate != null and serviceNoticeDate !=''">
+			SERVICE_NOTICE_DATE=sysdate,
+		</if>
+		<if test="sendCiphertext != null and sendCiphertext !=''">
+			SEND_CIPHERTEXT=#{sendCiphertext,jdbcType=VARCHAR},
+		</if>
+		<if test="acceptCiphertext != null and acceptCiphertext !=''">
+			ACCEPT_CIPHERTEXT=#{acceptCiphertext,jdbcType=VARCHAR},
+		</if>
+		<if test="updateUser != null and updateUser !=''">
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+		</if>
+		<if test="tradeNo != null and tradeNo !=''">
+			trade_no=#{tradeNo,jdbcType=VARCHAR},
+		</if>
+		UPDATE_DATE=sysdate
+		WHERE TRAN_CODE=#{tranCode}
+	</update>
+	
+	<update id="updatePayStatus" parameterType="Payment">
+		UPDATE PAY_PAYMENT set PAY_STATUS=#{payStatus} where ID=#{id}
+	</update>
+	<!--根据tranCode查询支付流水信息-->
+	<select id="queryPaymentInfo" resultType="Payment" resultMap="paymentMapperResultMap" parameterType="java.lang.String">
+		select <include refid="payMentColumn" /> FROM PAY_PAYMENT t WHERE t.TRAN_CODE=#{tranCode}
+	</select>
+</mapper>

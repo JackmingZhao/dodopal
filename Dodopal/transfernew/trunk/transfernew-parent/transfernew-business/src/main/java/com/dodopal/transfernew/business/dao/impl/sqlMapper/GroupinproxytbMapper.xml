@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.GroupinproxytbMapper">
+
+	<select id="findGroupinproxytb" resultType="Groupinproxytb"
+		parameterType="java.lang.String">
+		select t.groupid as groupId, t.proxyid as proxyId from icpay.groupinproxytb t
+		<where>
+			<if test="groupid != null and groupid != '' ">
+				t.groupid = #{groupid}
+			</if>
+		</where>
+
+	</select>
+
+</mapper>

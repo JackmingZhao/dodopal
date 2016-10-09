@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.SysuserstbMapper">
+<sql id="allColumns">
+	USERID,
+  USERNAME,
+  LOGINID,
+  PASSWORD,
+  TEL,
+  MOBILTEL,
+  PROVINCEID,
+  CITYID,
+  ADDRESS,
+  ZIPCODE,
+  SEX,
+  IDENTITYID,
+  IDENTITYTYPE,
+  EMAIL,
+  REGISTTIME,
+  LASTEDITTIME,
+  UNITID,
+  USERTYPE,
+  MCHNITID,
+  POINT,
+  STATUS,
+  QUESTION,
+  ANSWER,
+  DEPARTID,
+  QB,
+  QIANBAOMONEY,
+  UUID,
+  MCHNMARK,
+  LASTMOBILTEL,
+  YKTCITYID,
+  HISTORY_SCORE,
+  CURRENT_SCORE,
+  USERTYPE1,
+  ACTIVEID,
+  WECHATID,
+  WECHATICON,
+  PROXYORDERNO,
+  ACTIVEREBATE,
+  EDUCATION,
+  OCCUPATION,
+  BIRTHDAY,
+  RELNAME
+</sql>
+<!-- TEST -->
+<select id="findSysuserstb" resultType="Sysuserstb" resultMap="sysuserstbResultMap">
+select <include refid="allColumns" /> 
+  from icpay.sysuserstb isys
+ where isys.userid=#{userid}
+</select>
+<select id="findSysUserstbByMchnitid" resultType="Sysuserstb" resultMap="sysuserstbResultMap">
+select <include refid="allColumns" /> 
+  from icpay.sysuserstb isys
+ where isys.mchnitid=#{mchnitid} and isys.usertype='3'
+</select>
+
+<!-- 数据迁移连锁加盟网点 -->
+<select id="findAllSysuserstb" resultType="Sysuserstb" resultMap="sysuserstbResultMap">
+select <include refid="allColumns" /> 
+  from icpay.sysuserstb isys
+ where isys.userid in
+       (select ibip.userid
+          from icpay.biposinuserstb ibip
+         where ibip.posid in
+               (select ibpos.posid
+                  from icpay.biposinfotb ibpos
+                 where ibpos.mchnitid in
+                       (select ibim.mchnitid
+                          from icpay.bimchntinfotb ibim
+                         where ibim.mchnitid in
+                               (select tm.mchntid from transfer_merchant tm where tm.mchntid=#{mchntid}))))
+</select>
+
+<!-- 查询用户的基础信息  isys.cityid = '1110' and isys.yktcityid = '1110' and -->
+<select id="findSysUserstb" resultType="Sysuserstb" resultMap="sysuserstbResultMap">
+ select <include refid="allColumns"></include> from icpay.sysuserstb isys 
+   where isys.usertype='2'
+   and isys.userid=#{userid}
+</select>
+
+<select id="findSysUserstbAllByPage" resultType="Sysuserstb" resultMap="sysuserstbResultMap">
+ select <include refid="allColumns"></include> from icpay.sysuserstb isys 
+  where isys.usertype = '2'
+    and (isys.trans_flag != '0' or isys.trans_flag is null)
+    and isys.cityid = '1110' order by isys.userid
+</select>
+
+
+<!-- 更新老系统迁移标志，0已迁移，1未迁移 -->
+<update id="updateUserTransFlag" parameterType="java.lang.String">
+update icpay.sysuserstb set trans_flag='0' where userid = #{userid}
+</update>
+</mapper>

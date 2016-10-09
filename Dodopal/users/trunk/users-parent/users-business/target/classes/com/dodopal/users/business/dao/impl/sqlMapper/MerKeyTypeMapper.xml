@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerKeyTypeMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,MER_KEY_TYPE,MER_MD5_PAYPWD,MER_MD5_BACKPAYPWD,INNER_PAYPWD,INNER_BACKPAYPWD,
+		MER_RSA_PRI,MER_RSA_PUB,MER_DSA_PRI,MER_DSA_PUB
+	</sql>
+
+	<!-- 查找秘钥列表 -->
+	<select id="findMerKeyType" resultType="MerKeyType" resultMap="merKeyTypeResultMap"
+		parameterType="MerKeyType">
+		select <include refid="allColumns" /> from MER_KEY_TYPE t 
+		<where>
+        	<if test="merKeyType !=null and merKeyType !=''">   
+            	t.MER_KEY_TYPE = #{merKeyType}    
+        	</if>   
+        	<if test="activate != null and activate !=''">   
+           	    AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	    AND t.MER_CODE = #{merCode}
+       		</if>
+       		
+		</where>
+		ORDER by t.CREATE_DATE DESC 
+	</select>
+	
+	<!-- 签名秘钥查看 -->
+	<select id="findMerMD5PayPwd" resultType="MerKeyType" resultMap="merKeyTypeResultMap"
+		parameterType="MerKeyType">
+		select ID,MER_CODE,MER_MD5_PAYPWD,ACTIVATE from MER_KEY_TYPE t 
+		<where>
+        	<if test="merKeyType !=null and merKeyType !=''">   
+            	t.MER_KEY_TYPE = #{merKeyType}    
+        	</if>   
+        	<if test="activate != null and activate !=''">   
+           	    AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	    AND t.MER_CODE = #{merCode}
+       		</if>
+       		<if test="merMD5PayPwd != null and merMD5PayPwd !=''">   
+           	    AND t.MER_MD5_PAYPWD = #{merMD5PayPwd}
+       		</if>
+		</where>
+		ORDER by t.CREATE_DATE DESC 
+	</select>
+	
+	<!-- 验签秘钥查看 -->
+	<select id="findMerMD5BackPayPWD" resultType="MerKeyType" resultMap="merKeyTypeResultMap"
+		parameterType="MerKeyType">
+		select  ID,MER_CODE,MER_MD5_BACKPAYPWD,ACTIVATE from MER_KEY_TYPE t 
+		<where>
+        	<if test="merKeyType !=null and merKeyType !=''">   
+            	t.MER_KEY_TYPE = #{merKeyType}    
+        	</if>   
+        	<if test="activate != null and activate !=''">   
+           	    AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	    AND t.MER_CODE = #{merCode}
+       		</if>
+       		<if test="merMD5BackPayPWD != null and merMD5BackPayPWD !=''">   
+           	    AND t.MER_MD5_BACKPAYPWD = #{merMD5BackPayPWD}
+       		</if>
+		</where>
+		ORDER by t.CREATE_DATE DESC 
+	</select>
+
+	<select id="findMerKeyTypeByMerCode" resultType="MerKeyType" resultMap="merKeyTypeResultMap" parameterType="String">
+		select <include refid="allColumns" /> from MER_KEY_TYPE t where t.MER_CODE = #{merCode}
+	</select>
+
+	<!-- 保存操作 -->
+	<insert id="insertMerKeyType" parameterType="MerKeyType">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_KEY_TYPE_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+   		INSERT INTO MER_KEY_TYPE 
+   			(ID,CREATE_DATE,UPDATE_DATE,CREATE_USER,UPDATE_USER,MER_CODE,MER_KEY_TYPE,
+   			MER_MD5_PAYPWD,MER_MD5_BACKPAYPWD,MER_RSA_PRI,MER_RSA_PUB,MER_DSA_PRI,
+   			MER_DSA_PUB,INNER_PAYPWD,INNER_BACKPAYPWD,ACTIVATE) VALUES (
+   			#{id,jdbcType=VARCHAR},
+   			sysdate,
+   			#{updateDate,jdbcType=DATE},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR},
+			#{merCode,jdbcType=VARCHAR},
+			#{merKeyType,jdbcType=VARCHAR},
+			#{merMD5PayPwd,jdbcType=VARCHAR},
+			#{merMD5BackPayPWD,jdbcType=VARCHAR},
+			#{merRSAPri,jdbcType=VARCHAR},
+			#{merRSAPub,jdbcType=VARCHAR},
+			#{merDSAPri,jdbcType=VARCHAR},
+			#{merDSAPub,jdbcType=VARCHAR},
+			#{innerPayPWD,jdbcType=VARCHAR},
+			#{innerBackPayPWD,jdbcType=VARCHAR},
+			'0')
+   	</insert>
+   	
+	<!-- 根据商户号或id进行更新 -->
+	<update id="updateMerKeyType" parameterType="MerKeyType">
+		UPDATE MER_KEY_TYPE 
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate},
+			</if>
+				MER_KEY_TYPE=#{merKeyType,jdbcType=VARCHAR},
+				MER_MD5_PAYPWD=#{merMD5PayPwd,jdbcType=VARCHAR},
+				MER_MD5_BACKPAYPWD=#{merMD5BackPayPWD,jdbcType=VARCHAR},
+				MER_RSA_PRI=#{merRSAPri,jdbcType=VARCHAR},
+				MER_RSA_PUB=#{merRSAPub,jdbcType=VARCHAR},
+				MER_DSA_PRI=#{merDSAPri,jdbcType=VARCHAR},
+				MER_DSA_PUB=#{merDSAPub,jdbcType=VARCHAR},
+				INNER_PAYPWD=#{innerPayPWD,jdbcType=VARCHAR},
+				INNER_BACKPAYPWD=#{innerBackPayPWD,jdbcType=VARCHAR},
+				UPDATE_USER=#{updateUser},
+				UPDATE_DATE=sysdate
+		</trim>
+		<where>
+			<if test="merCode != null and merCode !=''">
+				 MER_CODE=#{merCode}
+			</if>
+			<if test="id != null and id !=''">
+				and ID=#{id}
+			</if>
+		</where>
+	</update>
+
+	<!-- 签名秘钥更新 -->
+	<update id="updateMerMD5PayPwd" parameterType="MerKeyType">
+		UPDATE MER_KEY_TYPE 
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="merMD5PayPwd != null and merMD5PayPwd !=''">
+				MER_MD5_PAYPWD=#{merMD5PayPwd},
+				UPDATE_DATE=sysdate 
+			</if>
+		</trim>
+		<where>
+			<if test="merCode != null and merCode !=''">
+				MER_CODE=#{merCode}
+			</if>
+			<if test="id != null and id !=''">
+				AND ID=#{id}
+			</if>
+		</where>
+	</update>
+	<!-- 验签秘钥更新 -->
+	<update id="updateMerMD5BackPayPWD" parameterType="MerKeyType">
+		UPDATE MER_KEY_TYPE 
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="merMD5BackPayPWD != null and merMD5BackPayPWD !=''">
+				MER_MD5_BACKPAYPWD=#{merMD5BackPayPWD},
+				UPDATE_DATE=sysdate 
+			</if>
+		</trim>
+		<where>
+			<if test="merCode != null and merCode !=''">
+				MER_CODE=#{merCode}
+			</if>
+			<if test="id != null and id !=''">
+				AND ID=#{id}
+			</if>
+		</where>
+	</update>
+
+	<delete id="batchDelMerKeyTypeByMerCodes">
+		delete from MER_KEY_TYPE where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.MerchantExtendMapper">
+	<insert id="addMerchantExtend" parameterType="MerchantExtend">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select MERCHANT_EXTEND_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		MERCHANT_EXTEND(ID,MER_CODE,OLD_MERCHANT_ID,OLD_MERCHANT_TYPE)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{merCode,jdbcType=VARCHAR},#{oldMerchantId,jdbcType=VARCHAR},#{oldMerchantType,jdbcType=VARCHAR})
+	</insert>
+<!-- 查找新商户表的对应的上级商户code -->
+<select id="findMerchantExtend" resultType="MerchantExtend" resultMap="merchantExtendResultMap">
+select ID,MER_CODE,OLD_MERCHANT_ID,OLD_MERCHANT_TYPE from  merchant_extend  
+where old_merchant_id = #{mchnitid} 
+and old_merchant_type = #{type}
+</select>
+</mapper>

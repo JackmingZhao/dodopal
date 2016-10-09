@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.PosLogMapper">
+	<resultMap type="PosLog" id="posLogResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		
+		<result property="code" column="CODE" />
+		<result property="operStatus" column="OPER_STATUS" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="merName" column="MER_NAME" />
+		<result property="operName" column="OPER_NAME" />
+		<result property="source" column="SOURCE" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.MerDiscountMapper">
+	<select id="findMerDiscountToday" resultType="java.util.Map">
+		<![CDATA[
+		select t.DISCOUNT_THRESHOLD disCount,t.SET_DISCOUNT setDiscount from tran_discount t join merchant_tran_discount md on md.discount_id = t.id 
+		where md.mer_code = #{merCode} 
+		and t.begin_date<=sysdate and t.end_date>=sysdate and INSTR(t.week,TO_CHAR(SYSDATE- 1,'D'))>0 
+		and replace(t.begin_time,':','')<=TO_CHAR(SYSDATE,'HH24MI') and replace(t.end_time,':','')>=TO_CHAR(SYSDATE,'HH24MI')
+		order by t.discount_threshold desc
+		]]>
+	</select>
+</mapper>

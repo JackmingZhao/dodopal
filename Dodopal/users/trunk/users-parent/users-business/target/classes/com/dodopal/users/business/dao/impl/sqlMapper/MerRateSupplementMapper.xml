@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerRateSupplementMapper">
+	<sql id="allColumns">
+		ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,RATE_CODE,PAGE_CALLBACK_URL,SERVICE_NOTICE_URL,PAGE_CHECK_CALLBACK_URL,
+		IS_SHOW_ERROR_MSG
+	</sql>
+
+	<select id="findMerRateSpmtsByMerCode" resultType="MerRateSupplement" resultMap="merRateSupplementResultMap" parameterType="string">
+		select <include refid="allColumns" /> from MER_RATE_SUPPLEMENT where MER_CODE = #{merCode}
+	</select>
+
+	<select id="findMerRateUrl" resultType="MerRateSupplement" resultMap="merRateSupplementResultMap">
+		select <include refid="allColumns" /> from MER_RATE_SUPPLEMENT where MER_CODE = #{merCode} and RATE_CODE = #{rateCode}
+	</select>
+
+	<insert id="batchAddMerRateSpmts" parameterType="java.util.List">
+		INSERT INTO MER_RATE_SUPPLEMENT(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,RATE_CODE,PAGE_CALLBACK_URL,SERVICE_NOTICE_URL,PAGE_CHECK_CALLBACK_URL,IS_SHOW_ERROR_MSG
+		)
+		select MER_RATE_SUPPLEMENT_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{item.merCode},
+			#{item.rateCode},
+			#{item.pageCallbackUrl, jdbcType=VARCHAR},
+			#{item.serviceNoticeUrl, jdbcType=VARCHAR},
+			#{item.pageCheckCallbackUrl, jdbcType=VARCHAR},
+			#{item.isShowErrorMsg, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+		) a
+	</insert>
+
+	<delete id="deleteMerRateSpmtsByMerCode" parameterType="string">
+		delete from MER_RATE_SUPPLEMENT where MER_CODE = #{merCode}
+	</delete>
+
+	<delete id="batchDelMerRateSpmtsByMerCodes">
+		delete from MER_RATE_SUPPLEMENT where MER_CODE in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+</mapper>

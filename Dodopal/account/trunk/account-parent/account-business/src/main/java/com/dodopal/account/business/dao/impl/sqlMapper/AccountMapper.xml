@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountMapper">
+	<sql id="allColumns">
+		ID, 
+		ACCOUNT_CODE, 
+		FUND_TYPE, 
+		CUSTOMER_TYPE, 
+		CUSTOMER_NO, 
+		CREATE_USER, 
+		CREATE_DATE, 
+		UPDATE_USER, 
+		UPDATE_DATE
+	</sql>
+	
+        <insert id="addAccount" parameterType="Account">
+            <selectKey resultType="String" keyProperty="id" order="BEFORE">
+                select ACCOUNT_ID_SEQ.nextval from dual
+            </selectKey>
+          INSERT INTO ACCOUNT(ID,ACCOUNT_CODE,FUND_TYPE,CUSTOMER_TYPE,CUSTOMER_NO,CREATE_USER,CREATE_DATE)
+          VALUES (#{id,jdbcType=VARCHAR},#{accountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},#{customerType,jdbcType=VARCHAR},
+          #{customerNo,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+        </insert>
+    <!--获取序列下一个值-->
+    <select id="getSequenceNextId" resultType="java.lang.String">
+        select ACCOUNT_CODE_SEQ.nextval from dual
+    </select>
+    <!--根据客户类型和客户号查询主账户编号AccountCode-->
+    <select id="queryAccoutCode" resultType="Account" resultMap="accountResultMap" parameterType="java.lang.String">
+        select <include refid="allColumns"/> from ACCOUNT  where CUSTOMER_TYPE=#{custType} AND CUSTOMER_NO =#{custNum}
+    </select>
+
+	<select id="findAccountByAcid" resultType="Account" resultMap="accountResultMap"
+		parameterType="java.lang.String">
+		SELECT T.ID,
+		       T.ACCOUNT_CODE,
+		       T.FUND_TYPE,
+		       T.CUSTOMER_TYPE,
+		       T.CUSTOMER_NO,
+		       A.NICK_NAME AS CREATE_USER,
+		       T.CREATE_DATE,
+		       B.NICK_NAME AS UPDATE_USER,
+		       T.UPDATE_DATE
+		  FROM ACCOUNT T
+		  LEFT JOIN V_USER_INFO A
+		    ON T.CREATE_USER = A.ID
+		  LEFT JOIN V_USER_INFO B
+		    ON T.UPDATE_USER = B.ID
+		 WHERE T.ID = #{acid}
+	</select>
+
+	<select id="findAccountInfoListMerByPage" resultType="AccountMainInfo" resultMap="accountMainInfoResultMap" parameterType="AccountInfoListQuery">
+		SELECT 
+		FUND.ID,
+		ACC.ID AS ACID,
+		ACC.ACCOUNT_CODE,
+		ACC.CUSTOMER_NO,
+		MER.MER_NAME AS CUNAME,
+		FUND.FUND_TYPE,
+		FUND.SUM_TOTAL_AMOUNT,
+		FUND.TOTAL_BALANCE,
+		FUND.AVAILABLE_BALANCE,
+		FUND.FROZEN_AMOUNT,
+		FUND.STATE
+		FROM ACCOUNT ACC, ACCOUNT_FUND FUND, MERCHANT MER
+		<where>
+			ACC.ACCOUNT_CODE = FUND.ACCOUNT_CODE
+			AND ACC.CUSTOMER_NO = MER.MER_CODE
+			AND ACC.CUSTOMER_TYPE = '1'
+			<if test="custNum != null and custNum !=''">
+				AND ACC.CUSTOMER_NO LIKE '%'||#{custNum}||'%'
+			</if>
+			<if test="custName != null and custName !=''">
+				AND MER.MER_NAME LIKE '%'||#{custName}||'%'
+			</if>
+			<if test="fundType != null and fundType !=''">
+				AND FUND.FUND_TYPE = #{fundType}
+			</if>
+			<if test="status != null and status !=''">
+			<![CDATA[
+				AND FUND.STATE = #{status}
+			]]>
+			</if>
+		</where>
+		 ORDER BY FUND.CREATE_DATE DESC
+	</select>
+	<select id="findAccountInfoListUserByPage" resultType="AccountMainInfo" resultMap="accountMainInfoResultMap" parameterType="AccountInfoListQuery">
+		SELECT 
+		FUND.ID,
+		ACC.ID AS ACID,
+		ACC.ACCOUNT_CODE,
+		ACC.CUSTOMER_NO,
+		MERUSER.MER_USER_NAME AS CUNAME,
+		FUND.FUND_TYPE,
+		FUND.SUM_TOTAL_AMOUNT,
+		FUND.TOTAL_BALANCE,
+		FUND.AVAILABLE_BALANCE,
+		FUND.FROZEN_AMOUNT,
+		FUND.STATE
+		FROM ACCOUNT ACC, ACCOUNT_FUND FUND, MERCHANT_USER MERUSER
+		<where>
+		ACC.ACCOUNT_CODE = FUND.ACCOUNT_CODE
+		AND ACC.CUSTOMER_NO = MERUSER.USER_CODE
+		AND ACC.CUSTOMER_TYPE = '0'
+		<if test="custNum != null and custNum !=''">
+			AND ACC.CUSTOMER_NO LIKE '%'||#{custNum}||'%'
+		</if>
+		<if test="custName != null and custName !=''">
+			AND MERUSER.MER_USER_NAME LIKE '%'||#{custName}||'%'
+		</if>
+		<if test="fundType != null and fundType !=''">
+			AND FUND.FUND_TYPE = #{fundType}
+		</if>
+		<if test="status != null and status !=''">
+		<![CDATA[
+			AND FUND.STATE = #{status}
+		]]>
+		</if>
+		</where>
+		ORDER BY FUND.CREATE_DATE DESC
+	</select>
+	
+	<select id="expAccountInfoListMer" resultType="AccountMainInfo" resultMap="accountMainInfoResultMap" parameterType="AccountInfoListQuery">
+		SELECT 
+		FUND.ID,
+		ACC.ID AS ACID,
+		ACC.ACCOUNT_CODE,
+		ACC.CUSTOMER_NO,
+		MER.MER_NAME AS CUNAME,
+		FUND.FUND_TYPE,
+		FUND.SUM_TOTAL_AMOUNT,
+		FUND.TOTAL_BALANCE,
+		FUND.AVAILABLE_BALANCE,
+		FUND.FROZEN_AMOUNT,
+		FUND.STATE
+		FROM ACCOUNT ACC, ACCOUNT_FUND FUND, MERCHANT MER
+		<where>
+			ACC.ACCOUNT_CODE = FUND.ACCOUNT_CODE
+			AND ACC.CUSTOMER_NO = MER.MER_CODE
+			AND ACC.CUSTOMER_TYPE = '1'
+			<if test="custNum != null and custNum !=''">
+				AND ACC.CUSTOMER_NO LIKE '%'||#{custNum}||'%'
+			</if>
+			<if test="custName != null and custName !=''">
+				AND MER.MER_NAME LIKE '%'||#{custName}||'%'
+			</if>
+			<if test="fundType != null and fundType !=''">
+				AND FUND.FUND_TYPE = #{fundType}
+			</if>
+			<if test="status != null and status !=''">
+			<![CDATA[
+				AND FUND.STATE = #{status}
+			]]>
+			</if>
+		</where>
+		 ORDER BY FUND.CREATE_DATE DESC
+	</select>
+	
+	<select id="expAccountInfoListUser" resultType="AccountMainInfo" resultMap="accountMainInfoResultMap" parameterType="AccountInfoListQuery">
+		SELECT 
+		FUND.ID,
+		ACC.ID AS ACID,
+		ACC.ACCOUNT_CODE,
+		ACC.CUSTOMER_NO,
+		MERUSER.MER_USER_NAME AS CUNAME,
+		FUND.FUND_TYPE,
+		FUND.SUM_TOTAL_AMOUNT,
+		FUND.TOTAL_BALANCE,
+		FUND.AVAILABLE_BALANCE,
+		FUND.FROZEN_AMOUNT,
+		FUND.STATE
+		FROM ACCOUNT ACC, ACCOUNT_FUND FUND, MERCHANT_USER MERUSER
+		<where>
+		ACC.ACCOUNT_CODE = FUND.ACCOUNT_CODE
+		AND ACC.CUSTOMER_NO = MERUSER.USER_CODE
+		AND ACC.CUSTOMER_TYPE = '0'
+		<if test="custNum != null and custNum !=''">
+			AND ACC.CUSTOMER_NO LIKE '%'||#{custNum}||'%'
+		</if>
+		<if test="custName != null and custName !=''">
+			AND MERUSER.MER_USER_NAME LIKE '%'||#{custName}||'%'
+		</if>
+		<if test="fundType != null and fundType !=''">
+			AND FUND.FUND_TYPE = #{fundType}
+		</if>
+		<if test="status != null and status !=''">
+		<![CDATA[
+			AND FUND.STATE = #{status}
+		]]>
+		</if>
+		</where>
+		ORDER BY FUND.CREATE_DATE DESC
+	</select>
+</mapper>

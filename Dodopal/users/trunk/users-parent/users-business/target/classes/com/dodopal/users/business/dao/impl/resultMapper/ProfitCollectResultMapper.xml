@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.ProfitCollectMapper">
+	<resultMap type="ProfitCollect" id="profitCollectResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		
+		<result property="collectDate" column="COLLECT_DATE" />
+		<result property="collectTime" column="COLLECT_TIME" />
+		<result property="customerCode" column="CUSTOMER_CODE" />
+		<result property="customerName" column="CUSTOMER_NAME" />
+		<result property="bussinessType" column="BUSSINESS_TYPE" />
+		<result property="tradeCount" column="TRADE_COUNT" />
+		<result property="tradeAmount" column="TRADE_AMOUNT" />
+		<result property="profit" column="PROFIT" />
+	</resultMap>
+</mapper>

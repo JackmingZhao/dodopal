@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerchantUserMapper">
+<!-- 关联查询的列 -->
+	<sql id="merchantUesrAndMerNameColumn">
+		t.ID,t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE,
+		t.MER_USER_FLG,t.MER_USER_TYPE,t.MER_CODE,t.MER_USER_NAME,t.MER_USER_PWD,t.MER_USER_IDENTITY_TYPE,
+	t.MER_USER_IDENTITY_NUM,t.MER_USER_NICKNAME,t.MER_USER_SEX,t.MER_USER_MOBILE,t.MER_USER_TELEPHONE,t.MER_USER_ADDS,
+	t.MER_USER_BIRTHDAY,t.MER_USER_EMALL,t.MER_USER_EMPLOYEE_DATE,t.MER_USER_LAST_LOGIN_DATE,t.MER_USER_LAST_LOGIN_IP,
+	t.MER_USER_LOGIN_FAI_COUNT,t.MER_USER_LOCKED_DATE,t.MER_USER_REMARK,t.ACTIVATE,t.DEL_FLG,t.USER_CODE,t.SOURCE,t.PAYINFO_FLG,
+	t.CITY_CODE,t.MER_USER_STATE,t.EDUCATION,t.INCOME,t.BIRTHDAY,t.IS_MARRIED,t.TRADE_AREA,
+	 m.MER_NAME, m.MER_TYPE, m.MER_STATE, m.MER_STATE_USER, m.MER_STATE_DATE,t.MER_USER_PRO,t.MER_USER_CITY,t.WECHATID,t.PARAMKEY
+	</sql>
+	<select id="findMerchantUserAndMerNameByPage" resultType="MerchantUser" resultMap="merchantUserMerNameResultMap" 
+	parameterType="MerchantUserQuery">
+		select <include refid="merchantUesrAndMerNameColumn" /> from MERCHANT_USER t left join merchant m on m.mer_code = t.mer_code
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+            	t.MER_USER_NAME LIKE  '%'||#{merUserName}||'%'
+        	</if>   
+        	<if test="merchantName != null and merchantName !=''">   
+           	 AND m.mer_name LIKE '%'||#{merchantName}||'%'      
+       		</if>
+       		<if test="merchantState != null and merchantState !=''">   
+           	 AND m.MER_STATE LIKE '%'||#{merchantState}||'%'       
+       		</if>
+       		<if test="merchantType != null and merchantType !=''">   
+           	 AND m.MER_TYPE LIKE '%'||#{merchantType}||'%'       
+       		</if>
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE LIKE '%'||#{merUserMobile}||'%'       
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE '%'||#{merUserNickName}||'%'    
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	 AND t.MER_CODE = #{merCode}
+       		</if>
+			<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="delFlag != null and delFlag !=''">   
+           	 AND t.DEL_FLG = #{delFlag}
+       		</if>
+       		<if test="merUserType != null and merUserType !=''">   
+           	 AND t.MER_USER_TYPE = #{merUserType}
+       		</if>       		
+       		<if test="merUserSource != null and merUserSource !=''">   
+           	 AND t.SOURCE = #{merUserSource}
+       		</if> 
+       		<if test="merUserSex != null and merUserSex !=''">   
+           	 AND t.MER_USER_SEX = #{merUserSex}
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE LIKE  '%'||#{userCode}||'%'
+       		</if>
+       		<if test="createDateStart != null and createDateStart !=''">   
+           	  <![CDATA[
+           	 AND t.CREATE_DATE >= #{createDateStart}
+           	 ]]>
+           	 </if>
+           	 <if test="createDateEnd != null and createDateEnd !=''">   
+           	  <![CDATA[
+           	   AND t.CREATE_DATE < #{createDateEnd}+1  
+           	 ]]>
+           	
+           	 </if>
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+
+	<select id="findMerchantUserByPage" resultType="MerchantUser" resultMap="merchantUserResultMap" 
+	parameterType="MerchantUserQuery">
+		select * from MERCHANT_USER t 
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+            	t.MER_USER_NAME LIKE '%'||#{merUserName}||'%'    
+        	</if>   
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE LIKE '%'||#{merUserMobile}||'%'       
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE '%'||#{merUserNickName}||'%'   
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	 AND t.MER_CODE = #{merCode}
+       		</if>
+			<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="delFlag != null and delFlag !=''">   
+           	 AND t.DEL_FLG = #{delFlag}
+       		</if>
+       		<if test="merUserType != null and merUserType !=''">   
+           	 AND t.MER_USER_TYPE = #{merUserType}
+       		</if>       		
+       		<if test="merUserSource != null and merUserSource !=''">   
+           	 AND t.SOURCE = #{merUserSource}
+       		</if> 
+       		<if test="merUserSex != null and merUserSex !=''">   
+           	 AND t.MER_USER_SEX = #{merUserSex}
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE = #{userCode}
+       		</if>
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+
+	<select id="findMerOperatorByPage" resultType="MerchantUser" resultMap="merchantUserResultMap" parameterType="MerchantUserQuery">
+		select * from MERCHANT_USER t 
+		<where>
+			t.MER_CODE = #{merCode}
+        	<if test="merUserName!=null and merUserName!=''">   
+             AND t.MER_USER_NAME LIKE '%'||#{merUserName}||'%'
+        	</if>   
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	AND t.MER_USER_MOBILE LIKE '%'||#{merUserMobile}||'%'
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE '%'||#{merUserNickName}||'%'    
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="loginUserId != null and loginUserId !=''">   
+           	 AND t.CREATE_USER = #{loginUserId}
+       		</if>
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+
+	<select id="findMerchantUserAndMerName" resultType="MerchantUser" resultMap="merchantUserMerNameResultMap" 
+	parameterType="MerchantUser">
+		select <include refid="merchantUesrAndMerNameColumn" /> from MERCHANT_USER t left join merchant m on m.mer_code = t.mer_code
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+            	t.MER_USER_NAME LIKE CONCAT(CONCAT('%', #{merUserName}),'%')    
+        	</if>   
+        	<if test="merchantName != null and merchantName !=''">   
+           	 AND m.mer_name LIKE CONCAT(CONCAT('%',#{merchantName}),'%')       
+       		</if>
+       		<if test="merchantState != null and merchantState !=''">   
+           	 AND m.MER_STATE LIKE CONCAT(CONCAT('%',#{merchantState}),'%')       
+       		</if>
+       		<if test="merchantType != null and merchantType !=''">   
+           	 AND m.MER_TYPE LIKE CONCAT(CONCAT('%',#{merchantType}),'%')       
+       		</if>
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE LIKE CONCAT(CONCAT('%',#{merUserMobile}),'%')       
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE CONCAT(CONCAT('%', #{merUserNickName}),'%')    
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	 AND t.MER_CODE = #{merCode}
+       		</if>
+			<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="delFlag != null and delFlag !=''">   
+           	 AND t.DEL_FLG = #{delFlag}
+       		</if>
+       		<if test="merUserType != null and merUserType !=''">   
+           	 AND t.MER_USER_TYPE = #{merUserType}
+       		</if>       		
+       		<if test="merUserSource != null and merUserSource !=''">   
+           	 AND t.SOURCE = #{merUserSource}
+       		</if> 
+       		<if test="merUserSex != null and merUserSex !=''">   
+           	 AND t.MER_USER_SEX = #{merUserSex}
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE = #{userCode}
+       		</if>
+       		<if test="createDateStart != null and createDateStart !=''">   
+           	  <![CDATA[
+           	 AND t.CREATE_DATE >= #{createDateStart} 
+           	 ]]>
+           	 </if>
+           	 <if test="createDateEnd != null and createDateEnd !=''">   
+           	  <![CDATA[
+           	   AND t.CREATE_DATE < #{createDateEnd}+1    
+           	  
+           	 ]]>
+           	 </if>
+    	</where>
+	ORDER by t.id DESC 
+	</select>
+
+	<select id="checkExist" resultType="boolean" parameterType="MerchantUser">
+		select count(1) from MERCHANT_USER
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+           	 MER_USER_NAME = #{merUserName}
+        	</if>   
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND MER_USER_MOBILE = #{merUserMobile} AND MER_USER_STATE != '2'
+       		</if>
+    	</where>  
+	</select>
+
+
+
+	<!-- 按条件查询用户列表'%'||#{supplierID}||'%' -->
+	<select id="findMerchantUser" resultType="MerchantUser" resultMap="merchantUserResultMap" 
+	parameterType="MerchantUser">
+		select * from MERCHANT_USER t 
+		<where>
+			<if test="id!=null and id !=''">   
+            	t.ID = #{id}   
+        	</if>
+        	<if test="merUserName!=null and merUserName!=''">
+        	 AND t.MER_USER_NAME LIKE CONCAT(CONCAT('%', #{merUserName}),'%')    
+        	</if>   
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE LIKE CONCAT(CONCAT('%',#{merUserMobile}),'%')       
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE CONCAT(CONCAT('%', #{merUserNickName}),'%')    
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	 AND t.MER_CODE = #{merCode}
+       		</if>
+			<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="delFlag != null and delFlag !=''">   
+           	 AND t.DEL_FLG = #{delFlag}
+       		</if>
+       		<if test="merUserType != null and merUserType !=''">   
+           	 AND t.MER_USER_TYPE = #{merUserType}
+       		</if>       		
+       		<if test="merUserSource != null and merUserSource !=''">   
+           	 AND t.SOURCE = #{merUserSource}
+       		</if> 
+       		<if test="merUserSex != null and merUserSex !=''">   
+           	 AND t.MER_USER_SEX = #{merUserSex}
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE = #{userCode}
+       		</if>
+       		<if test="createDateStart != null and createDateStart !=''">   
+           	  <![CDATA[
+           	 AND t.CREATE_DATE >= #{createDateStart}
+           	 ]]>
+           	 </if>
+           	 <if test="createDateEnd != null and createDateEnd !=''">   
+           	  <![CDATA[
+           	 AND t.CREATE_DATE < #{createDateEnd}+1
+           	 ]]>
+           	 </if>
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+
+	<select id="findMerchantUserExact" resultType="MerchantUser" resultMap="merchantUserResultMap" 
+	parameterType="MerchantUser">
+		select * from MERCHANT_USER t 
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+             t.MER_USER_NAME = #{merUserName}  
+        	</if>   
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE = #{merUserMobile} AND MER_USER_STATE != '2' 
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE = #{userCode}
+       		</if>
+       		<if test="id != null and id !=''">   
+           	 AND t.ID = #{id}
+       		</if>
+    	</where>  
+	</select>
+
+	<select id="findByUsernameAndPWd" resultType="MerchantUser" resultMap="merchantUserResultMap"
+		parameterType="MerchantUser">
+		select * from MERCHANT_USER t 
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+            	t.MER_USER_NAME = #{merUserName}    
+        	</if>   
+        	<if test="merUserPWD!= null and merUserPWD!=''">   
+           	 AND t.MER_USER_PWD = #{merUserPWD}
+       		</if>
+		</where>
+		ORDER by t.id DESC 
+	</select>
+
+	<select id="findMerchantUserByUserName" resultType="MerchantUser" resultMap="merchantUserResultMap"
+		parameterType="java.lang.String">
+		select * from MERCHANT_USER where MER_USER_NAME = #{userName}
+	</select>
+
+	<select id="findMerUserByUserNameForUpdate" resultType="MerchantUser" resultMap="merchantUserResultMap">
+		select * from MERCHANT_USER where MER_USER_NAME = #{userName} for update wait 3
+	</select>
+
+	<select id="findMerchantUserByUserCode" resultType="MerchantUser" resultMap="merchantUserResultMap"
+		parameterType="java.lang.String">
+		select * from MERCHANT_USER where USER_CODE = #{userCode}
+	</select>
+
+	<select id="findMerchantUserById" resultType="MerchantUser" resultMap="merchantUserResultMap"
+		parameterType="java.lang.String">
+		select * from MERCHANT_USER where id = #{id}
+	</select>
+	
+	<select id="findMerchantUserAndMerNameById" resultType="MerchantUser" resultMap="merchantUserMerNameResultMap"
+		parameterType="java.lang.String">
+		select t.ID,a.nick_name as create_user,t.CREATE_DATE,b.nick_name as update_user,t.UPDATE_DATE,
+				t.MER_USER_FLG,t.MER_USER_TYPE,t.MER_CODE,t.MER_USER_NAME,t.MER_USER_PWD,t.MER_USER_IDENTITY_TYPE,
+				t.MER_USER_IDENTITY_NUM,t.MER_USER_NICKNAME,t.MER_USER_SEX,t.MER_USER_MOBILE,t.MER_USER_TELEPHONE,t.MER_USER_ADDS,
+				t.MER_USER_BIRTHDAY,t.MER_USER_EMALL,t.MER_USER_EMPLOYEE_DATE,t.MER_USER_LAST_LOGIN_DATE,t.MER_USER_LAST_LOGIN_IP,
+				t.MER_USER_LOGIN_FAI_COUNT,t.MER_USER_LOCKED_DATE,t.MER_USER_REMARK,t.ACTIVATE,t.DEL_FLG,t.USER_CODE,t.SOURCE,t.PAYINFO_FLG,
+				t.CITY_CODE,t.MER_USER_STATE,t.EDUCATION,t.INCOME,t.BIRTHDAY,t.IS_MARRIED,t.TRADE_AREA,
+				m.MER_NAME, m.MER_TYPE, m.MER_STATE, m.MER_STATE_USER, m.MER_STATE_DATE,t.MER_USER_PRO,t.MER_USER_CITY,t.WECHATID,t.PARAMKEY
+		from 
+		(select * from MERCHANT_USER where ID = #{id}) t
+		left join MERCHANT m on m.MER_CODE = t.MER_CODE
+		left join v_user_info a on t.create_user=a.id
+		left join v_user_info b on t.update_user=b.id
+	</select>
+
+	<select id="findMerchantUserByMobile" resultType="String" 
+		parameterType="java.lang.String">
+		select t.ID from MERCHANT_USER t where t.MER_USER_MOBILE = #{mobile}
+	</select>
+	<!-- 更改sql 因数据库表结构 mobile字段更改为唯一  2015年6月16日10:46:00-->
+	<!-- select t.ID from MERCHANT_USER t left join MERCHANT m on m.MER_CODE = t.MER_CODE where t.MER_USER_MOBILE = #{mobile}
+		and m.MER_STATE = '1' -->
+	<!-- 根据手机号查询用户账号 -->
+	<select id="findMerchantUserNameByMobile" resultType="String" 
+		parameterType="java.lang.String">
+		select t.MER_USER_NAME from MERCHANT_USER t where t.MER_USER_MOBILE = #{mobile}
+	</select>
+
+	<select id="getMerUserCodeSeq" resultType="String">
+		select MER_USER_CODE_GENERATE_SEQ.NEXTVAL from dual
+	</select>
+
+	<!-- 个人(手机端)当日充值成功次数 -->
+	<select id="getCurDayPrdRcgCount" resultType="Integer" parameterType="string">
+		select count(1) from PRD_ORDER t
+		 where t.mer_code = #{userCode}
+		   and t.pro_order_states = '4'
+		   and t.source = '2'
+		   and t.prd_order_date>= to_date(to_char(sysdate,'yyyy-MM-dd'),'yyyy-MM-dd')
+		   and t.prd_order_date &lt; to_date(to_char(sysdate +1,'yyyy-MM-dd'),'yyyy-MM-dd')
+	</select>
+
+	<select id="findUnionLoginUserName" resultType="string">
+		SELECT b.MER_USER_NAME FROM MERCHANT_USER_EXTEND a
+		  LEFT JOIN MERCHANT_USER b ON a.USER_CODE = b.USER_CODE
+		 WHERE a.OLD_USER_ID=#{userid} AND a.OLD_USER_TYPE=#{usertype}
+	</select>
+
+	<select id="findUserIdByOldUserId" resultType="string">
+		select b.id from MERCHANT_USER_EXTEND a
+		  left join MERCHANT_USER b on a.user_code = b.user_code
+		 where a.old_user_id = #{oldUserId} and a.old_user_type = #{oldUserType}
+	</select>
+
+	<!-- 保存用户 -->
+	<insert id="insertMerchantUser" parameterType="MerchantUser">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_USER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MERCHANT_USER 
+			(MER_USER_FLG, 
+			MER_USER_TYPE, 
+			MER_USER_NAME, 
+			MER_USER_PWD,
+			MER_USER_IDENTITY_TYPE,
+			MER_USER_IDENTITY_NUM, 
+			MER_USER_NICKNAME, 
+			MER_USER_SEX,
+			MER_USER_MOBILE,
+			MER_USER_TELEPHONE,
+			MER_USER_ADDS,
+			MER_USER_BIRTHDAY, 
+			MER_USER_EMALL,
+			MER_USER_EMPLOYEE_DATE,
+			MER_USER_LAST_LOGIN_DATE,
+			MER_USER_LAST_LOGIN_IP,
+			MER_USER_LOGIN_FAI_COUNT, 
+			MER_USER_LOCKED_DATE, 
+			MER_USER_REMARK,
+			ACTIVATE,
+			DEL_FLG, 
+			CREATE_USER,
+			CREATE_DATE,
+			ID,
+			USER_CODE,
+			SOURCE, 
+			CITY_CODE, 
+			MER_CODE, 
+			PAYINFO_FLG, 
+			MER_USER_STATE,
+			EDUCATION,
+			INCOME,
+			BIRTHDAY,
+			IS_MARRIED,
+			TRADE_AREA,
+			MER_USER_PRO,
+			MER_USER_CITY,
+			WECHATID,
+			PARAMKEY
+			)
+		values (
+			#{merUserFlag, jdbcType=VARCHAR}, 
+		 	#{merUserType, jdbcType=VARCHAR}, 
+			#{merUserName, jdbcType=VARCHAR}, 
+			#{merUserPWD, jdbcType=VARCHAR}, 
+			#{merUserIdentityType, jdbcType=VARCHAR}, 
+			#{merUserIdentityNumber, jdbcType=VARCHAR}, 
+			#{merUserNickName, jdbcType=VARCHAR}, 
+			#{merUserSex, jdbcType=VARCHAR}, 
+			#{merUserMobile, jdbcType=VARCHAR}, 
+			#{merUserTelephone, jdbcType=VARCHAR}, 
+			#{merUserAdds, jdbcType=VARCHAR}, 
+			#{merUserBirthday,jdbcType=DATE},
+			#{merUserEmail,jdbcType=VARCHAR},
+			#{merUserEmployeeDate,jdbcType=DATE}, 
+			#{merUserLastLoginDate,jdbcType=DATE},
+			#{merUserLastLoginIp,jdbcType=VARCHAR},
+			#{merUserLoginFaiCount,jdbcType=INTEGER}, 
+			#{merUserLockedDate,jdbcType=DATE}, 
+			#{merUserRemark, jdbcType=VARCHAR}, 
+			#{activate, jdbcType=VARCHAR}, 
+			#{delFlag, jdbcType=VARCHAR}, 
+			<if test="createUser != null and createUser !=''">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser == null or createUser ==''">
+				#{id},
+			</if>
+			sysdate,
+			#{id, jdbcType=VARCHAR}, 
+			#{userCode, jdbcType=VARCHAR}, 
+			#{merUserSource, jdbcType=VARCHAR},
+			#{cityCode, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR},
+			#{payInfoFlg, jdbcType=VARCHAR},
+			#{merUserState},
+			#{education, jdbcType=VARCHAR},
+			#{income, jdbcType=INTEGER},
+			#{birthday, jdbcType=VARCHAR},
+			#{isMarried, jdbcType=VARCHAR},
+			#{tradeArea, jdbcType=VARCHAR},
+			#{merUserPro, jdbcType=VARCHAR},
+			#{merUserCity, jdbcType=VARCHAR},
+			#{wechatId, jdbcType=VARCHAR},
+			#{paramKey, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 更新用户，部分字段 
+	MER_USER_FLG, 
+			MER_USER_TYPE, 
+			MER_USER_NICKNAME, 
+			MER_USER_EMPLOYEE_DATE,
+			MER_USER_REMARK,
+			USER_CODE,
+			SOURCE, 
+			CITY_CODE, -->
+	<update id="updateMerchantUser" parameterType="MerchantUser" >
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+		MER_USER_EMALL=#{merUserEmail,jdbcType=VARCHAR},
+				MER_USER_IDENTITY_TYPE=#{merUserIdentityType,jdbcType=VARCHAR},
+				MER_USER_IDENTITY_NUM=#{merUserIdentityNumber,jdbcType=VARCHAR},
+				MER_USER_SEX=#{merUserSex,jdbcType=VARCHAR},
+				MER_USER_REMARK=#{merUserRemark,jdbcType=VARCHAR},
+				MER_USER_TELEPHONE=#{merUserTelephone,jdbcType=VARCHAR},
+				MER_USER_ADDS=#{merUserAdds,jdbcType=VARCHAR},
+				MER_USER_BIRTHDAY=#{merUserBirthday,jdbcType=DATE}, 
+				MER_USER_EMPLOYEE_DATE=#{merUserEmployeeDate,jdbcType=DATE},
+				UPDATE_DATE=sysdate,
+				EDUCATION=#{education, jdbcType=VARCHAR},
+				INCOME=#{income, jdbcType=INTEGER},
+				BIRTHDAY=#{birthday, jdbcType=VARCHAR},
+				IS_MARRIED=#{isMarried, jdbcType=VARCHAR},
+				TRADE_AREA=#{tradeArea, jdbcType=VARCHAR},
+			<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null and updateUser !=''">
+				UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="merUserMobile != null and merUserMobile !=''">
+				MER_USER_MOBILE=#{merUserMobile,jdbcType=VARCHAR},
+			</if>
+			<if test="merUserNickName != null and merUserNickName !=''">
+				MER_USER_NICKNAME=#{merUserNickName,jdbcType=VARCHAR},
+			</if>
+			<if test="merUserState != null and merUserState !=''">
+				MER_USER_STATE=#{merUserState,jdbcType=VARCHAR},
+			</if>
+			<if test="merUserPro != null and merUserPro !=''">
+			MER_USER_PRO =#{merUserPro, jdbcType=VARCHAR},
+			MER_USER_CITY=#{merUserCity, jdbcType=VARCHAR},
+			</if>
+		</trim>
+		<where>
+			<if test="id != null and id !=''">
+				id=#{id}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE=#{userCode}
+			</if>
+			<if test="merUserName != null and merUserName !=''">
+				and MER_USER_NAME=#{merUserName}
+			</if>
+		</where>
+	</update>
+
+	<!-- 批量启用或停用 -->
+	<update id="startOrStopUser" parameterType="java.util.Map">
+	update MERCHANT_USER t set
+		t.activate = #{activate, jdbcType=VARCHAR},t.UPDATE_DATE=sysdate,t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.id in
+    	<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+
+	<!-- 批量启用或停用商户操作员 -->
+	<update id="batchActivateOperator">
+	update MERCHANT_USER t set
+		t.activate = #{activate},t.UPDATE_DATE=sysdate,t.update_user=#{updateUser, jdbcType=VARCHAR}
+		where t.mer_code =#{merCode} and t.user_code in
+    	<foreach collection="userCodes" item= "code" index ="index"  open= "(" close =")" separator=",">
+			#{code}
+	    </foreach>
+	</update>
+
+	<!-- 修改用户名密码 -->
+	<update id="modifyPWD" parameterType="MerchantUser">
+		update MERCHANT_USER t set t.MER_USER_PWD = #{merUserPWD},t.UPDATE_DATE=sysdate   where t.MER_USER_NAME = #{merUserName}
+	</update>
+	
+	<!-- 重置密码 -->
+	<update id="resetPWD" parameterType="MerchantUser">
+		update MERCHANT_USER t set t.MER_USER_PWD = #{merUserPWD},
+		t.UPDATE_DATE=sysdate,
+		t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.id=#{id}
+			<if test="merUserName != null and merUserName !=''">
+			and t.MER_USER_NAME=#{merUserName}
+			</if>
+	</update>
+	<!-- 支付确认信息标识修改 -->
+	<update id="modifyPayInfoFlg" parameterType="MerchantUser">
+		update MERCHANT_USER t set t.PAYINFO_FLG = #{payInfoFlg} where t.id = #{id}
+	</update>
+	
+	<update id="deleteUserByFlag" parameterType="java.lang.String">
+		update MERCHANT_USER t set t.delFlag = "1" where t.id = #{id}
+	</update>
+
+	<update id="updateLoginDataByUserName" parameterType="MerchantUser">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="merUserLastLoginDate != null and merUserLastLoginDate !=''">
+				MER_USER_LAST_LOGIN_DATE=sysdate,
+			</if>
+			<if test="merUserLastLoginIp != null and merUserLastLoginIp !=''">
+				MER_USER_LAST_LOGIN_IP=#{merUserLastLoginIp},
+			</if>
+			<if test="merUserLoginFaiCount != null">
+				MER_USER_LOGIN_FAI_COUNT=#{merUserLoginFaiCount},
+			</if>
+			<if test="merUserLockedDate != null and merUserLockedDate !=''">
+				MER_USER_LOCKED_DATE=#{merUserLockedDate},
+			</if>
+		</trim>
+		where mer_user_name=#{merUserName}
+	</update>
+
+	<!-- OSS -->
+	<update id="updateRejectMerchantUserByUserName" parameterType="MerchantUser">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+			MER_USER_REMARK=#{merUserRemark,jdbcType=VARCHAR},
+			MER_USER_STATE='2',
+			<if test="updateUser != null and updateUser !=''">
+				UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			</if>
+			UPDATE_DATE=sysdate,
+		</trim>
+		where mer_user_name=#{merUserName}
+	</update>
+
+	<!-- 门户 -->
+	<update id="updateRejectMerchantUserByUserCode" parameterType="MerchantUser" >
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+				MER_USER_EMALL=#{merUserEmail,jdbcType=VARCHAR},
+				MER_USER_IDENTITY_TYPE=#{merUserIdentityType,jdbcType=VARCHAR},
+				MER_USER_IDENTITY_NUM=#{merUserIdentityNumber,jdbcType=VARCHAR},
+				MER_USER_SEX=#{merUserSex,jdbcType=VARCHAR},
+				MER_USER_REMARK=#{merUserRemark,jdbcType=VARCHAR},
+				MER_USER_TELEPHONE=#{merUserTelephone,jdbcType=VARCHAR},
+				MER_USER_ADDS=#{merUserAdds,jdbcType=VARCHAR},
+				MER_USER_BIRTHDAY=#{merUserBirthday,jdbcType=DATE}, 
+				MER_USER_EMPLOYEE_DATE=#{merUserEmployeeDate,jdbcType=DATE},
+				UPDATE_DATE=sysdate,
+				UPDATE_USER=#{updateUser},
+				MER_USER_NAME=#{merUserName},
+				MER_USER_PWD=#{merUserPWD},
+				MER_USER_NICKNAME=#{merUserNickName},
+				MER_USER_MOBILE=#{merUserMobile},
+				EDUCATION=#{education, jdbcType=VARCHAR},
+				INCOME=#{income, jdbcType=INTEGER},
+				BIRTHDAY=#{birthday, jdbcType=VARCHAR},
+				IS_MARRIED=#{isMarried, jdbcType=VARCHAR},
+				ACTIVATE=#{activate},
+		</trim>
+		where USER_CODE=#{userCode}
+	</update>
+
+	<!-- 修改用户默认业务城市 -->
+	<update id="updateMerUserBusCity">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+				CITY_CODE=#{cityCode},
+				UPDATE_DATE=sysdate,
+				UPDATE_USER=#{id},
+		</trim>
+		where id=#{id}
+	</update>
+
+	<!-- 修改用户手机号-->
+	<update id="updateMerUserMobileById">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+				MER_USER_MOBILE=#{merUserMobile},
+				UPDATE_DATE=sysdate,
+				UPDATE_USER=#{id},
+		</trim>
+		where id=#{id}
+	</update>
+
+	<!-- 修改用户密码-->
+	<update id="updateMerUserPWDById">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+				MER_USER_PWD=#{merUserPWD},
+				UPDATE_DATE=sysdate,
+				UPDATE_USER=#{id},
+		</trim>
+		where id=#{id}
+	</update>
+
+	<!-- 更新供应商管理员信息 -->
+	<update id="updateProviderAdminUser" parameterType="MerchantUser">
+		update MERCHANT_USER
+		<trim prefix="SET" suffixOverrides=",">
+				MER_USER_NICKNAME=#{merUserNickName},
+				MER_USER_MOBILE=#{merUserMobile},
+				UPDATE_DATE=sysdate,
+				UPDATE_USER=#{updateUser},
+		</trim>
+		where mer_code=#{merCode} and mer_user_flg='1000'
+	</update>
+
+	<delete id="deleteMerchantUser" parameterType="java.lang.String">
+		delete from MERCHANT_USER where id = #{id}
+	</delete>
+
+	<delete id="batchDelMerUserByMerCodes">
+		delete from MERCHANT_USER where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+	
+	
+	<!-- 用户管辖部门中间表BEIGN -->
+	<!-- 保存用户关联 -->
+	<insert id="saveMerDeptUser" parameterType="java.util.Map">
+		INSERT INTO MER_GROUP_DEPT_CHARGED_BY_USER 
+		   (MER_USER_NAME,MER_GRP_DEP_ID)
+		VALUES (
+			#{merUserName, jdbcType=VARCHAR},
+			#{merGrpDepId, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 根据用户名删除用户管辖部门中间表 -->
+	<delete id="deleteMerDeptUserByUserName">
+		delete from MER_GROUP_DEPT_CHARGED_BY_USER where MER_USER_NAME = #{name}
+	</delete>
+	
+	<delete id="deleteMerDeptUserByDeptId">
+		delete from MER_GROUP_DEPT_CHARGED_BY_USER where MER_GRP_DEP_ID in 
+		<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</delete>
+	<select id="findMerGroupDeptByUserName"  parameterType="java.lang.String" resultType="java.lang.String"> 
+		select MER_GRP_DEP_ID from MER_GROUP_DEPT_CHARGED_BY_USER where MER_USER_NAME  = #{name}
+	</select>
+	
+	<select id="findMerGroupDeptNameByUserName"  parameterType="java.lang.String" resultType="java.lang.String"> 
+	select dep.DEP_NAME from MER_GROUP_DEPT_CHARGED_BY_USER merdep join MER_GROUP_DEPARTMENT dep on  dep.id=merdep.MER_GRP_DEP_ID where MER_USER_NAME  = #{name}
+	
+	</select>
+		
+	<select id="findNickNameByUserId"  parameterType="java.lang.String" resultType="java.lang.String"> 
+		select NICK_NAME from v_user_info where ID  = #{userId}
+	</select>
+		
+	<!-- 导出用户信息列表 -->
+	<select id="getExportExcelMerUserList" resultType="MerchantUser" resultMap="merchantUserMerNameResultMap" 
+	parameterType="MerchantUserQuery">
+		select <include refid="merchantUesrAndMerNameColumn" /> from MERCHANT_USER t left join merchant m on m.mer_code = t.mer_code
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+            	t.MER_USER_NAME LIKE  '%'||#{merUserName}||'%'
+        	</if>   
+        	<if test="merchantName != null and merchantName !=''">   
+           	 AND m.mer_name LIKE '%'||#{merchantName}||'%'      
+       		</if>
+       		<if test="merchantState != null and merchantState !=''">   
+           	 AND m.MER_STATE LIKE '%'||#{merchantState}||'%'       
+       		</if>
+       		<if test="merchantType != null and merchantType !=''">   
+           	 AND m.MER_TYPE LIKE '%'||#{merchantType}||'%'       
+       		</if>
+        	<if test="merUserMobile!= null and merUserMobile!=''">   
+           	 AND t.MER_USER_MOBILE LIKE '%'||#{merUserMobile}||'%'       
+       		</if>
+            <if test="merUserNickName!= null and merUserNickName!=''">   
+           	 AND t.MER_USER_NICKNAME LIKE '%'||#{merUserNickName}||'%'    
+       		</if>
+       		<if test="activate!= null and activate!=''">   
+           	 AND t.ACTIVATE = #{activate}
+       		</if>
+       		<if test="merCode != null and merCode !=''">   
+           	 AND t.MER_CODE = #{merCode}
+       		</if>
+			<if test="merUserFlag != null and merUserFlag !=''">   
+           	 AND t.MER_USER_FLG = #{merUserFlag}
+       		</if>
+       		<if test="delFlag != null and delFlag !=''">   
+           	 AND t.DEL_FLG = #{delFlag}
+       		</if>
+       		<if test="merUserType != null and merUserType !=''">   
+           	 AND t.MER_USER_TYPE = #{merUserType}
+       		</if>    		
+       		<if test="merUserSource != null and merUserSource !=''">   
+           	 AND t.SOURCE = #{merUserSource}
+       		</if> 
+       		<if test="merUserSex != null and merUserSex !=''">   
+           	 AND t.MER_USER_SEX = #{merUserSex}
+       		</if>
+       		<if test="userCode != null and userCode !=''">   
+           	 AND t.USER_CODE LIKE  '%'||#{userCode}||'%'
+       		</if>
+       		<if test="createDateStart != null and createDateStart !=''">   
+           	  <![CDATA[
+           	 AND t.CREATE_DATE >= #{createDateStart}
+           	 ]]>
+           	 </if>
+           	 <if test="createDateEnd != null and createDateEnd !=''">   
+           	  <![CDATA[
+           	   AND t.CREATE_DATE < #{createDateEnd}+1  
+           	 ]]>
+           	
+           	 </if>
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+</mapper>

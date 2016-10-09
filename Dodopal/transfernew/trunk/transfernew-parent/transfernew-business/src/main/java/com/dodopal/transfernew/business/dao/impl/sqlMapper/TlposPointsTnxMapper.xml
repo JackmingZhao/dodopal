@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.TlposPointsTnxMapper">
+
+	<select id="findTlpospointstnxById" resultType="Tlpospointstnx">
+		select  
+			tlp.APPLYTIME	as  applytime,
+			tlp.ORDERID		as	orderid,
+			tlp.POINTSPARA	as	pointspara,
+			tlp.POINTTXN	as  pointtxn,
+			tlp.POINTVALUE	as  pointvalue,
+			tlp.POSID		as  posid,
+			tlp.TNXID		as  tnxid
+		from ICPAY.TLPOSPOINTSTNX tlp
+			where tlp.POSID=#{posId}
+					
+	</select>
+	
+	<insert id="addTlpospointstnxTarget" parameterType="TlpospointstnxTarget">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select TLPOSPOINTSTNX_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into TLPOSPOINTSTNX 
+			(ID,
+			PONITS_ACCOUNT_CODE,
+			ORDERID,
+			POINTVALUE,
+			POINTSPARA,
+			POINTTXN,
+			APPLYTIME
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+			#{ponitsAccountCode, jdbcType=VARCHAR},
+			#{orderid, jdbcType=VARCHAR},
+			#{pointvalue,jdbcType=DECIMAL},
+			#{pointspara, jdbcType=VARCHAR}, 
+			#{pointtxn,jdbcType=DECIMAL},
+			#{applytime, jdbcType=VARCHAR}
+			)
+	</insert>
+</mapper>

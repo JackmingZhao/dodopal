@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.BicostdisdetailMapper">
+	<resultMap type="Bicostdisdetail" id="bicostdisdetailResultMap">
+		<result property="mchnitid" column="MCHNITID" />
+		<result property="saleid" column="SALEID" />
+		<result property="saledate" column="SALEDATE" />
+		<result property="starttime" column="STARTTIME" />
+		<result property="endtime" column="ENDTIME" />
+		<result property="sale" column="SALE" />
+		<result property="setsale" column="SETSALE" />
+		<result property="posid" column="POSID" />
+	</resultMap>
+</mapper>

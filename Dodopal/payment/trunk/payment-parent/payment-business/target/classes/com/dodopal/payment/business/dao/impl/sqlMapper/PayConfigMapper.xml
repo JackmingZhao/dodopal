@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayConfigMapper">
+	<sql id="payConfigColumn">
+	t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,t.PAY_TYPE,t.PAY_TYPE_NAME,t.PAY_CHANNEL_MARK,
+	t.BANK_GATEWAY_TYPE,t.BANK_GATEWAY_NAME,t.PAY_WAY_NAME,t.ANOTHER_ACCOUNT_CODE,t.PAY_KEY,t.PROCE_RATE,t.AFTER_PROCE_RATE,t.AFTER_PROCE_RATE_DATE,t.DEFAULT_BANK,t.IMAGE_NAME,
+	t.GATEWAY_NUMBER,t.ACTIVATE
+	</sql>
+	
+ <select id="findPayConfigByPage" resultType="PayConfig" resultMap="payConfigResultMap" parameterType="PayConfig">
+		select <include refid="payConfigColumn" /> from PAY_CONFIG t
+		<where>
+			<if test="payType != null and payType !=''">
+			 t.PAY_TYPE = #{payType} 
+			</if>
+			<if test="payWayName != null and payWayName !=''">
+			and t.PAY_WAY_NAME like '%'||#{payWayName}||'%'
+			</if>
+			<if test="activate != null and activate !=''">
+			and t.ACTIVATE = #{activate}
+			</if>
+			<if test="afterProceRateDateStart != null and afterProceRateDateStart !=''">   
+           	  <![CDATA[
+           	 AND TO_DATE(TO_CHAR(t.AFTER_PROCE_RATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >=TO_DATE(TO_CHAR(#{afterProceRateDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	 ]]>
+           	 </if>
+           	 <if test="afterProceRateDateEnd != null and afterProceRateDateEnd !=''">   
+           	  <![CDATA[
+           	   AND TO_DATE(TO_CHAR(t.AFTER_PROCE_RATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <=TO_DATE(TO_CHAR(#{afterProceRateDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	  
+           	 ]]>
+           	 </if>
+		</where>
+		order by t.id desc
+		
+ </select>	
+  <select id="findPayConfigById" resultType="PayConfig" resultMap="payConfigResultMap" parameterType="java.lang.String">
+		select a.nick_name as create_user,b.nick_name as update_user,t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.PAY_TYPE,t.PAY_TYPE_NAME,t.PAY_CHANNEL_MARK,
+	t.BANK_GATEWAY_TYPE,t.BANK_GATEWAY_NAME,t.PAY_WAY_NAME,t.ANOTHER_ACCOUNT_CODE,t.PAY_KEY,t.PROCE_RATE,t.AFTER_PROCE_RATE,t.AFTER_PROCE_RATE_DATE,t.DEFAULT_BANK,t.IMAGE_NAME,
+	t.GATEWAY_NUMBER,t.ACTIVATE
+		
+		from 
+		(select * from PAY_CONFIG  where id=#{id}) t
+		left join v_user_info a on t.create_user=a.id
+		left join v_user_info b on t.update_user=b.id
+  </select>
+  <select id="findPayConfigByPayWayName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from PAY_CONFIG t where t.PAY_WAY_NAME = #{payWayName} and t.id !=#{id}
+  </select>
+ <select id="findPayConfigByAnother" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from PAY_CONFIG t where t.ANOTHER_ACCOUNT_CODE=#{anotherAccountCode}
+		and PAY_TYPE = #{payType}
+  </select>
+  <select id="findPayConfigPayType" resultType="PayConfig" resultMap="payConfigResultMap" parameterType="java.lang.String">
+		select <include refid="payConfigColumn" /> from PAY_CONFIG t where t.PAY_TYPE=#{payType} and t.ACTIVATE = '0'
+    </select>
+ <update id="startOrStopPayConfig" parameterType="java.util.Map">
+	update PAY_CONFIG t set
+		t.activate = #{activate, jdbcType=VARCHAR},t.UPDATE_DATE=sysdate,t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.id in
+    	<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+  </update>
+  
+  <update id="updatePayConfig" parameterType="PayConfig">
+	update PAY_CONFIG t set
+		<if test="payWayName != null and payWayName !=''">   
+           	 t.PAY_WAY_NAME =#{payWayName,jdbcType=VARCHAR},      
+       	</if>
+       	<if test="afterProceRateDate != null and afterProceRateDate !=''">   
+           	  t.AFTER_PROCE_RATE_DATE =#{afterProceRateDate,jdbcType=DATE},     
+       	</if>
+       	<if test="afterProceRate != null and afterProceRate !=''">   
+           	 t.AFTER_PROCE_RATE =#{afterProceRate,jdbcType=DOUBLE},       
+       	</if>
+		t.UPDATE_DATE=sysdate,
+		t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.id = #{id}
+  </update>
+  
+   <update id="updatePayConfigBankGateway" parameterType="PayConfig">
+	update PAY_CONFIG t set
+           	 t.PAY_CHANNEL_MARK =#{payChannelMark,jdbcType=VARCHAR},      
+           	  t.ANOTHER_ACCOUNT_CODE =#{anotherAccountCode,jdbcType=VARCHAR},     
+           	  t.PAY_KEY =#{payKey,jdbcType=VARCHAR},     
+           	  t.PROCE_RATE =#{proceRate, jdbcType=DOUBLE},     
+           	  t.DEFAULT_BANK =#{defaultBank, jdbcType=DOUBLE},     
+           	  t.BANK_GATEWAY_TYPE =#{bankGatewayType,jdbcType=VARCHAR},
+           	  t.BANK_GATEWAY_NAME =#{bankGatewayName,jdbcType=VARCHAR},
+           	  t.AFTER_PROCE_RATE_DATE =#{afterProceRateDate,jdbcType=DATE},     
+           	  t.AFTER_PROCE_RATE =#{afterProceRate,jdbcType=DOUBLE},       
+			  t.UPDATE_DATE=sysdate,
+			  t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+			  where t.id = #{id}
+  </update>
+  
+ <insert id="savePayConfig" parameterType="PayConfig">
+	<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+   		select PAY_CONFIG_ID_SEQ.NEXTVAL from dual
+  	</selectKey>
+  	insert into PAY_CONFIG (ID, PAY_TYPE, PAY_TYPE_NAME, PAY_CHANNEL_MARK, BANK_GATEWAY_TYPE,BANK_GATEWAY_NAME, PAY_WAY_NAME, ANOTHER_ACCOUNT_CODE, PAY_KEY, PROCE_RATE, AFTER_PROCE_RATE, AFTER_PROCE_RATE_DATE, DEFAULT_BANK, IMAGE_NAME, GATEWAY_NUMBER, ACTIVATE, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+	values (#{id, jdbcType=VARCHAR}, #{payType, jdbcType=VARCHAR},#{payTypeName, jdbcType=VARCHAR},  #{payChannelMark, jdbcType=VARCHAR},
+	#{bankGatewayType, jdbcType=VARCHAR},#{bankGatewayName, jdbcType=VARCHAR}, #{payWayName, jdbcType=VARCHAR},#{anotherAccountCode, jdbcType=VARCHAR},
+	#{payKey, jdbcType=VARCHAR},#{proceRate, jdbcType=DOUBLE}, #{afterProceRate, jdbcType=DOUBLE}, #{afterProceRateDate, jdbcType=DATE}, #{defaultBank, jdbcType=VARCHAR}, 
+	#{imageName, jdbcType=VARCHAR},#{gatewayNumber, jdbcType=VARCHAR},#{activate, jdbcType=VARCHAR},#{createUser, jdbcType=VARCHAR} ,sysdate, #{updateUser, jdbcType=VARCHAR},#{updateDate, jdbcType=DATE})
+  	
+ </insert>
+	<!--根据tranCode(交易id)查询支付配置信息-->
+	<select id="queryPayInfo" resultType="PayConfig" resultMap="payConfigResultMap" parameterType="java.lang.String">
+		select <include refid="payConfigColumn" /> FROM PAY_PAYMENT pt,PAY_CONFIG t WHERE pt.PAY_WAY_ID=t.ID and pt.tran_code=#{tranCode}
+	</select>
+	<!--根据payWayId(支付方式id)查询支付配置信息-->
+	<select id="queryPayInfoByPayWayId" resultType="PayConfig" resultMap="payConfigResultMap" parameterType="java.lang.String">
+		select <include refid="payConfigColumn" /> FROM PAY_CONFIG t WHERE t.ID = #{payWayId}
+	</select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.TranDiscountTimeMapper">
+<sql id="allColumns">
+  ID,
+  MER_CODE,
+  DATE_ID,
+  BEGIN_TIME,
+  END_TIME,
+  DISCOUNT_THRESHOLD
+</sql>
+
+<insert id="addTranDiscountTime" parameterType="TranDiscountTime">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select tran_discount_time_id_seq.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO tran_discount_time(
+			<include refid="allColumns" />
+		)
+		VALUES (
+			#{id},
+			#{merCode, jdbcType=VARCHAR},
+			#{dateId, jdbcType=VARCHAR},
+			#{beginTime, jdbcType=VARCHAR},
+			#{endTime, jdbcType=VARCHAR},
+			#{discountThreshold}
+		)
+	</insert>
+</mapper>

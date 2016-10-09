@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="oss-web">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="oss-business-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oss-business/oss-business">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="oss-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oss-api/oss-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="oss-delegate-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/oss-delegate/oss-delegate">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="users-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/users-api/users-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="product-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/product-api/product-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="card-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/card-api/card-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="account-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/account-api/account-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="payment-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/payment-api/payment-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dodopal-common-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dodopal-common/dodopal-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dodopal-hessian-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dodopal-hessian/dodopal-hessian">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="oss-web"/>
+        <property name="java-output-path" value="/oss-web/target/classes"/>
+    </wb-module>
+</project-modules>

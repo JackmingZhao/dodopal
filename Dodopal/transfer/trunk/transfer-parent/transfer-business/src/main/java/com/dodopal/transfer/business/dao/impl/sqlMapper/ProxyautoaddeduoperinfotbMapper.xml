@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.ProxyautoaddeduoperinfotbMapper">
+	<select id="findProxyautoaddeduoperinfotb" parameterType="java.lang.String"
+		resultType="Proxyautoaddeduoperinfotb">
+	select SEQ                   as seq,
+       GROUPID                as groupid,
+       PROXYID                as proxyid,
+       AUTO_ADD_TRIGGER_LIMIT as autoAddTriggerLimit,
+       AUTO_ADD_ARRIVE_LIMIT  as autoAddArriveLimit,
+       ADDDATETIME            as adddatetime,
+       IMPLDATETIME           as impldatetime,
+       OPERDATETIME           as operdatetime,
+       STATUS                 as status
+  	from icpay.proxyautoaddeduoperinfotb t
+		<where>
+		    t.status='0'
+			<if test="proxyid !=null and proxyid !=''">
+            and   t.proxyId = #{proxyid}
+			</if>
+		</where>
+	</select>
+</mapper>

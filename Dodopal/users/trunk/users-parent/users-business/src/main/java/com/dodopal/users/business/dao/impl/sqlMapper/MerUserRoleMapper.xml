@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerUserRoleMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		USER_CODE,MER_ROLE_CODE
+	</sql>
+
+	<select id="findMerUserRoleByUserCode" resultType="MerUserRole" resultMap="merUserRoleResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_USER_ROLE where user_code = #{userCode}
+	</select>
+
+	<insert id="batchAddMerUserRole" parameterType="java.util.List">
+		INSERT INTO MER_USER_ROLE(
+			ID,
+			CREATE_USER,
+			CREATE_DATE,
+			ACTIVATE,
+			USER_CODE,
+			MER_ROLE_CODE
+		)
+		select MER_USER_ROLE_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{item.activate},
+			#{item.userCode},
+			#{item.merRoleCode}
+			from dual
+		</foreach>
+		) a
+	</insert>
+
+	<delete id="delMerUserRoleByUserCode" parameterType="java.lang.String">
+		delete from MER_USER_ROLE where user_code = #{userCode}
+	</delete>
+	
+	<delete id="delMerUserRoleByUserRoleCode" parameterType="java.lang.String">
+		delete from MER_USER_ROLE where user_code = #{userCode} and mer_role_code = #{merRoleCode}
+	</delete>
+</mapper>

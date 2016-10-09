@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerGroupUserMapper">
+
+    <sql id="sqlColumn">
+		      t.ID,
+			  t.CREATE_USER,
+			  t.CREATE_DATE,
+			  t.UPDATE_USER,
+			  t.UPDATE_DATE,
+			  t.ACTIVATE,
+			  t.DEP_ID,
+			  t.MER_CODE,
+			  t.GP_USER_NAME,
+			  t.IDENTITY_NUM,
+			  t.EMPLOYEE_DATE,
+			  t.CARD_CODE,
+			  t.CARD_TYPE,
+			  t.RECHARGE_AMOUNT,
+			  t.RECHARGE_WAY,
+			  t.MOBILTEL,
+			  t.PHONE,
+			  t.REMARK,
+			  t.EMP_TYPE
+	</sql>
+
+	<!-- 按条件查询用户列表'%'||#{supplierID}||'%' -->
+	<select id="findMerGpUsers" resultType="MerGroupUser" resultMap="merGroupUserResultMap" 
+	parameterType="MerGroupUserFind">
+		select 
+			  <include refid="sqlColumn" />
+			  ,tm.MER_NAME AS MER_NAME
+			  ,td.DEP_NAME AS DEP_NAME
+			  FROM
+			   MER_GROUP_USER t,
+			   MERCHANT tm ,
+			   MER_GROUP_DEPARTMENT td 
+		<where>
+		      t.mer_code = tm.mer_code
+			 AND t.dep_id = td.id
+		     <if test="merCode!=null and merCode!=''">   
+             AND t.MER_CODE = #{merCode}       
+        	</if>   
+        	<if test="gpUserName!=null and gpUserName!=''">   
+             AND t.GP_USER_NAME LIKE '%'||#{gpUserName}||'%'   
+        	</if>   
+        	<if test="depId!= null and depId!=''">   
+           	 AND t.DEP_ID = #{depId}    
+       		</if>
+            <if test="cardCode!= null and cardCode!=''">   
+           	 AND t.CARD_CODE LIKE '%'||#{cardCode}||'%'   
+       		</if>
+       		<if test="empType!= null and empType!=''">   
+           	 AND t.EMP_TYPE = #{empType}
+       		</if>       		     		
+    	</where>  
+    	ORDER by t.ID DESC 
+	</select>
+	
+	<!-- 按条件查询用户列表'%'||#{supplierID}||'%' -->
+	<select id="findMerGpUsersByPage" resultType="MerGroupUser" resultMap="merGroupUserResultMap" 
+	parameterType="MerGroupUserFind">
+		select 
+			  <include refid="sqlColumn" />
+			  ,tm.MER_NAME AS MER_NAME
+			  ,td.DEP_NAME AS DEP_NAME
+			  FROM
+			   MER_GROUP_USER t,
+			   MERCHANT tm ,
+			   MER_GROUP_DEPARTMENT td 
+		<where>
+		      t.mer_code = tm.mer_code
+			 AND t.dep_id = td.id
+		     <if test="merCode!=null and merCode!=''">   
+             AND t.MER_CODE = #{merCode}       
+        	</if>   
+        	<if test="gpUserName!=null and gpUserName!=''">   
+             AND t.GP_USER_NAME LIKE '%'||#{gpUserName}||'%'   
+        	</if>   
+        	<if test="depId!= null and depId!=''">   
+           	 AND t.DEP_ID = #{depId}    
+       		</if>
+            <if test="cardCode!= null and cardCode!=''">   
+           	 AND t.CARD_CODE LIKE '%'||#{cardCode}||'%'   
+       		</if>
+       		<if test="empType!= null and empType!=''">   
+           	 AND t.EMP_TYPE = #{empType}
+       		</if>       		     		
+    	</where>  
+    	ORDER by t.ID DESC 
+	</select>
+	
+	<select id="findMerGpUserById" resultType="MerGroupUser" resultMap="merGroupUserResultMap" 
+	parameterType="java.lang.String">
+		select 
+			  <include refid="sqlColumn" />
+			  ,tm.MER_NAME AS MER_NAME
+			  ,td.DEP_NAME AS DEP_NAME
+			  FROM
+			   MER_GROUP_USER t,
+			   MERCHANT tm ,
+			   MER_GROUP_DEPARTMENT td 
+		<where>
+		      t.mer_code = tm.mer_code
+			 AND t.dep_id = td.id
+		     AND t.ID = #{id}
+    	</where>  
+	</select>
+	
+	<select id="getMerGpUserCount" resultType="java.lang.Integer" parameterType="MerGroupUserFind">
+		select Count(*) from MER_GROUP_USER  t
+		<where>		      
+           	 <if test="merCode!=null and merCode!=''">   
+              t.MER_CODE = #{merCode}       
+        	</if>   
+        	<if test="depId!= null and depId!=''">   
+           	 AND t.DEP_ID = #{depId}    
+       		</if>
+            <if test="cardCode!= null and cardCode!=''">   
+           	 AND t.CARD_CODE =#{cardCode}   
+       		</if>
+			 AND t.EMP_TYPE='0'
+    	</where>  
+	</select>
+	
+	
+	<select id="getMerGpUserByCarCode" resultType="MerGroupUser" parameterType="MerGroupUserFind">
+		select  
+		       <include refid="sqlColumn" />
+		       from MER_GROUP_USER  t
+		<where>		      
+           	 <if test="merCode!=null and merCode!=''">   
+              t.MER_CODE = #{merCode}       
+        	</if> 
+            <if test="cardCode!= null and cardCode!=''">   
+           	 AND t.CARD_CODE =#{cardCode}   
+       		</if>
+			 AND t.EMP_TYPE='0'
+    	</where>  
+	</select>
+
+	<select id="findMerGpUsersByUserName" resultType="MerGroupUser" resultMap="merGroupUserResultMap" >
+		select <include refid="sqlColumn" />,
+			   w.dep_name as DEP_NAME
+  		  from MER_GROUP_USER t, MER_GROUP_DEPARTMENT w
+ 		 where t.MER_CODE = #{merCode}
+   		   and w.mer_code = #{merCode}
+   		   and t.dep_id = w.id
+   		   and w.activate = '0'
+   		   and t.emp_type = '0'
+   		<if test="merUserName != null and merUserName != ''"> 
+   		   and t.dep_id in (select mer_grp_dep_id
+                      from MER_GROUP_DEPT_CHARGED_BY_USER
+                     where mer_user_name = #{merUserName})
+        </if>
+	</select>
+
+	<insert id="insertMerGpUser" parameterType="MerGroupUser" >
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_GP_USER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MER_GROUP_USER T
+		     (<include refid="sqlColumn" />)
+		VALUES (
+			#{id, jdbcType=VARCHAR}, 
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{updateUser, jdbcType=VARCHAR}, 
+			null,
+			'0',
+			#{depId, jdbcType=VARCHAR}, 
+			#{merCode, jdbcType=VARCHAR}, 
+			#{gpUserName, jdbcType=VARCHAR}, 
+			#{identityNum, jdbcType=VARCHAR}, 
+			#{employeeDate, jdbcType=TIMESTAMP}, 
+			#{cardCode, jdbcType=VARCHAR}, 
+			#{cardType, jdbcType=VARCHAR}, 
+			#{rechargeAmount, jdbcType=INTEGER},
+			#{rechargeWay, jdbcType=VARCHAR},
+			#{mobiltle, jdbcType=VARCHAR},
+			#{phone, jdbcType=VARCHAR},
+			#{remark, jdbcType=VARCHAR},
+			'0'
+		)
+	</insert>
+	
+	
+	<update id="updateMerGpUser" parameterType="MerGroupUser">
+	update MER_GROUP_USER
+		<trim prefix="SET" suffixOverrides=",">
+		
+				UPDATE_USER=#{createUser,jdbcType=VARCHAR},
+				
+				UPDATE_DATE=sysdate,
+								
+				<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate,jdbcType=VARCHAR},
+			    </if>			    
+			    <if test="depId != null and depId !=''">
+				DEP_ID=#{depId,jdbcType=VARCHAR},
+			    </if>			    
+			    <if test="gpUserName != null and gpUserName !=''">
+				GP_USER_NAME=#{gpUserName,jdbcType=VARCHAR},
+			    </if>
+			    <if test="cardType != null and cardType !=''">
+				CARD_TYPE=#{cardType,jdbcType=VARCHAR},
+			    </if>
+			    <if test="rechargeAmount != null and rechargeAmount !='' or rechargeAmount > 0" >
+				RECHARGE_AMOUNT=#{rechargeAmount,jdbcType=INTEGER},
+			    </if>
+			    <if test="empType != null and empType !=''" >
+				EMP_TYPE=#{empType,jdbcType=INTEGER},
+			    </if>
+				CARD_CODE=#{cardCode,jdbcType=VARCHAR},
+				IDENTITY_NUM=#{identityNum,jdbcType=VARCHAR},
+				EMPLOYEE_DATE=#{employeeDate, jdbcType=TIMESTAMP},
+				MOBILTEL=#{mobiltle,jdbcType=VARCHAR},
+				PHONE=#{phone,jdbcType=VARCHAR},
+				REMARK=#{remark,jdbcType=VARCHAR}
+		</trim>
+		<where>
+			<if test="id != null and id !=''">
+			id=#{id}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteMerGpUser" parameterType="java.lang.String">
+		delete from MER_GROUP_USER
+		where id = #{id}
+	</delete>
+</mapper>

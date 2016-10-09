@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.PosCompanyMapper">
+	<resultMap type="PosCompany" id="posCompanyResultMap">
+		<id property="id" column="ID" />  
+		
+		<result property="code" column="CODE" />
+		<result property="name" column="NAME" />
+		<result property="charger" column="CHARGER" />
+		<result property="phone" column="PHONE" />
+		<result property="fax" column="FAX" />
+		<result property="mail" column="MAIL" />
+		<result property="address" column="ADDRESS" />
+		<result property="zipCode" column="ZIP_CODE" />
+		<result property="comments" column="COMMENTS" />
+		
+		<result property="activate" column="ACTIVATE" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+	</resultMap>
+</mapper>

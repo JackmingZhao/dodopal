@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountChangeSumMapper">
+	<sql id="accountChangeSumColumn">
+		acs.FUND_ACCOUNT_CODE,acs.ACCOUNT_CHANGE_DATE,acs.DAY_CONSUME_SUM,acs.DAY_RECHARGE_SUM,
+		acs.DAY_TRAN_TIMES,acs.DAY_TRAN_LIMIT
+	</sql>
+	<!--根据资金账户编号查询到资金累计信息 -->
+	<select id="queryAccountChangeSum" resultType="AccountChangeSum"
+		resultMap="accountChangeSumResultMap" parameterType="java.lang.String">
+		select
+		<include refid="accountChangeSumColumn" />
+		FROM ACCOUNT_CHANGE_SUM acs WHERE acs.FUND_ACCOUNT_CODE=
+		#{fundAccountCode}
+		AND acs.ACCOUNT_CHANGE_DATE =
+		to_date(#{today,jdbcType=VARCHAR},'yyyyMMdd')
+	</select>
+	<select id="queryAccountChangeSumByDateAndCodeForUpdate" resultType="AccountChangeSum"
+		resultMap="accountChangeSumResultMap" parameterType="java.lang.String">
+		select
+		FUND_ACCOUNT_CODE, ACCOUNT_CHANGE_DATE, DAY_CONSUME_SUM, DAY_RECHARGE_SUM, DAY_TRAN_TIMES, DAY_TRAN_LIMIT, CHANGE_DATE, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE
+		FROM ACCOUNT_CHANGE_SUM acs
+		WHERE
+		acs.FUND_ACCOUNT_CODE=
+		#{fundAccountCode}
+		and ACCOUNT_CHANGE_DATE = to_date(#{today},'yyyyMMdd') for update wait 3
+	</select>
+	<!--更改资金授信账户信息 -->
+	<update id="updateAccountChangeSum" parameterType="AccountChangeSum">
+		update ACCOUNT_CHANGE_SUM t set
+			t.DAY_CONSUME_SUM =#{dayConsumeSum,jdbcType=BIGINT},
+			t.DAY_RECHARGE_SUM=#{dayRechargeSum,jdbcType=BIGINT},
+			t.UPDATE_USER=#{updateUser,jdbcType=BIGINT},
+			t.UPDATE_DATE=sysdate
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+		and t.ACCOUNT_CHANGE_DATE = to_date(#{accountChangeDate},'yyyyMMdd')
+	</update>
+	<!--更改资金授信账户信息 -->
+	<update id="updateAccountChangeSumByDateAndCode" parameterType="AccountChangeSum">
+		update ACCOUNT_CHANGE_SUM t set
+		<if test="dayConsumeSum != null">
+			t.DAY_CONSUME_SUM =#{dayConsumeSum,jdbcType=BIGINT},
+		</if>
+		<if test="dayRechargeSum != null">
+			t.DAY_RECHARGE_SUM=#{dayRechargeSum,jdbcType=BIGINT},
+		</if>
+		<if test="dayTranTimes != null">
+			t.DAY_TRAN_TIMES=#{dayTranTimes,jdbcType=BIGINT},
+		</if>
+		<if test="dayTranLimit != null">
+			t.DAY_TRAN_LIMIT=#{dayTranLimit,jdbcType=BIGINT},
+		</if>
+		<if test="updateUser != null and updateUser !=''">
+			t.UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+		</if>
+		t.UPDATE_DATE=sysdate
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+		and t.ACCOUNT_CHANGE_DATE = to_date(#{changeDate},'yyyyMMdd')
+	</update>
+	<!--变动累计表新增数据语句 -->
+	<insert id="addAccountChangeSum" parameterType="AccountChangeSum">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ACCOUNT_CHANGE_SUM_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		ACCOUNT_CHANGE_SUM(ID,FUND_ACCOUNT_CODE,ACCOUNT_CHANGE_DATE,DAY_CONSUME_SUM,DAY_RECHARGE_SUM,DAY_TRAN_TIMES,
+		DAY_TRAN_LIMIT,CHANGE_DATE,CREATE_USER,CREATE_DATE)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},to_date(#{accountChangeDate,jdbcType=VARCHAR},'yyyyMMdd'),
+		#{dayConsumeSum,jdbcType=BIGINT},#{dayRechargeSum,jdbcType=BIGINT},#{dayTranTimes,jdbcType=BIGINT},
+		#{dayTranLimit,jdbcType=BIGINT},to_char(sysdate,'yyyyMMdd'),#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+</mapper>

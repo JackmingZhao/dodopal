@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerCountMapper">
+
+	<select id="findMerCountByPage" resultType="MerCount"
+		parameterType="MerCountQuery">
+		select sup.merCode,
+               sup.merName,
+               sup.merAddress,
+               sup.activate,
+               sup.merUserName,
+               sup.merUserMobile,
+               sup.createDate
+		from
+		(select
+		a.mer_code as merCode,
+		a.mer_name as merName,
+		a.mer_adds as merAddress,
+		a.activate as activate,
+		a.create_date as createDate,
+		c.mer_user_nickname as merUserName,
+		c.mer_user_mobile as merUserMobile
+		from MERCHANT a
+		left join merchant_user c
+		on a.mer_code = c.mer_code
+		and c.mer_user_flg='1000'
+		where exists (select 1
+		from mer_bus_rate b
+		where a.mer_code = b.mer_code
+		<if test="providerCode != null and providerCode !=''">
+			and b.provider_code = #{providerCode}
+		</if>
+		)
+		<if test="merUserMobile != null and merUserMobile !=''">
+			and c.mer_user_mobile LIKE '%'||#{merUserMobile}||'%'
+		</if>
+		<if test="merUserName != null and merUserName !=''">
+			and c.mer_user_nickname LIKE '%'||#{merUserName}||'%'
+		</if>
+		<if test="merName != null and merName !=''">
+			and a.mer_name LIKE '%'||#{merName}||'%'   
+		</if>
+		
+		 union all
+		 
+       SELECT
+       p.mer_code as merCode,
+       p.mer_name as merName,
+       p.mer_adds as merAddress,
+       p.activate as activate,
+       p.create_date as createDate,
+       d.mer_user_nickname as merUserName,
+       d.mer_user_mobile as merUserMobile
+       from merchant p
+       left join merchant_user d
+       on p.mer_code = d.mer_code
+       and d.mer_user_flg = '1000'
+       where exists (select 1
+          from (select DISTINCT T.MER_CODE
+                  from mer_bus_rate t
+                 <if test="providerCode != null and providerCode !=''">
+			      where  t.provider_code = #{providerCode}
+		         </if>
+                 ) m
+          where m.mer_code = p.mer_parent_code
+          and p.mer_type = '13'
+         )
+        <if test="merUserMobile != null and merUserMobile !=''">
+			and d.mer_user_mobile LIKE '%'||#{merUserMobile}||'%'
+		</if>
+		<if test="merUserName != null and merUserName !=''">
+			and d.mer_user_nickname LIKE '%'||#{merUserName}||'%'
+		</if>
+		<if test="merName != null and merName !=''">
+			and p.mer_name LIKE '%'||#{merName}||'%'   
+		</if>
+		) sup
+		 order by sup.createDate desc
+	</select>
+</mapper>

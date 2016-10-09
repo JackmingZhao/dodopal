@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductYktCityInfoMapper">
+
+	<select id="findProductYktCityInfo" resultType="ProductYKT" parameterType="ProductYKTQuery">
+		select 
+		       t1.ykt_code          as yktCode,
+		       t1.ykt_name          as yktName,
+		       t2.cityid            as businessCityId,
+		       t3.cityname          as businessCityName
+          from prd_ykt_info t1
+     left join prd_ykt_city_info t2
+    	    on t1.ykt_code = t2.ykt_code
+     left join oss_city_info t3
+            on t3.citycode = t2.cityid
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t1.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="activate != null and activate !=''">
+				and t1.activate = #{activate}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getYktCityRelationCountByCityIds" resultType="java.lang.Integer">
+		select  count(*) from prd_ykt_city_info t
+	    <where>	
+        <if test="yktCode != null and yktCode !=''">
+			ykt_code != #{yktCode}
+		</if>
+	    <if test="array != null">
+	      and t.cityid in	
+	    	<foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+            </foreach>  
+	    </if>
+	    </where>
+	</select>
+	
+	<insert id="addYktCityRelationBatch" parameterType="java.util.List">
+		insert into prd_ykt_city_info(ID,CITYID,YKT_CODE,CREATE_USER,CREATE_DATE)
+		select prd_ykt_city_info_id_seq.nextval,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.cityId, jdbcType=VARCHAR},
+			#{item.yktCode, jdbcType=VARCHAR},
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate
+			from dual
+		</foreach>
+		) a
+	</insert>
+	
+	<delete id="moveYktCityRelationBatch">
+		delete prd_ykt_city_info where ykt_code = #{yktCode}
+	</delete>
+	
+	<select id="getBusinessCityByYktCode" resultType="ProductYKT" parameterType="java.lang.String">
+		select 
+		       t2.cityid            as businessCityId,
+		       t3.cityname          as businessCityName
+          from prd_ykt_city_info t2
+     left join oss_city_info t3
+            on t3.citycode = t2.cityid
+		where
+			   t2.ykt_code = #{yktCode}
+	</select>
+	
+	<select id="getProversion" resultType="java.lang.Integer">
+		select count(1) from PRD_PROVERSION t where t.CITY_CODE = #{cityCode} and t.PROVERSION= #{proversion}
+	</select>
+	
+	<!-- 更新版本号 -->
+	<update id="updateProversion">
+		update PRD_PROVERSION t set t.proversion = t.proversion + 1 where t.city_code = #{cityCode}
+	</update>
+	
+	<!-- 新增版本号 -->
+	<insert id="addProversion">
+		insert into PRD_PROVERSION(proversion,city_Code) values(1,#{cityCode})
+	</insert>
+	
+	<!-- 检查一卡通充值产品版本号记录是否存在 -->
+	<select id="checkExistVersion" resultType="boolean" parameterType="java.lang.String">
+		select count(1) from PRD_PROVERSION t where t.CITY_CODE = #{cityCode}
+	</select>
+	
+	<!-- 当前所有业务城市查询 add by shenxiang -->
+	<select id="getAllBusinessCity" resultType="map">		   
+		  select t1.CITYID as CITYID, 
+			     t2.CITYNAME as CITYNAME
+	        from prd_ykt_city_info t1
+	  left outer join OSS_CITY_INFO t2
+	          on t1.cityId = t2.citycode
+	</select>
+	
+	<select id="getProversionByCityCode" resultType="java.lang.String">
+		select t.PROVERSION from PRD_PROVERSION t where t.CITY_CODE = #{cityCode}
+	</select>
+</mapper>

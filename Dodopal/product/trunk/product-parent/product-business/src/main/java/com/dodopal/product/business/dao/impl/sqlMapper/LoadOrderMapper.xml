@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.LoadOrderMapper">
+	<sql id="sqlColumn">
+			   P.ID,
+			   P.ORDER_NUM,
+			   P.ORDER_TIME,
+			   P.EXTMER_ORDER_NUM,
+			   P.EXTMER_ORDER_TIME,
+			   P.CARD_FACENUM,
+			   P.EXCHANGED_CARD_NUM,
+			   P.PRODUCT_CODE,
+			   P.PRODUCT_NAME,
+			   P.CITY_CODE,
+			   P.CITY_NAME,
+			   P.YKT_CODE,
+			   P.YKT_NAME,
+			   P.CUSTOMER_CODE,
+			   P.CUSTOMER_NAME,
+			   P.CUSTOMER_TYPE,
+			   P.LOAD_RATE,
+			   P.LOAD_RATE_TYPE,
+			   P.LOAD_AMT,
+			   P.CUSTOMER_PAY_AMT,
+			   P.CUSTOMER_GAIN,
+			   P.PAYWAY_ID,
+			   P.PAYWAY_NAME,
+			   P.PAY_TYPE,
+			   P.PAY_SERVICE_TYPE,
+			   P.PAY_SERVICE_RATE,
+			   P.STATUS,
+			   P.SOURCE,
+			   P.COMMENTS,
+			   V.nick_name as CREATE_USER,				
+			   P.CREATE_DATE,			
+			   V2.nick_name as UPDATE_USER,			
+			   P.UPDATE_DATE
+	</sql>
+	
+	<!--更新圈存订单状态 -->
+	<update id="updateLoadOrderStatus" parameterType="java.lang.String">
+		update PRD_LOAD_ORDER
+		   set STATUS = #{loadOrderStatus,jdbcType=VARCHAR},
+		       UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+		       UPDATE_DATE = sysdate
+		 where ORDER_NUM = #{loadOrderNum}
+	</update>
+	
+	<!-- 创建圈存订单 -->
+	<insert id="insertLoadOrder" parameterType="LoadOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select PRD_LOAD_ORDER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO PRD_LOAD_ORDER (ID,ORDER_NUM,ORDER_TIME,EXTMER_ORDER_NUM,EXTMER_ORDER_TIME,CARD_FACENUM,EXCHANGED_CARD_NUM,PRODUCT_CODE,PRODUCT_NAME,
+		                            CITY_CODE,CITY_NAME,YKT_CODE,YKT_NAME,CUSTOMER_CODE,CUSTOMER_NAME,CUSTOMER_TYPE,LOAD_RATE,LOAD_RATE_TYPE,LOAD_AMT,
+		                            CUSTOMER_PAY_AMT,CUSTOMER_GAIN,PAYWAY_ID,PAYWAY_NAME,PAY_TYPE,PAY_SERVICE_TYPE,PAY_SERVICE_RATE,STATUS,SOURCE,
+		                            COMMENTS,CREATE_USER,CREATE_DATE)
+		                    VALUES(#{id,jdbcType=VARCHAR},#{orderNum,jdbcType=VARCHAR},sysdate,#{extMerOrderNum,jdbcType=VARCHAR},
+		                           #{extMerOrderTime,jdbcType=VARCHAR},#{cardFaceNum,jdbcType=VARCHAR},#{exchangedCardNum,jdbcType=VARCHAR},
+		                           #{productCode,jdbcType=VARCHAR},#{productName,jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{cityName,jdbcType=VARCHAR},
+		                           #{yktCode,jdbcType=VARCHAR},#{yktName,jdbcType=VARCHAR},#{customerCode,jdbcType=VARCHAR},#{customerName,jdbcType=VARCHAR},
+		                           #{customerType,jdbcType=VARCHAR},#{loadRate,jdbcType=NUMERIC},#{loadRateType,jdbcType=VARCHAR},#{loadAmt,jdbcType=NUMERIC},
+		                           #{customerPayAmt,jdbcType=NUMERIC},#{customerGain,jdbcType=NUMERIC},#{paywayId,jdbcType=VARCHAR},#{paywayName,jdbcType=VARCHAR},
+		                           #{payType,jdbcType=VARCHAR},#{payServiceType,jdbcType=VARCHAR},#{payServiceRate,jdbcType=NUMERIC},#{status,jdbcType=VARCHAR},
+		                           #{source,jdbcType=VARCHAR},#{comments,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<!-- 根据圈存订单编号获取圈存订单信息 -->
+	<select id="getLoadOrderByLoadOrderNum" resultType="LoadOrder" >
+		select P.ID                 as id,
+		       P.ORDER_NUM          as orderNum,
+		       P.ORDER_TIME         as orderTime,
+		       P.EXTMER_ORDER_NUM   as extMerOrderNum,
+		       P.EXTMER_ORDER_TIME  as extMerOrderTime,
+		       P.CARD_FACENUM       as cardFaceNum,
+		       P.EXCHANGED_CARD_NUM as exchangedCardNum,
+		       P.PRODUCT_CODE       as productCode,
+		       P.PRODUCT_NAME       as productName,
+		       P.CITY_CODE          as cityCode,
+		       P.CITY_NAME          as cityName,
+		       P.YKT_CODE           as yktCode,
+		       P.YKT_NAME           as yktName,
+		       P.CUSTOMER_CODE      as customerCode,
+		       P.CUSTOMER_NAME      as customerName,
+		       P.CUSTOMER_TYPE      as customerType,
+		       P.LOAD_RATE          as loadRate,
+		       P.LOAD_RATE_TYPE     as loadRateType,
+		       P.LOAD_AMT           as loadAmt,
+		       P.CUSTOMER_PAY_AMT   as customerPayAmt,
+		       P.CUSTOMER_GAIN      as customerGain,
+		       P.PAYWAY_ID          as paywayId,
+		       P.PAYWAY_NAME        as paywayName,
+		       P.PAY_TYPE           as payType,
+		       P.PAY_SERVICE_TYPE   as payServiceType,
+		       P.PAY_SERVICE_RATE   as payServiceRate,
+		       P.STATUS             as status,
+		       P.SOURCE             as source,
+		       P.COMMENTS           as comments,
+		       P.CREATE_USER        as createUser,
+		       P.CREATE_DATE        as createDate,
+		       P.UPDATE_USER        as updateUser,
+		       P.UPDATE_DATE        as updateDate
+		  from PRD_LOAD_ORDER p
+		 where p.ORDER_NUM = #{orderNum}
+	</select>
+	
+	<!-- 根据圈存订单编号获取圈存订单信息 -->
+	<select id="viewLoadOrderByLoadOrderNum" resultType="LoadOrder" >
+		select P.ID                 as id,
+		       P.ORDER_NUM          as orderNum,
+		       P.ORDER_TIME         as orderTime,
+		       P.EXTMER_ORDER_NUM   as extMerOrderNum,
+		       P.EXTMER_ORDER_TIME  as extMerOrderTime,
+		       P.CARD_FACENUM       as cardFaceNum,
+		       P.EXCHANGED_CARD_NUM as exchangedCardNum,
+		       P.PRODUCT_CODE       as productCode,
+		       P.PRODUCT_NAME       as productName,
+		       P.CITY_CODE          as cityCode,
+		       P.CITY_NAME          as cityName,
+		       P.YKT_CODE           as yktCode,
+		       P.YKT_NAME           as yktName,
+		       P.CUSTOMER_CODE      as customerCode,
+		       P.CUSTOMER_NAME      as customerName,
+		       P.CUSTOMER_TYPE      as customerType,
+		       P.LOAD_RATE          as loadRate,
+		       P.LOAD_RATE_TYPE     as loadRateType,
+		       P.LOAD_AMT           as loadAmt,
+		       P.CUSTOMER_PAY_AMT   as customerPayAmt,
+		       P.CUSTOMER_GAIN      as customerGain,
+		       P.PAYWAY_ID          as paywayId,
+		       P.PAYWAY_NAME        as paywayName,
+		       P.PAY_TYPE           as payType,
+		       P.PAY_SERVICE_TYPE   as payServiceType,
+		       P.PAY_SERVICE_RATE   as payServiceRate,
+		       P.STATUS             as status,
+		       P.SOURCE             as source,
+		       P.COMMENTS           as comments,
+		       V.nick_name          as createUser,
+		       P.CREATE_DATE        as createDate,
+		       V2.nick_name         as updateUser,
+		       P.UPDATE_DATE        as updateDate
+		  from PRD_LOAD_ORDER p 
+		  left join  V_USER_INFO V on p.CREATE_USER = V.id 
+		  left join  V_USER_INFO V2 on p.UPDATE_USER = V2.id
+		 where p.ORDER_NUM = #{orderNum}
+	</select>
+	
+	
+	
+	<!-- 根据外部订单号获取获取圈存订单信息（验证外部订单号是否重复下单） -->
+	<select id="getLoadOrderByExtMerOrderNum" resultType="LoadOrder" >
+		select P.ID                 as id,
+		       P.ORDER_NUM          as orderNum,
+		       P.ORDER_TIME         as orderTime,
+		       P.EXTMER_ORDER_NUM   as extMerOrderNum,
+		       P.EXTMER_ORDER_TIME  as extMerOrderTime,
+		       P.CARD_FACENUM       as cardFaceNum,
+		       P.EXCHANGED_CARD_NUM as exchangedCardNum,
+		       P.PRODUCT_CODE       as productCode,
+		       P.PRODUCT_NAME       as productName,
+		       P.CITY_CODE          as cityCode,
+		       P.CITY_NAME          as cityName,
+		       P.YKT_CODE           as yktCode,
+		       P.YKT_NAME           as yktName,
+		       P.CUSTOMER_CODE      as customerCode,
+		       P.CUSTOMER_NAME      as customerName,
+		       P.CUSTOMER_TYPE      as customerType,
+		       P.LOAD_RATE          as loadRate,
+		       P.LOAD_RATE_TYPE     as loadRateType,
+		       P.LOAD_AMT           as loadAmt,
+		       P.CUSTOMER_PAY_AMT   as customerPayAmt,
+		       P.CUSTOMER_GAIN      as customerGain,
+		       P.PAYWAY_ID          as paywayId,
+		       P.PAYWAY_NAME        as paywayName,
+		       P.PAY_TYPE           as payType,
+		       P.PAY_SERVICE_TYPE   as payServiceType,
+		       P.PAY_SERVICE_RATE   as payServiceRate,
+		       P.STATUS             as status,
+		       P.SOURCE             as source,
+		       P.COMMENTS           as comments,
+		       P.CREATE_USER        as createUser,
+		       P.CREATE_DATE        as createDate,
+		       P.UPDATE_USER        as updateUser,
+		       P.UPDATE_DATE        as updateDate
+		  from PRD_LOAD_ORDER P
+		 where P.EXTMER_ORDER_NUM = #{extMerOrderNum}
+	</select>
+	
+	
+	
+	
+
+<!-- #################################################################################################################### -->
+<!-- #################################################################################################################### -->
+<!-- #################################################################################################################### -->
+<!-- #################################################################################################################### -->
+	
+	
+	<select id="findProductInfo" resultType = "com.dodopal.product.business.model.LoadOrderPrdInfo" parameterType="java.lang.String">
+		select p4.pro_price as price, p4.cityid as cityCode, p3.cityname as cityName 
+		from PRD_YKT_CITY_INFO p1, PRD_YKT_INFO p2 , OSS_CITY_INFO p3, PRD_PRODUCT_YKT p4 
+		where pro_code = #{proCode} and pro_status = '0' and p1.ykt_code = p2.ykt_code and p2.activate = '0' 
+		and p1.cityid = p4.cityid and p1.cityid = p3.citycode
+	</select>
+	
+	<select id="findPrdProductYktByCityCode" resultType = "com.dodopal.product.business.model.LoadOrderPrdInfo" parameterType="java.lang.String">
+		select PRO_CODE as productCode from PRD_PRODUCT_YKT 
+		where pro_type = '1' and cityid = #{cityid}
+	</select>
+	
+	<select id="findCityName" resultType = "java.lang.String" parameterType="java.lang.String">
+		select p3.cityname from PRD_YKT_CITY_INFO p1, PRD_YKT_INFO p2 , OSS_CITY_INFO p3 where p1.ykt_code = p2.ykt_code and p2.activate = '0' and p1.cityid = #{cityId} and p1.cityid = p3.citycode
+	</select>
+	
+	<select id="findMerchantName" resultType = "java.lang.String" parameterType="java.lang.String">
+		select MER_NAME from merchant where activate = '0' and mer_code = #{merCode}
+	</select>
+	
+	<select id="validateProduct" resultType = "java.lang.Integer" parameterType="java.lang.String">
+		select count(0) from PRD_PRODUCT_YKT where PRO_CODE = #{proCode} and pro_status = '0'
+	</select>
+	
+	<select id="yktIsRecharge" resultType = "java.lang.String" parameterType="java.lang.String">
+		select YKT_IS_RECHARGE from PRD_YKT_INFO p1, PRD_YKT_CITY_INFO p2 
+		where p1.YKT_CODE = p2.YKT_CODE and p2.cityid = #{cityid}
+	</select>
+	
+	<select id="yktIsRechargeByProCode" resultType = "java.lang.String" parameterType="java.lang.String">
+		select YKT_IS_RECHARGE from PRD_YKT_INFO p1, PRD_YKT_CITY_INFO p2, PRD_PRODUCT_YKT p3 
+		where p1.YKT_code = p2.YKT_code and p2.cityid =p3.cityid and p3.pro_code=#{proCode}
+	</select>
+	
+	<select id="yktActivate" resultType = "java.lang.String" parameterType="java.lang.String">
+		select p1.activate from PRD_YKT_INFO p1, PRD_YKT_CITY_INFO p2, PRD_PRODUCT_YKT p3  
+		where p1.YKT_CODE = p2.YKT_CODE and p2.cityid = p3.cityid and p3.pro_code = #{proCode}
+	</select>
+	
+	<select id="yktActivateByCityCode" resultType = "java.lang.String" parameterType="java.lang.String">
+		select p1.activate from PRD_YKT_INFO p1, PRD_YKT_CITY_INFO p2 
+		where p1.YKT_CODE = p2.YKT_CODE and p2.cityid = #{cityid}
+	</select>
+	
+	
+	
+
+	
+	
+	
+	
+	
+	<!--  ****************************    ****************************************************    *****************************       -->
+	
+	<select id="findLoadOrder" resultType="LoadOrder" resultMap="loadOrderResultMap">
+		select ORDER_NUM, SOURCE_ORDER_NUM from PRD_LOAD_ORDER 
+	</select>
+
+	
+
+	<select id="findAvailableLoadOrdersByCardNum" resultType="LoadOrder" resultMap="loadOrderResultMap" parameterType="java.lang.String">
+	    select ORDER_NUM,EXTMER_ORDER_NUM,EXTMER_ORDER_TIME,CARD_FACENUM,EXCHANGED_CARD_NUM,PRODUCT_CODE,CITY_CODE,
+		       CITY_NAME,LOAD_AMT,CUSTOMER_CODE,CUSTOMER_NAME,COMMENTS,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE
+		  from PRD_LOAD_ORDER
+		 where CARD_FACENUM = #{cardNum}
+		   and (STATUS = '0' or STATUS = '2')
+		 order by CREATE_DATE desc
+	</select>
+	
+	<select id="findLoadOrderStatus" resultType="LoadOrder" resultMap="loadOrderResultMap" parameterType="java.lang.String">
+		select  ID, ORDER_NUM, SOURCE_ORDER_NUM, SOURCE_ORDER_TIME, CARD_NUM, ORDER_STATUS
+		from PRD_LOAD_ORDER 
+	    where   SOURCE_ORDER_NUM = #{sourceOrderNum}  and MERCHANT_NUM = #{merchantNum} 
+	</select>
+	
+	<select id="findLoadOrdersByPage" resultType="LoadOrder" resultMap="loadOrderResultMap">
+		select <include refid="sqlColumn" /> 
+		from PRD_LOAD_ORDER P, V_USER_INFO V, V_USER_INFO V2
+	    <where>
+			<if test="orderNum != null and orderNum !=''">
+				ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="sourceOrderNum != null and sourceOrderNum !=''">
+				and EXTMER_ORDER_NUM like '%'||#{sourceOrderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and CARD_FACENUM like '%'||#{cardNum}||'%'
+			</if>  
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="merchantNum != null and merchantNum !=''">
+				and CUSTOMER_CODE like '%'||#{merchantNum}||'%'
+			</if>
+			<if test="merchantName != null and merchantName !=''">
+				and CUSTOMER_NAME like '%'||#{merchantName}||'%'
+			</if>
+			<if test="orderStatus != null and orderStatus !=''">
+				and STATUS = #{orderStatus}
+			</if>
+	        and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+		order by P.CREATE_DATE desc
+		
+	</select>
+	
+	
+	<select id="findLoadOrdersExport" resultType="LoadOrder" resultMap="loadOrderResultMap">
+		select <include refid="sqlColumn" /> 
+		from PRD_LOAD_ORDER P, V_USER_INFO V, V_USER_INFO V2
+	    <where>
+			<if test="orderNum != null and orderNum !=''">
+				ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="sourceOrderNum != null and sourceOrderNum !=''">
+				and EXTMER_ORDER_NUM like '%'||#{sourceOrderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and CARD_FACENUM like '%'||#{cardNum}||'%'
+			</if>  
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="merchantNum != null and merchantNum !=''">
+				and CUSTOMER_CODE like '%'||#{merchantNum}||'%'
+			</if>
+			<if test="merchantName != null and merchantName !=''">
+				and CUSTOMER_NAME like '%'||#{merchantName}||'%'
+			</if>
+			<if test="orderStatus != null and orderStatus !=''">
+				and STATUS = #{orderStatus}
+			</if>
+	        and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+		order by P.CREATE_DATE desc
+		
+	</select>
+	<select id="selectOrderNumSeq" resultType = "java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select PRD_LOAD_ORDER_ORDER_NUM_SEQ.NEXTVAL as order_num from dual ]]>
+	</select>
+	
+	<!-- 查询圈存订单分页 -->
+	<select id="findLoadOrderListByPage" resultType="LoadOrder" resultMap="loadOrderResultMap" parameterType="ProLoadOrderQuery">
+		select <include refid="sqlColumn" /> 
+		from PRD_LOAD_ORDER P, V_USER_INFO V, V_USER_INFO V2
+	    <where>
+			<if test="loadOrderNum != null and loadOrderNum !=''">
+				<![CDATA[ ORDER_NUM like '%'||#{loadOrderNum}||'%']]>
+			</if>
+			<if test="loadOrderState != null and loadOrderState !=''">
+				and STATUS = #{loadOrderState}
+			</if>
+			<if test="startDate != null and startDate !=''">
+				<![CDATA[ and ORDER_TIME > #{startDate}]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and ORDER_TIME< #{endDate}+1]]>
+			</if>
+			<if test="cardNo != null and cardNo !=''">
+				<![CDATA[ and CARD_FACENUM like '%'||#{cardNo}||'%']]>
+			</if>
+			<if test="cityCode != null and cityCode !=''">
+				and CITY_CODE = #{cityCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and LOAD_AMT/100 >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and #{txnAmtEnd} >= LOAD_AMT/100 ]]>
+			</if>
+			and P.CUSTOMER_CODE = #{userCode} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+		order by P.id desc
+	</select>
+
+	<select id="excelLoadOrder" resultType="LoadOrder" resultMap="loadOrderResultMap" parameterType="ProLoadOrderQuery">
+		select <include refid="sqlColumn" /> 
+		from PRD_LOAD_ORDER P, V_USER_INFO V, V_USER_INFO V2
+	    <where>
+			<if test="loadOrderNum != null and loadOrderNum !=''">
+				<![CDATA[ ORDER_NUM like '%'||#{loadOrderNum}||'%']]>
+			</if>
+			<if test="loadOrderState != null and loadOrderState !=''">
+				and STATUS = #{loadOrderState}
+			</if>
+			<if test="startDate != null and startDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(ORDER_TIME,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{startDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(ORDER_TIME,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{endDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cardNo != null and cardNo !=''">
+				<![CDATA[and CARD_FACENUM like '%'||#{cardNo}||'%']]>
+			</if>
+			<if test="cityCode != null and cityCode !=''">
+				and CITY_CODE = #{cityCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and LOAD_AMT/100 >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and #{txnAmtEnd} >= LOAD_AMT/100 ]]>
+			</if>
+			and P.CUSTOMER_CODE = #{userCode} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+		order by P.id desc
+	</select>
+
+</mapper>

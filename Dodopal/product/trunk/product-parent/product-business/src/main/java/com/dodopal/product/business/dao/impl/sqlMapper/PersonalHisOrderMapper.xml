@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.PersonalHisOrderMapper">
+	<select id="findRechargeOrderByPage" resultType="PersonalHisOrder" parameterType="personalHisOrderQuery">
+		select  t.orderid,            
+        nvl(b.cityname, t.cityid) cityid,      
+        nvl(c.fullname,t.yktid) yktid,        
+        decode(cardtype,'1','CPU卡','2','M1卡')   cardtype, 
+        t.chargecardno,
+        t.checkcardno,
+        t. bankid,      
+        t. proamt/100 as proamt,      
+        t. blackamt/100 as blackamt,    
+        t. amt/100 as amt,
+        ( case when t.posSeq4>0 
+          then t.posSeq4
+          else 0
+          end )  cardkahao,
+        decode(t.senddate,'0','',(substr(t.senddate,0,4)||'-'||substr(t.senddate,5,2)||'-'||substr(t.senddate,7,2) )) senddate ,
+        decode(t.sendtime,'0','',(substr(to_char(t.sendtime,'099999'),-6,2) || ':' || substr(to_char(t.sendtime,'099999'),-4,2) || ':' || substr(to_char(t.sendtime,'099999'),-2,2))) sendtime,          
+        decode(t.orderstates,'1000000001','失败交易','1000000002','失败交易','1000000003','失败交易','1000000004','可疑交易','1000000005','可疑交易','1000000006','可疑交易','1000000007','成功交易','1000000008','补充值交易','1000000009','退款处理中','1000000010','退款失败','1000000011','退款成功','1000000012','退款失败','1000000013','退款失败','1000000014','退款失败','1000000016','退款成功','1000000017','成功交易','1000000018','失败交易','1000000019','成功交易','1000000022','可疑交易','1000000023','成功交易','1000000024','失败交易','1000000026','账户充值成功','1000000027','账户充值失败') orderstates
+        from icpay.v_Tlbankorder t,
+                 (select cityid,cityname from icpay.bicityinfotb) b,
+               (select yktid , fullname from icpay.biyktinfotb)c 
+        where userid=#{userid}
+          and t.cityid=b.cityid(+)
+          and t.yktid=c.yktid(+)
+          and t.orderstates!='1000000001'
+          and t.orderstates!='1000000008'
+	</select>
+
+	<select id="findConsumeOrderByPage" resultType="PersonalHisOrder" parameterType="personalHisOrderQuery">
+		select  orderid,    
+                    nvl(d.mchnitname,b.mchnitid) mchnitid,    
+                    amt/100 as amt,  
+                    proamt/100 as proamt,
+                    blackamt/100 as  blackamt,    
+                   (case when cardkahao>0 
+					then cardkahao
+					else 0
+					end)  cardkahao,   
+                    decode(checkcardno,'6011','山东一卡通','6010','都都宝','3300','都都宝',nvl(c.fullname,b.yktid)) yktid,        
+                    decode(checkcardno,'6011','','6010','','3300','',checkcardno,checkcardno)  checkcardno,
+                    decode(cardtype,'1','CPU卡','2','M1卡')    cardtype,
+                    decode(checkcarddate,'0','',(substr(checkcarddate,0,4)||'-'||substr(checkcarddate,5,2)||'-'||substr(checkcarddate,7,2) )) checkcarddate ,
+                    decode(checkcardtime,'0','',(substr(to_char(checkcardtime,'099999'),-6,2) || ':' || substr(to_char(checkcardtime,'099999'),-4,2) || ':' || substr(to_char(checkcardtime,'099999'),-2,2))) checkcardtime,          
+                    decode(b.orderstates,'1000000001','失败交易','1000000002','失败交易','1000000003','失败交易','1000000004','失败交易','1000000005','可疑交易','1000000006','可疑交易','1000000007','成功交易','1000000008','成功交易','1000000009','补充值完毕','1000000010','成功交易') orderstates  
+            from icpay.v_Tlmchntorder  b,
+            (select yktid , fullname from icpay.biyktinfotb) c,
+            (select mchnitid, mchnitname  from icpay.bimchntinfotb) d
+             where ((b.userid=#{userid}) or (#{userid} in (select distinct userid from icpay.biposinuserstb where posid=b.checkcardposid)))
+             and b.yktid=c.yktid(+) and b.mchnitid=d.mchnitid(+) 
+             and b.orderstates!='1000000001'
+             and b.orderstates!='1000000008'
+	</select>
+</mapper>

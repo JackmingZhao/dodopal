@@ -1,0 +1,269 @@
+/*重置浏览器样式*/
+body, h1, h2, h3, p, ul, li, dl, dt, dd, th, td, input{
+	/* margin: 0px;
+	padding: 0px; */
+	list-style: none;
+	border: 0px;
+	font: Verdana, Geneva, sans-serif, 宋体;
+	font-size: 12px;
+	backgroud:#E0E0E0;
+}
+
+
+a {
+	color: Black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: Red;
+	text-decoration: none;
+}
+
+.head a {
+	color: White;
+	text-decoration: underline;
+}
+
+.easyui-accordion ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 10px;
+}
+
+.easyui-accordion ul li {
+	padding: 0px;
+}
+
+.easyui-accordion ul li a {
+	line-height: 24px;
+}
+
+.easyui-accordion ul li div {
+	margin: 2px 0px;
+	padding-left: 10px;
+	padding-top: 2px;
+}
+
+.easyui-accordion ul li div.hover {
+	border: 1px dashed #99BBE8;
+	background: #E0ECFF;
+	cursor: pointer;
+}
+
+.easyui-accordion ul li div.hover a {
+	color: #416AA3;
+}
+
+.easyui-accordion ul li div.selected {
+	border: 1px solid #99BBE8;
+	background: #E0ECFF;
+	cursor: default;
+}
+
+.easyui-accordion ul li div.selected a {
+	color: #416AA3;
+	font-weight: bold;
+}
+
+table.viewtable {
+	font-size:20px;
+	white-space: nowrap;
+	overflow: hidden;
+	margin: 10px;
+	overflow: hidden;
+	padding : 5px;
+}
+
+
+table.viewtable tr {
+	padding : 5px;
+}
+
+
+table.viewtable tr th {
+	text-align: right;
+	font-weight: normal;
+	text-indent: 8px;
+	padding : 5px;
+}
+
+table.viewtable td input {
+	width: 130px;
+	height: 17px;
+	border-color: #A4BED4;
+}
+
+table.viewtable tr td select {
+	width: 120px;
+}
+
+table.viewtable tr td textarea {
+	border-color: #A4BED4;
+}
+
+table.edittable {
+	font-size:20px;
+	white-space: nowrap;
+	overflow: hidden;
+	/* margin: 10px; */
+	overflow: hidden;
+}
+
+
+table.edittable tr {
+	padding : 10px;
+}
+
+/* input {margin-right: 20px;} */
+input,label { vertical-align:middle;/* margin-right: 3px; */} 
+
+table.edittable td input {
+	height: 20px;
+	line-height: 20px;
+	border-color: #A4BED4;
+}
+
+table.edittable th {
+	text-align: right;
+	font-weight: normal;
+}
+
+table.edittable th {
+	padding : 10px;
+}
+
+
+table.edittable td {
+	width: 200px;
+	height: 20px;
+	border-color: #A4BED4;
+}
+
+table.edittable tr td input[type="radio"] {
+	border:none;
+	margin-bottom: 4px;
+}
+table.edittable tr td input[type="checkbox"] {
+	border:none; 
+}
+
+table.edittable tr td select {
+	width: 198px;
+}
+
+table.edittable tr td textarea {
+	border-color: #A4BED4;
+}
+
+table.viewOnly {
+	font-size:20px;
+	font-weight: normal;
+	font: Verdana, Geneva, sans-serif, 宋体;
+	white-space: nowrap;
+	overflow: hidden;
+	margin: 10px;
+	border:none;
+}
+
+table.viewOnly tr th{
+	white-space: nowrap;
+	font-weight: normal;
+	padding : 10px;
+	text-align: right;
+	padding: 8px;
+}
+
+table.viewOnly tr td{
+	white-space: pre-wrap;
+	font-weight: normal;
+	padding : 10px;
+	text-align: left;
+	padding: 8px;
+	width : 300px;
+}
+
+.breakSpace {
+	witdh:20px;
+}
+
+.underscore_td {
+	border-color: #878787;
+	border-style: solid;
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 1px;
+	border-left-width: 0px;
+	width: 113px;
+	text-align: center;
+}
+
+fieldset {
+	margin:5px;
+}
+
+legend {
+	text-algin:left;
+	margin-left:20px;
+	font-size:18px;
+	border:none;
+	color: #228B22;
+}
+
+
+input, textarea {
+	border: 1px solid #CCC;
+}
+
+input:focus, textarea:focus {
+	background: #FFFFCC;
+}
+
+input {
+	background-color: expression(( this.readOnly && this.readOnly == true)?"#f0f0f0":"")
+}
+
+.ui-jqgrid .ui-userdata {
+  border-left: 0px none;
+  border-right: 0px none;
+  height: 35px;
+  overflow: hidden;
+}
+.tableToolbar {
+	font-size:14px;
+	line-height: 30px;
+}
+
+.tableToolbar a{
+	padding: 5px;
+}
+
+
+table.checkboxView {
+	font-size:20px;
+	white-space: nowrap;
+	overflow: hidden;
+	margin: 10px;
+	overflow: hidden;
+}
+
+
+table.checkboxView tr {
+	padding : 5px;
+}
+
+
+table.checkboxView tr th {
+	text-align: right;
+	font-weight: normal;
+	padding : 5px;
+}
+
+table.checkboxView td input {
+	height: 17px;
+	border-color: #A4BED4;
+}
+
+textarea{
+　　resize:none;
+}

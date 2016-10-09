@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.common.dao.SysOperationMapper">
+	<select id="findOperation" resultType="SysOperation" resultMap="sysOperationResultMap" parameterType="java.lang.String">
+		select code, version from sys_operation where code = #{code}
+	</select>
+	
+	<select id="findOperations" resultType="SysOperation" resultMap="sysOperationResultMap">
+		select code, version from sys_operation
+	</select>
+</mapper>

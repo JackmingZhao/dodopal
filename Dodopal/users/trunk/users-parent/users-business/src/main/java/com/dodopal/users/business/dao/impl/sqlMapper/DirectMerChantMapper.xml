@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.DirectMerChantMapper">
+
+	<sql id="allColumns">
+		t.ID,t.ACTIVATE,t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE,
+		t.MER_CODE,t.MER_NAME,t.MER_TYPE,t.MER_PARENT_CODE
+	</sql>
+<select id="findMerchantByParentCode" resultType="DirectMerChant"
+		resultMap="directMerChantResultMapper">
+		select t.* from(select
+		<include refid="allColumns" />
+		,f.AVAILABLE_BALANCE
+		from MERCHANT t, ACCOUNT a, ACCOUNT_FUND f where
+		t.MER_CODE =
+		a.CUSTOMER_NO
+		and t.MER_TYPE='13'
+		and t.ACTIVATE = '0' and a.ACCOUNT_CODE =
+		f.ACCOUNT_CODE and f.FUND_TYPE
+		= '0') t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+			 and t.MER_NAME like '%'||#{merName}||'%'
+		    </if>
+		</where>
+	</select>
+	
+	
+	<select id="findMerchantByParentCodeType" resultType="DirectMerChant"
+		resultMap="directMerChantResultMapper">
+		select t.* from(select
+		<include refid="allColumns" />
+		,f.AVAILABLE_BALANCE
+		from MERCHANT t, ACCOUNT a, ACCOUNT_FUND f where
+		t.MER_CODE =
+		a.CUSTOMER_NO
+		and 
+		t.MER_TYPE=#{businessType} 
+		and t.ACTIVATE = '0' and a.ACCOUNT_CODE =
+		f.ACCOUNT_CODE and f.FUND_TYPE
+		= '0') t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+			 and t.MER_NAME like '%'||#{merName}||'%'
+		    </if>
+		</where>
+	</select>
+	
+	<select id="findDirectTransferFilter" resultType="DirectMerChant"
+		resultMap="directMerChantResultMapper">
+		select t.* from(select
+		<include refid="allColumns" />
+		,f.AVAILABLE_BALANCE
+		from MERCHANT t, ACCOUNT a, ACCOUNT_FUND f ,MER_DDP_INFO mdi where
+		t.MER_CODE =
+		a.CUSTOMER_NO
+		and 
+		t.MER_TYPE=#{businessType} and mdi.MER_CODE = t.MER_CODE
+		and t.ACTIVATE = '0' and a.ACCOUNT_CODE =
+		f.ACCOUNT_CODE and f.FUND_TYPE
+		= '0') t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+			 and t.MER_NAME like '%'||#{merName}||'%'
+		    </if>
+		</where>
+	</select>
+	
+		<!--<select id="findMerchantByParentCode" resultType="DirectMerChant" resultMap="directMerChantResultMapper"> 
+		select * from merchant t where t.mer_parent_code='013541000000190'</select> -->
+</mapper>

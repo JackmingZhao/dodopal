@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MerDdpInfoMapper">
+<insert id="addMerDdpInfo" parameterType="MerDdpInfo">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_DDP_INFO_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MER_DDP_INFO(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,MER_DDP_LINK_IP,MER_DDP_LINK_USER,MER_DDP_LINK_USER_MOBILE,ACTIVATE,
+			SETTLEMENT_TYPE,SETTLEMENT_THRESHOLD,IS_AUTO_DISTRIBUTE,TRADE_AREA,LIMIT_SOURCE
+		)
+		VALUES (
+			#{id, jdbcType=VARCHAR},
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{merCode, jdbcType=VARCHAR},
+			#{merDdpLinkIp, jdbcType=VARCHAR},
+			#{merDdpLinkUser, jdbcType=VARCHAR},
+			#{merDdpLinkUserMobile, jdbcType=VARCHAR},
+			#{activate, jdbcType=VARCHAR},
+			#{settlementType, jdbcType=VARCHAR},
+			#{settlementThreshold, jdbcType=INTEGER},
+			#{isAutoDistribute, jdbcType=VARCHAR},
+			#{tradeArea, jdbcType=VARCHAR},
+			#{limitSource, jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

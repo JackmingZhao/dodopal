@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.BiposinuserstbMapper">
+
+	<select id="findBiposinuserstb" resultType="Biposinuserstb">
+		select  bip.POSID			as	posid,
+				bip.APPLYTIME		as	applytime,
+				bip.DMPAMT			as	dmpamt,
+				bip.SELLTYPE		as	selltype,
+				bip.USERID			as	userid,
+				bip.VALPERIOD		as	valperiod
+			from ICPAY.BIPOSINUSERSTB bip
+			where bip.userid=#{userid}
+	</select>
+	    <!-- 根据POSid查询当前多少用户使用POS -->
+	<select id="findBiposinuserstbByPosId" resultType="Biposinuserstb">
+		select  bip.POSID			as	posid,
+				bip.APPLYTIME		as	applytime,
+				bip.DMPAMT			as	dmpamt,
+				bip.SELLTYPE		as	selltype,
+				bip.USERID			as	userid,
+				bip.VALPERIOD		as	valperiod
+			from ICPAY.BIPOSINUSERSTB bip
+			where bip.posid=#{posid}
+	</select>          
+</mapper>

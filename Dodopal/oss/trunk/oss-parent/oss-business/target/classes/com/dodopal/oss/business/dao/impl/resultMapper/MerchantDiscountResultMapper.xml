@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.MerchantDiscountMapper">
+	<resultMap type="MerchantDiscount" id="merchantDiscountResultMap">
+	
+		<id property="id" column="ID" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="discountThreshold" column="DISCOUNT_THRESHOLD" />
+		<result property="setDiscount" column="SET_DISCOUNT" />
+		<result property="merCodeArrLen" column="MERCODEARR_LEN" />
+		<result property="beginDate" column="BEGIN_DATE" />
+		
+		<result property="endDate" column="END_DATE" />
+		<result property="week" column="WEEK" />
+		<result property="beginTime" column="BEGIN_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<!-- <result property="dateId" column="DISCOUNT_ID" /> -->
+		
+		<result property="dateId" column="DISCOUNT_ID" />
+		
+	</resultMap>
+	
+	<resultMap type="DiscountMerchantInfo" id="discountMerchantInfoResultMap">
+		<result property="merCode" column="MER_CODE" />
+		<result property="merName" column="MER_NAME" />
+		<result property="merType" column="MER_TYPE" />
+		
+		
+		<result property="discountId" />
+		<result property="beginDate" />
+		<result property="endDate" />
+		<result property="week" />
+		<result property="beginTime" />
+		<result property="endTime" />
+		<result property="discountThreshold" />
+		<!-- <result property="isBoundleDiscount" column="IS_B_DISCOUNT" /> -->
+	</resultMap>
+</mapper>

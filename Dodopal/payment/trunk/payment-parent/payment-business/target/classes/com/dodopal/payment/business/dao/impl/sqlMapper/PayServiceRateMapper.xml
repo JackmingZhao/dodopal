@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayServiceRateMapper">
+	<sql id="PayServiceRateAllColumn">
+		t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,
+		t.ACTIVATE,t.PAY_CONFIG_ID,t.BUSINESS_TYPE,
+		t.PAY_SERVICE_TYPE,t.AMOUNR_START,t.AMOUNR_END,t.RATE
+	</sql>
+
+	<select id=""></select>
+	<select id="findPayServiceRate" resultType="PayServiceRate"
+		resultMap="PayServiceRateResultMap">
+		select
+		<include refid="PayServiceRateAllColumn" />
+		from PAY_SERVICE_RATE t
+		<where>
+		        t.ACTIVATE = '0'
+			<if test="payConfigId != null and payConfigId !=''">
+				and t.PAY_CONFIG_ID = #{payConfigId}
+			</if>
+			<if test="business != null and business !=''">
+				and t.BUSINESS_TYPE like '%'||#{business}||'%'
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+
+</mapper>

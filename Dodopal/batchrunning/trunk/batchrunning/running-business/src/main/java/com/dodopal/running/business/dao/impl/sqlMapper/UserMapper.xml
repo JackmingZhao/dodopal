@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.UserMapper">
+
+	<sql id="userColumn">
+		t.id,t.LOGIN_NAME,t.NAME,t.PASSWORD_EXPIRED_DATE,t.ACTIVATE,
+		t.ROLE_IDS,t.EMAIL,t.DEPARTMENT_CODE,y.dep_name DEPTNAME,t.LOGIN_DATE,t.LOGIN_IP,t.ZIP_CODE,
+		t.PROVINCE_ID,t.CITY_ID,t.TEL,t.SEX_ID,t.MOBILE,t.IDENTITY_TYPE,t.IDENTITY_ID,t.ADDRESS,
+		t.NICKNAME,t.COMMENTS,t.CREATE_DATE,
+		t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER
+	</sql>
+		<select id="findUserByPage" resultType="User" resultMap="userResultMap"
+		parameterType="UserQuery">
+		select <include refid="userColumn" />
+		from OSS_SYS_USER t left join  oss_sys_department y on
+		y.dep_code = t.DEPARTMENT_CODE
+		<where>
+			 lower(t.login_Name)!='admin' 
+			<if test="name != null and name !='' and name !='Admin'">
+			and	t.name like '%'||#{name}||'%'
+			</if>
+			<if test="loginName != null and loginName !='' and loginName !='Admin'">
+			and	t.login_Name like '%'||#{loginName}||'%'
+			</if>
+			<!-- 2为请选择 -->
+			<if test="activate != null and activate !=''">
+			and	t.ACTIVATE = #{activate, jdbcType=VARCHAR}
+			</if>
+		</where>
+		order by t.CREATE_DATE desc
+	</select>
+
+
+	<select id="findUsers" resultType="User" resultMap="userResultMap"
+		parameterType="UserQuery">
+		select * from OSS_SYS_USER
+		<where>
+			login_Name!='admin' and name!='Admin' 
+			<if test="departmentCode != null and departmentCode !=''">
+			and	DEPARTMENT_CODE=#{departmentCode,jdbcType=VARCHAR}
+			</if>
+			<!-- 2为请选择 -->
+			<if test="activate != null and activate !=''">
+			and	ACTIVATE = #{activate}
+			</if>
+		</where>
+		order by CREATE_DATE desc
+	</select>
+
+	<select id="findUser" resultType="User" resultMap="userResultMap"
+		parameterType="java.lang.String">
+		select * from OSS_SYS_USER where lower(login_name) = #{loginName} 
+	</select>
+
+	<select id="findUserById" resultType="User" resultMap="userResultMap"
+		parameterType="java.lang.String">
+		select * from OSS_SYS_USER where id = #{id} 
+	</select>
+
+
+	<select id="countUser" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select count(*) from OSS_SYS_USER where login_name = #{loginName}
+	</select>
+
+	<insert id="insertUser" parameterType="User">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_USER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO
+		OSS_SYS_USER
+		(ID, NAME, LOGIN_NAME, PASSWORD, PASSWORD_EXPIRED_DATE, 
+		ACTIVATE, ROLE_IDS, CREATE_DATE, CREATE_USER,LOGIN_IP,ZIP_CODE,PROVINCE_ID,CITY_ID,TEL,SEX_ID,
+		MOBILE,IDENTITY_TYPE,IDENTITY_ID,ADDRESS,NICKNAME,COMMENTS,EMAIL,DEPARTMENT_CODE)
+		VALUES
+		 (#{id, jdbcType=INTEGER}, #{name, jdbcType=VARCHAR}, 
+		 #{loginName, jdbcType=VARCHAR}, #{password, jdbcType=VARCHAR}, 
+		 #{passwordExpiredDate, jdbcType=DATE}, #{activate, jdbcType=INTEGER}, 
+		 #{roleIds, jdbcType=VARCHAR},sysdate,
+		  #{createUser,jdbcType=VARCHAR},#{loginIp,jdbcType=VARCHAR},
+		  #{zipCode,jdbcType=VARCHAR},#{provinceId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},#{tel,jdbcType=VARCHAR},
+		  #{sexId,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{identityType,jdbcType=VARCHAR},#{identityId,jdbcType=VARCHAR}
+		  ,#{address,jdbcType=VARCHAR},#{nickName,jdbcType=VARCHAR},#{comments,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{departmentCode,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updateUser" parameterType="User">
+		update OSS_SYS_USER
+		<trim prefix="SET" suffixOverrides=",">
+		UPDATE_DATE=sysdate,
+			<if test="name != null and name !=''">
+				name=#{name},
+			</if>
+		<!-- 	<if test="loginName != null and loginName !=''">
+				login_name=#{loginName},
+			</if> -->
+			<if test="updateUser != null and updateUser !=''">
+				UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null and email !=''">
+				EMAIL=#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="departmentCode != null and departmentCode !=''">
+				DEPARTMENT_CODE=#{departmentCode,jdbcType=VARCHAR},
+			</if>
+				MOBILE=#{mobile,jdbcType=VARCHAR},
+				TEL=#{tel,jdbcType=VARCHAR},
+				SEX_ID=#{sexId,jdbcType=VARCHAR},
+				IDENTITY_ID=#{identityId,jdbcType=VARCHAR},
+				IDENTITY_TYPE=#{identityType,jdbcType=VARCHAR},
+				ADDRESS=#{address,jdbcType=VARCHAR},
+				NICKNAME=#{nickName,jdbcType=VARCHAR},
+				COMMENTS=#{comments,jdbcType=VARCHAR},
+				PROVINCE_ID=#{provinceId,jdbcType=VARCHAR},
+				ZIP_CODE=#{zipCode,jdbcType=VARCHAR},				
+				CITY_ID=#{cityId,jdbcType=VARCHAR},				
+				ROLE_IDS=#{roleIds},
+				ACTIVATE=#{activate},
+		</trim>
+		where id=#{id}
+	</update>
+	
+     <update id="updateUserLoginIPAndDate" parameterType="java.lang.String">
+		update OSS_SYS_USER
+		<trim prefix="SET" suffixOverrides=",">
+		LOGIN_DATE=sysdate,
+		LOGIN_IP=#{ip,jdbcType=VARCHAR}
+		</trim>
+		where LOGIN_NAME=#{loginName}
+	</update>
+	<delete id="deleteUser" parameterType="java.lang.String">
+		delete from OSS_SYS_USER
+		where id = #{id}
+	</delete>
+
+
+	<update id="upPwdUser" parameterType="User">
+		update OSS_SYS_USER
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="password != null and password !=''">
+				password=#{password},
+			</if>
+			UPDATE_DATE=sysdate,PASSWORD_EXPIRED_DATE=sysdate
+		</trim>
+		where id=#{id}
+	</update>
+	
+	<update id="startUser" parameterType="User">
+		update OSS_SYS_USER 
+		set ACTIVATE=0
+		where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+        and login_name != 'admin'
+	</update>
+	
+	<update id="disableUser" parameterType="User">
+		update OSS_SYS_USER 
+		set ACTIVATE=1 
+		where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+        and login_name != 'admin'
+	</update>
+</mapper>

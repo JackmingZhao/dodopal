@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountChildMerchantMapper">
+	<sql id="accountChildMerchantColumn">
+		t.ID, t.CREATE_DATE, t.UPDATE_DATE, t.CREATE_USER,
+		t.UPDATE_USER
+		,t.MER_CODE,t.MER_NAME,t.MER_TYPE, t.MER_PARENT_CODE
+		
+	</sql>
+	<select id="findAccountChildMerByPage" resultType="AccountChildMerchant"
+		resultMap="accountChildMerchantResultMapper" parameterType="AccountChildMerchantQuery">
+		select t.* from(select
+		<include refid="accountChildMerchantColumn" />
+		,f.AVAILABLE_BALANCE,f.TOTAL_BALANCE,f.FROZEN_AMOUNT
+		from MERCHANT t, ACCOUNT a, ACCOUNT_FUND f where
+		t.MER_CODE =
+		a.CUSTOMER_NO
+		and t.ACTIVATE = '0' 
+		and t.MER_TYPE='13'
+		and a.ACCOUNT_CODE = f.ACCOUNT_CODE
+		and f.FUND_TYPE = #{fundType}) t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+				and t.MER_NAME like '%'||#{merName}||'%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAccountChildMerByList" resultType="AccountChildMerchant"
+		resultMap="accountChildMerchantResultMapper" parameterType="AccountChildMerchantQuery">
+		select t.* from(select
+		<include refid="accountChildMerchantColumn" />
+		,f.AVAILABLE_BALANCE,f.TOTAL_BALANCE,f.FROZEN_AMOUNT
+		from MERCHANT t, ACCOUNT a, ACCOUNT_FUND f where
+		t.MER_CODE =
+		a.CUSTOMER_NO
+		and t.ACTIVATE = '0' 
+		and t.MER_TYPE='13'
+		and a.ACCOUNT_CODE = f.ACCOUNT_CODE
+		and f.FUND_TYPE = #{fundType}) t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+				and t.MER_NAME like '%'||#{merName}||'%'
+			</if>
+		</where>
+	</select>
+</mapper>

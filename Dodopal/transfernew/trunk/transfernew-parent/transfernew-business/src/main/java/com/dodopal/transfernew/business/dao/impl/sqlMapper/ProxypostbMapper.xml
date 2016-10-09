@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.ProxypostbMapper">
+	<select id="findProxypostbById" resultType="Proxypostb"
+		parameterType="java.lang.String">
+		select * from icpay.proxypostb t
+		<where>
+			<if test="proxyid !=null and proxyid !=''">
+				t.proxyId = #{proxyid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findProxypostbListById" resultType="Proxypostb"
+		parameterType="java.lang.String"><!-- @auther Mikaelyan -->
+		select * from icpay.proxypostb t
+		<where>
+			<if test="proxyid !=null and proxyid !=''">
+				t.proxyId = #{proxyid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findProxypostbByPosid" resultType="Proxypostb"
+		parameterType="java.lang.String"><!-- @auther Mikaelyan -->
+		select * from icpay.proxypostb t
+		<where>
+			<if test="posid !=null and posid !=''">
+				t.POSID = #{posid}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

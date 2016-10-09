@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.MerchantDiscountMapper">
+
+
+	<select id="findMerchantDiscountsByUserDiscountByPage" resultMap="merchantDiscountResultMap" parameterType="MerchantDiscountQuery">
+		select a.*, (case when b.MERCODEARR_LEN is not null then b.MERCODEARR_LEN else 0 end ) MERCODEARR_LEN
+		from tran_discount a left join (select D.ID, COUNT(M.MER_CODE) MERCODEARR_LEN from tran_discount D, merchant_tran_discount M WHERE D.ID = M.DISCOUNT_ID GROUP BY D.ID) b on b.id = a.id 
+		where 1=1 
+		<if test="discountThreshold != null and discountThreshold !=''">
+			and a.DISCOUNT_THRESHOLD like '%'||#{discountThreshold}||'%'
+		</if>
+		order by a.id desc
+	</select>
+	
+	<select id="findMerchantsByDiscountIdByPage" resultMap="discountMerchantInfoResultMap" parameterType="MerchantQuery">
+		select t.MER_CODE, t.MER_NAME, t.MER_TYPE
+		from merchant t where t.MER_STATE = 1
+		<if test="merName != null and merName != ''">
+			and t.MER_NAME LIKE '%'||#{merName}||'%'
+		</if>
+	</select>
+	
+	
+	<select id="getMerDiscountId" resultType="String">
+		SELECT TRAN_DISCOUNT_ID_SEQ.NEXTVAL FROM DUAL
+	</select>
+	
+	<insert id="insertMerDiscount" parameterType="MerchantDiscount">
+   		INSERT INTO tran_discount(ID, BEGIN_DATE, END_DATE, WEEK, BEGIN_TIME, END_TIME, DISCOUNT_THRESHOLD, SET_DISCOUNT)
+		VALUES (#{id}, to_date(to_char(#{beginDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'), to_date(to_char(#{endDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD'), #{week}, #{beginTime}, #{endTime}, #{discountThreshold, jdbcType=NUMERIC}, #{setDiscount, jdbcType=NUMERIC})
+	</insert>
+	
+	<insert id="insertMerTranDiscount" parameterType="MerchantDiscount">
+		INSERT INTO merchant_tran_discount(DISCOUNT_ID, MER_CODE) SELECT #{id}, A.* FROM ( <foreach collection="merCodeArr" item="merId" index="index" separator="UNION ALL"> SELECT #{merId, jdbcType=VARCHAR} FROM DUAL </foreach> ) A
+	</insert>
+	
+	<select id="findDiscountById" resultMap="merchantDiscountResultMap" parameterType="java.lang.String">
+		select t.* from tran_discount t where t.id = #{discountId}
+	</select>
+	
+	<select id="findMerArrByDiscountId" resultMap="discountMerchantInfoResultMap" parameterType="java.lang.String">
+		select t.MER_CODE, t.MER_NAME, t.MER_TYPE from merchant t 
+		where t.mer_code in (select mt.mer_code from merchant_tran_discount mt where mt.discount_id = #{discountId})
+	</select>
+	
+	<select id="findMerInfoByIdArr" resultMap="discountMerchantInfoResultMap" >
+		select t.MER_CODE, t.MER_NAME, t.MER_TYPE from merchant t 
+		where t.mer_code in 
+		<foreach collection="merCodeArr" item="merCode" index="index" open="(" close=")" separator=",">
+			#{merCode, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	<update id="updateMerDiscount" parameterType="MerchantDiscount">
+		UPDATE tran_discount SET
+			<if test="beginDate != null and beginDate != ''">
+				BEGIN_DATE = to_date(to_char(#{beginDate}, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				,END_DATE = to_date(to_char(#{endDate}, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+			</if>
+			<if test="week != null and week != ''">
+				,WEEK = #{week}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				,BEGIN_TIME = #{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				,END_TIME = #{endTime}
+			</if>
+			<if test="discountThreshold != null and discountThreshold != ''">
+				,DISCOUNT_THRESHOLD = #{discountThreshold}
+			</if>
+			<if test="setDiscount != null and setDiscount != ''">
+				,SET_DISCOUNT = #{setDiscount}
+			</if>
+			
+		WHERE ID=#{id}
+	</update>
+	
+	<delete id="delMerTranDiscountByDiscountId" parameterType="java.lang.String">
+		DELETE FROM merchant_tran_discount WHERE discount_id = #{id, jdbcType=VARCHAR}
+	</delete>
+
+	
+
+	<select id="findMerchantDiscountsPageByUserDiscount" resultMap="merchantDiscountResultMap" parameterType="MerchantDiscountQuery">
+		select * from tran_discount_date t
+	</select>
+	
+	<!--查询交易折扣表  -->
+	<select id="findAllTranDiscountByPage" resultMap="merchantDiscountResultMap" parameterType="MerchantDiscountQuery">
+		select * from TRAN_DISCOUNT
+	</select>
+	
+	<select id="findTranDiscountByPage" resultMap="merchantDiscountResultMap" parameterType="MerchantDiscountQuery">
+		select m.MER_CODE,m.DISCOUNT_ID,t.BEGIN_DATE,t.END_DATE,t.WEEK,t.BEGIN_TIME,t.END_TIME,t.DISCOUNT_THRESHOLD,t.SET_DISCOUNT
+		 from MERCHANT_TRAN_DISCOUNT m,TRAN_DISCOUNT t 
+		<where>
+		t.id =  m.discount_id
+		<if test="merCode != null and merCode !=''">
+				and m.MER_CODE = #{merCode}
+		</if>
+		<if test="discountThreshold != null and discountThreshold !=''">
+				and t.DISCOUNT_THRESHOLD = #{discountThreshold}
+		</if>
+		</where>
+		order by t.id desc
+	</select>
+	
+	
+	<delete id="unbind">
+		DELETE FROM MERCHANT_TRAN_DISCOUNT  WHERE mer_code in
+		<foreach item="code" index="index" collection="merCode" open="(" separator="," close=")">
+  		#{code}
+ 		</foreach>
+		and DISCOUNT_ID in 
+		<foreach item="discountId" index="index" collection="discountIds" open="(" separator="," close=")">
+  		#{discountId}
+ 		</foreach>
+	</delete>
+	
+	<insert id="bind" parameterType="MerchantDiscount">
+		INSERT INTO MERCHANT_TRAN_DISCOUNT(DISCOUNT_ID, MER_CODE)
+		VALUES (#{id}, #{merCode})
+	</insert>
+
+	<select id="getMerCodeListByDiscountId" resultType="String">
+		select t.mer_code from merchant_tran_discount t where t.discount_id = #{discountId}
+	</select>
+	
+	<select id="findMerchantDiscountsByMerIdByPage" resultMap="merchantDiscountResultMap" parameterType="MerchantDiscountQuery">
+		select * 
+		from tran_discount t 
+		where 1 = 1
+		<if test="merId != null and merId != ''">
+			and t.id not in ( 
+			      select md.discount_id 
+			      from merchant_tran_discount md 
+			      where md.mer_code in ( 
+					  select m.mer_code from merchant m where m.id = #{merId}) 
+				  )
+		</if>
+		and t.end_date > sysdate
+		order by id desc
+
+	</select>
+	
+		
+	<insert id="insertSql" parameterType="String">
+		${insSql}
+	</insert>
+	
+	<select id="getConflictInfoList" resultType="String" parameterType="String">
+		${paramSql}
+	</select>
+		
+	<delete id="deleteMerDiscountByIds" parameterType="java.lang.String">
+		${delSql}
+	</delete>
+	
+	<select id="findMerDiscountsByMerCode" resultType="String" parameterType="String">
+		${merCode}
+	</select>
+	
+	<select id="getMerchantDiscountById" resultMap="merchantDiscountResultMap" parameterType="String">
+		${sql}
+	</select>
+	
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerchantUserExtendMapper">
+	<resultMap type="MerchantUserExtend" id="merchantUserExtendResultMap">
+		<result property="id" column="ID" />
+		<result property="userCode" column="USER_CODE" />
+		<result property="oldUserId" column="OLD_USER_ID" />
+		<result property="oldUserType" column="OLD_USER_TYPE" />
+		<result property="usertype1" column="USERTYPE1" />
+		<result property="activeid" column="ACTIVEID" />
+		<result property="wechatid" column="WECHATID" />
+		<result property="wechaticon" column="WECHATICON" />
+		<result property="occupation" column="OCCUPATION" />
+	</resultMap>
+</mapper>

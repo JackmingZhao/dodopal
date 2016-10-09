@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.RoleMapper">
+	<select id="findRoles" resultType="Role" resultMap="roleResultMap" parameterType="Role">
+		select * from OSS_SYS_ROLE
+		<where>
+			<if test="name != null and name !=''">
+				name like '%'||#{name}||'%'
+			</if>
+			<if test="description != null and description !=''">
+			and	description like '%'||#{description}||'%'
+			</if>
+			and lower(name) !='admin'
+		</where>
+		order by CREATE_DATE desc
+	</select>
+	<select id="findRoleByPage" resultType="Role" resultMap="roleResultMap" parameterType="RoleQuery">
+		select * from OSS_SYS_ROLE
+		<where>
+			<if test="name != null and name !=''">
+				name like '%'||#{name}||'%'
+			</if>
+			<if test="description != null and description !=''">
+			and	description like '%'||#{description}||'%'
+			</if>
+			and lower(name) !='admin'
+		</where>
+		order by CREATE_DATE DESC,ID DESC
+	</select>
+	<select id="findRoleByName" resultType="Role" resultMap="roleResultMap" parameterType="java.lang.String">
+		select * from OSS_SYS_ROLE where name = #{name}
+	</select>
+	
+	<select id="findRoleById" resultType="Role" resultMap="roleResultMap" parameterType="java.lang.String">
+		select * from OSS_SYS_ROLE where id = #{id}
+	</select>
+	
+	<select id="loadRoles" resultType="Role" resultMap="roleResultMap" parameterType="java.lang.String">
+		select * from OSS_SYS_ROLE where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</select>
+	
+	
+	<select id="countRole" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from OSS_SYS_ROLE where name = #{name}
+	</select>
+
+	<insert id="insertRole" parameterType="Role">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select OSS_SYS_ROLE_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO OSS_SYS_ROLE(ID, NAME, DESCRIPTION, OPERATION_IDS, CREATE_DATE, CREATE_USER)
+		VALUES (#{id, jdbcType=INTEGER}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{operationIds, jdbcType=VARCHAR},  sysdate, #{createUser,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- <insert id="insertRoleFunctionLink" parameterType="RoleFunctionLink">
+		INSERT INTO OSS_SYS_ROLE_FUNCTION(ROLE_ID, FUNCTION_ID)
+		VALUES (#{role.id}, #{operation.id})
+	</insert> -->
+
+	<update id="updateRole" parameterType="Role">
+		update OSS_SYS_ROLE
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="name != null and name !=''">
+				name=#{name},
+			</if>				
+			<if test="operationIds != null and operationIds !=''">
+			   OPERATION_IDS=#{operationIds},
+			</if>
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			description=#{description,jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteRole" parameterType="Role">
+		delete from OSS_SYS_ROLE where  lower(name)  != 'admin' and id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+		
+	</delete>
+
+	<!-- <delete id="deleteRoleFunctionLink" parameterType="java.lang.String">
+		delete from OSS_SYS_ROLE_FUNCTION where ROLE_ID = #{id}
+	</delete> -->
+
+
+</mapper>

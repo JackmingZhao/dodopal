@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.MerchantconsumMapper">
+	<!-- 商户消费明细统计列表展示 -->
+	<select id="findMerchantConsumInfoByPage" resultType="com.dodopal.oss.business.bean.MerchantConsumBean" parameterType="com.dodopal.oss.business.bean.query.MerchantConsumQuery">
+		select 
+		    TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')     as orderDate,
+	       p.CUSTOMER_TYPE  as customerType,
+	       P.CUSTOMER_CODE  as customerCode,
+	       P.CUSTOMER_NAME  as customerName,
+	       R.YKT_NAME       as yktName,
+	       P.SOURCE         as source,
+	      sum(P.RECEIVED_PRICE)  as receivedPrice
+	   from PRD_PURCHASE_ORDER P，PRD_PURCHASE_ORDER_RECORD R
+	  <where> P.ORDER_NUM  = R.ORDER_NUM  and p.states='2'
+  		<if test="startDate != null and startDate !=''">
+      			<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+		</if>
+		<if test="endDate != null and endDate !=''">
+			<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+		</if>
+	  	<if test="merName != null and merName !=''">
+	  		and instr(p.CUSTOMER_NAME ,#{merName}) > 0
+		</if>
+	  	<if test="yktCode != null and yktCode !=''">
+	  		and R.ykt_code =#{yktCode}
+		</if>
+		<!-- <if test="bussinessType != null and bussinessType !=''">
+	  		AND  P.BUSINESS_TYPE = #{bussinessType}
+		</if> -->
+	  </where>
+	  group by
+	          TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd'),
+	          R.YKT_NAME,
+	          p.CUSTOMER_CODE,
+	          P.CUSTOMER_NAME,
+	          p.CUSTOMER_TYPE,
+	          P.SOURCE  
+	 	ORDER BY  TO_DATE(TO_CHAR(p.ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') desc, R.YKT_NAME,P.CUSTOMER_NAME
+	</select>
+	
+	<!-- 获取商户消费明细统计总记录数 -->
+	<select id="findMerchantConsumInfoCount" resultType="java.lang.Integer" parameterType="com.dodopal.oss.business.bean.query.MerchantConsumQuery">
+		select count(*) from (
+			select 
+			  TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')    as orderDate,
+		      <!--  P.BUSINESS_TYPE  as businessType, -->
+		       p.CUSTOMER_TYPE  as customerType,
+		       P.CUSTOMER_CODE  as customerCode,
+		       P.CUSTOMER_NAME  as customerName,
+		       R.YKT_NAME       as yktName,
+		       P.SOURCE         as source,
+		       sum(P.RECEIVED_PRICE) as receivedPrice
+	  		 from PRD_PURCHASE_ORDER P，PRD_PURCHASE_ORDER_RECORD R
+			   <where> P.ORDER_NUM  = R.ORDER_NUM and p.states='2'
+				<if test="startDate != null and startDate !=''">
+	      			<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+				</if>
+				<if test="endDate != null and endDate !=''">
+					<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+				</if>
+			  	<if test="merName != null and merName !=''">
+			  		and instr(p.CUSTOMER_NAME ,#{merName}) > 0
+				</if>
+			  	<if test="yktCode != null and yktCode !=''">
+	  				and R.ykt_code =#{yktCode}
+				</if>
+				<!-- <if test="bussinessType != null and bussinessType !=''">
+			  		AND  P.BUSINESS_TYPE = #{bussinessType}
+				</if> -->
+			  </where>
+		  	 group by TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd'),
+	          R.YKT_NAME,
+	          p.CUSTOMER_CODE,
+	          P.CUSTOMER_NAME,
+	          p.CUSTOMER_TYPE,
+	          P.SOURCE  
+	 	ORDER BY  TO_DATE(TO_CHAR(p.ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') desc, R.YKT_NAME,P.CUSTOMER_NAME
+		 )
+	</select>
+	
+	<!-- 获取商户消费交易导出List -->
+	<select id="findMerchantConsumInfoExcel" resultType="com.dodopal.oss.business.bean.MerchantConsumBean" parameterType="com.dodopal.oss.business.bean.query.MerchantConsumQuery">
+		select 
+		   TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')     as orderDate,
+	      <!--  P.BUSINESS_TYPE  as businessType, -->
+	       p.CUSTOMER_TYPE  as customerType,
+	       P.CUSTOMER_CODE  as customerCode,
+	       P.CUSTOMER_NAME  as customerName,
+	       R.YKT_NAME       as yktName,
+	       P.SOURCE         as source,
+	      sum(P.RECEIVED_PRICE) as receivedPrice
+	   from PRD_PURCHASE_ORDER P，PRD_PURCHASE_ORDER_RECORD R
+	  <where> P.ORDER_NUM  = R.ORDER_NUM and p.states='2'
+	  	<if test="startDate != null and startDate !=''">
+   			<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+		</if>
+		<if test="endDate != null and endDate !=''">
+			<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+		</if>
+	  	<if test="merName != null and merName !=''">
+	  		and instr(p.CUSTOMER_NAME ,#{merName}) > 0
+		</if>
+	  	<if test="yktCode != null and yktCode !=''">
+	  		and R.ykt_code =#{yktCode}
+		</if>
+		<!-- <if test="bussinessType != null and bussinessType !=''">
+	  		AND  P.BUSINESS_TYPE = #{bussinessType}
+		</if> -->
+	  </where>
+	 	group by
+	          TO_DATE(TO_CHAR(P.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd'),
+	          R.YKT_NAME,
+	          p.CUSTOMER_CODE,
+	          P.CUSTOMER_NAME,
+	          p.CUSTOMER_TYPE,
+	          P.SOURCE  
+	 	ORDER BY  TO_DATE(TO_CHAR(p.ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') desc, R.YKT_NAME,P.CUSTOMER_NAME
+	</select>
+
+</mapper>

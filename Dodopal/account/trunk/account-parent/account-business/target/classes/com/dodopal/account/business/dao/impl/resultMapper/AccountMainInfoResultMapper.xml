@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.account.business.dao.AccountMapper">
+	<resultMap type="AccountMainInfo" id="accountMainInfoResultMap">
+		<result property="id" column="ID" />
+		<result property="accountCode" column="ACCOUNT_CODE" />
+		<result property="customerNo" column="CUSTOMER_NO" />
+		<result property="cuName" column="CU_NAME" />
+		<result property="fundType" column="FUND_TYPE" />
+		<result property="sumTotalAmount" column="SUM_TOTAL_AMOUNT" />
+		<result property="totalBalance" column="TOTAL_BALANCE" />
+		<result property="availableBalance" column="AVAILABLE_BALANCE" />
+		<result property="frozenAmount" column="FROZEN_AMOUNT" />
+		<result property="state" column="STATE" />
+	</resultMap>
+</mapper>

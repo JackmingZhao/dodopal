@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.TranDiscountDateMapper">
+<sql id="allColumns">
+	ID,
+  MER_CODE,
+  BEGIN_DATE,
+  END_DATE
+</sql>
+
+<!-- 查询TranDiscountDate表信息 -->
+<select id="findTranDiscountDate" resultType="TranDiscountDate" resultMap="tranDiscountDateResultMap">
+		select <include refid="allColumns" /> from tran_discount_date idd where idd.mer_code = #{mer_code};
+</select>
+
+<insert id="addTranDiscountDate" parameterType="TranDiscountDate">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select tran_discount_date_id_seq.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO tran_discount_date(
+			<include refid="allColumns" />
+		)
+		VALUES (
+			#{id},
+			#{merCode, jdbcType=VARCHAR},
+			#{beginDate, jdbcType=VARCHAR},
+			#{endDate, jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

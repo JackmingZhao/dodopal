@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.AccountControlMapper">
+	<insert id="addAccountControl" parameterType="AccountControl">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ACCOUNT_CONTROL_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		ACCOUNT_CONTROL(ID,FUND_ACCOUNT_CODE,DAY_CONSUME_SINGLE_LIMIT,DAY_CONSUME_SUM_LIMIT,
+		DAY_RECHARGE_SINGLE_LIMIT,DAY_RECHARGE_SUM_LIMIT,DAY_TRANSFER_MAX,DAY_TRANSFER_SINGLE_LIMIT,
+		DAY_TRANSFER_SUM_LIMIT ,CREATE_USER,CREATE_DATE)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{dayConsumeSingleLimit,jdbcType=BIGINT},
+		#{dayConsumeSumLimit,jdbcType=BIGINT},#{dayRechargeSingleLimit,jdbcType=BIGINT},
+		#{dayRechargeSumLimit,jdbcType=BIGINT},#{dayTransferMax,jdbcType=BIGINT},
+		#{dayTransferSingleLimit,jdbcType=BIGINT},#{dayTransferSumLimit,jdbcType=BIGINT},
+		#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+
+</mapper>

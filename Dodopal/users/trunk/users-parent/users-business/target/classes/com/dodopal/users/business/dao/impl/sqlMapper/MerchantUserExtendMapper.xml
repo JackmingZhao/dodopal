@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerchantUserExtendMapper">
+	<sql id="allColumns">
+		t.id,t.user_code,t.old_user_id,t.old_user_type,t.usertype1,
+		t.activeid,t.wechatid,t.wechaticon,t.occupation
+	</sql>
+
+	<select id="findByUserCode" parameterType="string" resultType="MerchantUserExtend" resultMap="merchantUserExtendResultMap">
+		select <include refid="allColumns" /> from MERCHANT_USER_EXTEND t
+		where t.user_code = #{userCode}
+	</select>
+
+</mapper>

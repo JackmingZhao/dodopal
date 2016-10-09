@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerchantMapper">
+
+	<sql id="allColumns">
+		ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,MER_NAME,MER_ADDS,MER_TYPE,MER_LINK_USER,
+		MER_ZIP,MER_LINK_USER_MOBILE,MER_TELEPHONE,MER_EMAIL,MER_PARENT_CODE,
+		MER_STATE,MER_ACTIVATE_DATE,ACTIVATE,MER_DEACTIVATE_DATE,MER_FAX,
+		MER_REGISTER_DATE,MER_BANK_NAME,MER_BANK_ACCOUNT,MER_BANK_USER_NAME,MER_BUSINESS_SCOPE_ID,
+		MER_AREA,MER_PRO,MER_CITY,DEL_FLG,MER_CLASSIFY,
+		MER_PROPERTY,MER_STATE_USER,MER_STATE_DATE,SOURCE,MER_REJECT_REASON,MER_PAY_MONEY_USER
+	</sql>
+	
+	<sql id="addallColumns">
+		b.ID,b.CREATE_USER,b.CREATE_DATE,b.UPDATE_USER,b.UPDATE_DATE,
+		b.MER_CODE,b.MER_NAME,b.MER_ADDS,b.MER_TYPE,b.MER_LINK_USER,
+		b.MER_ZIP,b.MER_LINK_USER_MOBILE,b.MER_TELEPHONE,b.MER_EMAIL,b.MER_PARENT_CODE,
+		b.MER_STATE,b.MER_ACTIVATE_DATE,b.ACTIVATE,b.MER_DEACTIVATE_DATE,b.MER_FAX,
+		b.MER_REGISTER_DATE,b.MER_BANK_NAME,b.MER_BANK_ACCOUNT,b.MER_BANK_USER_NAME,b.MER_BUSINESS_SCOPE_ID,
+		b.MER_AREA,MER_PRO,b.MER_CITY,DEL_FLG,b.MER_CLASSIFY,
+		b.MER_PROPERTY,b.MER_STATE_USER,b.MER_STATE_DATE,b.SOURCE,b.MER_REJECT_REASON
+	</sql>
+
+	<sql id="byPageWhere">
+		<where>
+			<if test="merCode != null and merCode !=''">
+				mer_code like '%'||#{merCode}||'%'
+			</if>
+			<if test="merState != null and merState !=''">
+				and mer_state = #{merState}
+			</if>
+			<if test="merType != null and merType !=''">
+				and mer_type = #{merType}
+			</if>
+			<if test="merClassify != null and merClassify !=''">
+				and mer_classify = #{merClassify}
+			</if>
+			<if test="merProperty != null and merProperty !=''">
+				and mer_property = #{merProperty}
+			</if>
+			<if test="activate != null and activate !=''">
+				and activate = #{activate}
+			</if>
+			<if test="merName != null and merName !=''">
+				and mer_name like  '%'||#{merName}||'%'
+			</if>
+			<if test="merParentCode != null and merParentCode !=''">
+				and mer_parent_code = #{merParentCode}
+			</if>
+			<if test="merLinkUser != null and merLinkUser !=''">
+				and mer_link_user like '%'||#{merLinkUser}||'%'
+			</if>
+			<if test="merLinkUserMobile != null and merLinkUserMobile !=''">
+				and mer_link_user_mobile like '%'||#{merLinkUserMobile}||'%'
+			</if>
+			<if test="merPro != null and merPro !=''">
+				and mer_pro = #{merPro}
+			</if>
+			<if test="merCity != null and merCity !=''">
+				and mer_city = #{merCity}
+			</if>
+			<if test="source != null and source !=''">
+				and source = #{source}
+			</if>
+			<if test="merState != null and merState == '1'.toString()">
+				and mer_type != '17'
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="busByPageWhere">
+		<where>
+			<if test="merCode != null and merCode !=''">
+				b.mer_code like '%'||#{merCode}||'%'
+			</if>
+			<if test="merState != null and merState !=''">
+				and b.mer_state = #{merState}
+			</if>
+			<if test="merType != null and merType !=''">
+				and b.mer_type = #{merType}
+			</if>
+			<if test="merClassify != null and merClassify !=''">
+				and b.mer_classify = #{merClassify}
+			</if>
+			<if test="merProperty != null and merProperty !=''">
+				and b.mer_property = #{merProperty}
+			</if>
+			<if test="activate != null and activate !=''">
+				and b.activate = #{activate}
+			</if>
+			<if test="merName != null and merName !=''">
+				and b.mer_name like  '%'||#{merName}||'%'
+			</if>
+			<if test="merParentCode != null and merParentCode !=''">
+				and b.mer_parent_code = #{merParentCode}
+			</if>
+			<if test="merLinkUser != null and merLinkUser !=''">
+				and b.mer_link_user like '%'||#{merLinkUser}||'%'
+			</if>
+			<if test="merLinkUserMobile != null and merLinkUserMobile !=''">
+				and b.mer_link_user_mobile like '%'||#{merLinkUserMobile}||'%'
+			</if>
+			<if test="merPro != null and merPro !=''">
+				and b.mer_pro = #{merPro}
+			</if>
+			<if test="merCity != null and merCity !=''">
+				and b.mer_city = #{merCity}
+			</if>
+			<if test="source != null and source !=''">
+				and b.source = #{source}
+			</if>
+			<if test="bussQuery != null and bussQuery !=''">
+				and t.rate_code= #{bussQuery}
+			</if>
+			<if test="merState != null and merState == '1'.toString()">
+				and mer_type != '17'
+			</if>
+		</where>
+	</sql>
+
+	<select id="checkExist" resultType="boolean" parameterType="Merchant">
+		select count(1) from merchant
+		<where>
+			<if test="activate != null and activate !=''">
+				activate = #{activate}
+			</if>
+			<if test="merName != null and merName !=''">
+				and mer_name = #{merName}
+			</if>
+		</where>
+	</select>
+
+	<select id="findMerchant" resultType="Merchant" resultMap="merchantResultMap" parameterType="Merchant">
+		select <include refid="allColumns" /> from merchant
+		<where>
+			<if test="merCode != null and merCode !=''">
+				and  mer_code = #{merCode}
+			</if>
+			<if test="merState != null and merState !=''">
+				and mer_state = #{merState}
+			</if>
+			<if test="merType != null and merType !=''">
+				and mer_type = #{merType}
+			</if>
+			<if test="merClassify != null and merClassify !=''">
+				and mer_classify = #{merClassify}
+			</if>
+			<if test="merProperty != null and merProperty !=''">
+				and mer_property = #{merProperty}
+			</if>
+			<if test="activate != null and activate !=''">
+				and activate = #{activate}
+			</if>
+			<if test="merName != null and merName !=''">
+				and mer_name like CONCAT('%', CONCAT(#{merName}, '%'))
+			</if>
+			<if test="merParentCode != null and merParentCode !=''">
+				and mer_parent_code = #{merParentCode}
+			</if>
+			<if test="merLinkUser != null and merLinkUser !=''">
+				and mer_link_user like CONCAT('%', CONCAT(#{merLinkUser}, '%'))
+			</if>
+			<if test="merLinkUserMobile != null and merLinkUserMobile !=''">
+				and mer_link_user_mobile like CONCAT('%', CONCAT(#{merLinkUserMobile}, '%'))
+			</if>
+			<if test="merPro != null and merPro !=''">
+				and mer_pro = #{merPro}
+			</if>
+			<if test="merCity != null and merCity !=''">
+				and mer_city = #{merCity}
+			</if>
+			<if test="merParentName != null and merParentName !=''">
+				and mer_name = #{merParentName}
+			</if>
+			<if test="merState != null and merState =='1'">
+				and mer_type != '17'
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findMerchantExact" resultType="Merchant" resultMap="merchantResultMap" parameterType="Merchant">
+		select <include refid="allColumns" /> from MERCHANT
+		<where>
+        	<if test="merCode!=null and merCode!=''">   
+            	MER_CODE = #{merCode}  
+        	</if>   
+        	<if test="merName != null and merName !=''">   
+           	 	AND MER_NAME = #{merName}      
+       		</if>
+       		<if test="merLinkUserMobile != null and merLinkUserMobile !=''"> 
+           		AND MER_LINK_USER_MOBILE = #{merLinkUserMobile}
+       		</if>
+    	</where>  
+	</select>
+
+	<select id="findMerchantByPage" resultType="Merchant" resultMap="merchantResultMap" parameterType="MerchantQuery">
+		select <include refid="allColumns" /> from merchant
+		<include refid="byPageWhere" />
+		order by ${orderBy}
+	</select>
+
+	<!-- EXCEL导出使用 -->
+	<select id="findMerchantByPageCount" resultType="int" parameterType="MerchantQuery">
+		select count(1) from merchant
+		<include refid="byPageWhere" />
+	</select>
+
+	<!-- EXCEL导出使用 -->
+	<select id="findMerchantByPageList" resultType="Merchant" resultMap="merchantResultMap" parameterType="MerchantQuery">
+		select <include refid="allColumns" /> from merchant
+		<include refid="byPageWhere" />
+		order by ${orderBy}
+	</select>
+
+	<select id="findMerchantBusByPage" resultType="Merchant" resultMap="merchantResultMap" parameterType="MerchantQuery">
+	    select <include refid="addallColumns" />,t.rate_code from MER_RATE_SUPPLEMENT t
+               left join merchant b  on t.mer_code = b.mer_code
+		<include refid="busByPageWhere" />
+		order by ${orderBy}
+	</select>
+
+	<!-- EXCEL导出使用 -->
+	<select id="findMerchantBusByPageCount" resultType="int" parameterType="MerchantQuery">
+	    select count(1) from MER_RATE_SUPPLEMENT t
+               left join merchant b  on t.mer_code = b.mer_code
+		<include refid="busByPageWhere" />
+	</select>
+
+	<!-- EXCEL导出使用 -->
+	<select id="findMerchantBusByPageList" resultType="Merchant" resultMap="merchantResultMap" parameterType="MerchantQuery">
+	    select <include refid="addallColumns" />,t.rate_code from MER_RATE_SUPPLEMENT t
+               left join merchant b  on t.mer_code = b.mer_code
+		<include refid="busByPageWhere" />
+		order by ${orderBy}
+	</select>
+
+	<select id="findMerchantById" resultType="Merchant" resultMap="merchantResultMap"
+		parameterType="java.lang.String">
+		select <include refid="allColumns" /> from merchant where id = #{id}
+	</select>
+
+	<select id="findMerchantByMerCode" resultType="Merchant" resultMap="merchantResultMap" parameterType="java.lang.String">
+		select w.ID,a.nick_name as create_user,w.CREATE_DATE,b.nick_name as update_user,w.UPDATE_DATE,
+		w.MER_CODE,w.MER_NAME,w.MER_ADDS,w.MER_TYPE,w.MER_LINK_USER,
+		w.MER_ZIP,w.MER_LINK_USER_MOBILE,w.MER_TELEPHONE,w.MER_EMAIL,w.MER_PARENT_CODE,
+		w.MER_STATE,w.MER_ACTIVATE_DATE,w.ACTIVATE,w.MER_DEACTIVATE_DATE,w.MER_FAX,
+		w.MER_REGISTER_DATE,w.MER_BANK_NAME,w.MER_BANK_ACCOUNT,w.MER_BANK_USER_NAME,w.MER_BUSINESS_SCOPE_ID,
+		w.MER_AREA,w.MER_PRO,w.MER_CITY,w.DEL_FLG,w.MER_CLASSIFY,
+		w.MER_PROPERTY,c.nick_name as mer_state_user,w.MER_STATE_DATE,w.SOURCE,w.MER_REJECT_REASON,w.MER_PAY_MONEY_USER
+		  from (
+				select <include refid="allColumns" /> from merchant
+				 where mer_code = #{merCode}
+	    ) w
+		left join v_user_info a on w.create_user=a.id
+		left join v_user_info b on w.update_user=b.id
+		left join v_user_info c on w.mer_state_user=c.id
+	</select>
+
+	<select id="batchFindMerchantByMerCode" resultType="Merchant" resultMap="merchantResultMap">
+		select <include refid="allColumns" /> from merchant m,(
+	 		<foreach collection="merCodes" item="item" index="index" open="" close="" separator="union all">
+	        	select #{item} as mer_codes from dual
+	        </foreach>
+        ) n
+        where m.mer_code = n.mer_codes
+	</select>
+
+	<select id="findChildMerchantByParentCodeType" resultType="Merchant" resultMap="merchantResultMap">
+		select <include refid="allColumns" /> from merchant where mer_parent_code = #{merParentCode} and mer_type in
+		<foreach item="item" index="index" collection="merTypes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</select>
+
+	<select id="findMerchantRelationByMerCode" resultType="Merchant" resultMap="merchantResultMap" parameterType="java.lang.String">
+		SELECT mer_code, mer_name, mer_parent_code, mer_type
+  		  FROM MERCHANT
+ 		 START WITH mer_code = #{merCode}
+	   CONNECT BY PRIOR mer_parent_code = mer_code
+ 		 UNION
+		SELECT mer_code, mer_name, mer_parent_code, mer_type
+  		  FROM MERCHANT
+ 		 START WITH mer_code = #{merCode}
+	   CONNECT BY PRIOR mer_code = mer_parent_code
+	</select>
+
+	<select id="findChildMerchantByMerCodes" resultType="Merchant" resultMap="merchantResultMap">
+		SELECT mer_code, mer_type, mer_parent_code
+		  FROM MERCHANT
+		 START WITH mer_code in
+		 <foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+	  		#{item}
+	 	 </foreach>
+       CONNECT BY PRIOR mer_code = mer_parent_code
+	</select>
+
+	<select id="getMerCodeSeq" resultType="String">
+		select MER_CODE_GENERATE_SEQ.NEXTVAL from dual
+	</select>
+
+	<!-- 根据商户号获取一卡通编码 -->
+	<select id="getYktCodeByMerCode" resultType="String" parameterType="java.lang.String">
+		select t.ykt_code from PRD_YKT_INFO t
+		 where t.mer_code = #{merCode}
+	</select>
+
+	<insert id="addMerchant" parameterType="Merchant">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MERCHANT(
+			<include refid="allColumns" />
+		)
+		VALUES (
+			#{id},
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			null,
+			null,
+			#{merCode},
+			#{merName, jdbcType=VARCHAR},
+			#{merAdds, jdbcType=VARCHAR},
+			#{merType, jdbcType=VARCHAR},
+			#{merLinkUser, jdbcType=VARCHAR},
+			#{merZip, jdbcType=VARCHAR},
+			#{merLinkUserMobile, jdbcType=VARCHAR},
+			#{merTelephone, jdbcType=VARCHAR},
+			#{merEmail, jdbcType=VARCHAR},
+			#{merParentCode, jdbcType=VARCHAR},
+			#{merState},
+			#{merActivateDate, jdbcType=TIMESTAMP},
+			#{activate},
+			#{merDeactivateDate, jdbcType=TIMESTAMP},
+			#{merFax, jdbcType=VARCHAR},
+			sysdate,
+			#{merBankName, jdbcType=VARCHAR},
+			#{merBankAccount, jdbcType=VARCHAR},
+			#{merBankUserName, jdbcType=VARCHAR},
+			#{merBusinessScopeId, jdbcType=VARCHAR},
+			#{merArea, jdbcType=VARCHAR},
+			#{merPro, jdbcType=VARCHAR},
+			#{merCity, jdbcType=VARCHAR},
+			#{delFlg},
+			#{merClassify},
+			#{merProperty},
+			#{merStateUser, jdbcType=VARCHAR},
+			#{merStateDate, jdbcType=TIMESTAMP},
+			#{source, jdbcType=VARCHAR},
+			#{merRejectReason, jdbcType=VARCHAR},
+			#{merPayMoneyUser, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateMerchant" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_PARENT_CODE=#{merParentCode, jdbcType=VARCHAR},
+			MER_TELEPHONE=#{merTelephone, jdbcType=VARCHAR},
+			MER_EMAIL=#{merEmail, jdbcType=VARCHAR},
+			MER_FAX=#{merFax, jdbcType=VARCHAR},
+			MER_BUSINESS_SCOPE_ID=#{merBusinessScopeId, jdbcType=VARCHAR},
+			MER_ZIP=#{merZip, jdbcType=VARCHAR},
+			MER_BANK_NAME=#{merBankName, jdbcType=VARCHAR},
+			MER_BANK_ACCOUNT=#{merBankAccount, jdbcType=VARCHAR},
+			MER_BANK_USER_NAME=#{merBankUserName, jdbcType=VARCHAR},
+			MER_PAY_MONEY_USER=#{merPayMoneyUser, jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			<if test="merState != null and merState !=''">
+				MER_STATE=#{merState},
+			</if>
+			<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate},
+			</if>
+			<if test="merType != null and merType !=''">
+				MER_TYPE=#{merType},
+			</if>
+			<if test="merArea != null and merArea !=''">
+				MER_AREA=#{merArea},
+			</if>
+			<if test="merPro != null and merPro !=''">
+				MER_PRO=#{merPro},
+			</if>
+			<if test="merCity != null and merCity !=''">
+				MER_CITY=#{merCity},
+			</if>
+			<if test="merAdds != null and merAdds !=''">
+				MER_ADDS=#{merAdds},
+			</if>
+			<if test="merLinkUser != null and merLinkUser !=''">
+				MER_LINK_USER=#{merLinkUser},
+			</if>
+			<if test="merLinkUserMobile != null and merLinkUserMobile !=''">
+				MER_LINK_USER_MOBILE=#{merLinkUserMobile},
+			</if>
+			<if test="merClassify != null and merClassify !=''">
+				MER_CLASSIFY=#{merClassify},
+			</if>
+			<if test="merProperty != null and merProperty !=''">
+				MER_PROPERTY=#{merProperty},
+			</if>
+			<if test="merStateUser != null and merStateUser !=''">
+				MER_STATE_USER=#{merStateUser},
+			</if>
+			<if test="merStateDate != null and merStateDate !=''">
+				MER_STATE_DATE=#{merStateDate},
+			</if>
+			<if test="merActivateDate != null and merActivateDate !=''">
+				MER_ACTIVATE_DATE=#{merActivateDate},
+			</if>
+			<if test="merDeactivateDate != null and merDeactivateDate !=''">
+				MER_DEACTIVATE_DATE=#{merDeactivateDate},
+			</if>
+			<if test="merRegisterDate != null and merRegisterDate !=''">
+				MER_REGISTER_DATE=#{merRegisterDate},
+			</if>
+			<if test="merName != null and merName !=''">
+				MER_NAME=#{merName},
+			</if>
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<!--更新审核通过商户信息-->
+	<update id="updateThroughMerchant" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_TELEPHONE=#{merTelephone, jdbcType=VARCHAR},
+			MER_EMAIL=#{merEmail, jdbcType=VARCHAR},
+			MER_FAX=#{merFax, jdbcType=VARCHAR},
+			MER_BUSINESS_SCOPE_ID=#{merBusinessScopeId, jdbcType=VARCHAR},
+			MER_ZIP=#{merZip, jdbcType=VARCHAR},
+			MER_BANK_NAME=#{merBankName, jdbcType=VARCHAR},
+			MER_BANK_ACCOUNT=#{merBankAccount, jdbcType=VARCHAR},
+			MER_BANK_USER_NAME=#{merBankUserName, jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<!--审核不通过-->
+	<update id="rejectMerchantReg" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_STATE=#{merState},
+			MER_STATE_USER=#{merStateUser},
+			MER_STATE_DATE=#{merStateDate},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			MER_REJECT_REASON=#{merRejectReason, jdbcType=VARCHAR},
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<update id="updateMerchantForPortal" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_TELEPHONE=#{merTelephone, jdbcType=VARCHAR},
+			MER_EMAIL=#{merEmail, jdbcType=VARCHAR},
+			MER_FAX=#{merFax, jdbcType=VARCHAR},
+			MER_BUSINESS_SCOPE_ID=#{merBusinessScopeId, jdbcType=VARCHAR},
+			MER_ZIP=#{merZip, jdbcType=VARCHAR},
+			MER_BANK_NAME=#{merBankName, jdbcType=VARCHAR},
+			MER_BANK_ACCOUNT=#{merBankAccount, jdbcType=VARCHAR},
+			MER_BANK_USER_NAME=#{merBankUserName, jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			MER_LINK_USER=#{merLinkUser},
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+	
+	<update id="updateMerchantMobileLinkUser" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="merLinkUserMobile != null and merLinkUserMobile !=''">
+			MER_LINK_USER_MOBILE=#{merLinkUserMobile},
+			</if>
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			MER_EMAIL=#{merEmail, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			<if test="merLinkUser != null and merLinkUser !=''">
+			MER_LINK_USER=#{merLinkUser},
+			</if>
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+	
+	<update id="batchUpdateMerchant">
+		update merchant
+		<trim prefix="set" suffixOverrides=",">
+			MER_DEACTIVATE_DATE=sysdate,
+			update_date=sysdate,
+			<if test="merchant != null and merchant.activate != null and merchant.activate !=''">
+				activate=#{merchant.activate},
+			</if>
+			<if test="merchant != null and merchant.updateUser != null and merchant.updateUser !=''">
+				update_user=#{merchant.updateUser},
+			</if>
+		</trim>
+		<where>
+			mer_code in
+			<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  			#{item}
+ 			</foreach>
+ 			<if test="merchant != null and merchant.merParentCode != null and merchant.merParentCode !=''">
+				and mer_parent_code = #{merchant.merParentCode}
+			</if>
+ 		</where>
+	</update>
+
+	<!-- 更新商户手机号 -->
+	<update id="updateMerLinkUserMobile">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_LINK_USER_MOBILE=#{merLinkUserMobile},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<!-- 更新供应商 -->
+	<update id="updateMerchantProvider" parameterType="Merchant">
+		update MERCHANT
+		<trim prefix="SET" suffixOverrides=",">
+			MER_NAME=#{merName},
+			MER_LINK_USER=#{merLinkUser},
+			MER_LINK_USER_MOBILE=#{merLinkUserMobile},
+			MER_PRO=#{merPro},
+			MER_CITY=#{merCity},
+			MER_ADDS=#{merAdds},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<delete id="batchDelMerchantByMerCodes">
+		delete from MERCHANT
+		where mer_code in
+			<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</delete>
+
+	<!-- 获取外接商户账户支付方式ID -->
+	<select id="findPayWayExtId" parameterType="java.lang.String" resultType="String">
+		select a.id from PAY_WAY_EXTERNAL a
+		  left join PAY_CONFIG b
+			on a.pay_config_id = b.id
+		 where b.pay_type = '0'
+		   and a.mer_code = #{merCode}
+	</select>
+	
+	<!-- 获取自动分配额度信息 -->
+	<select id="findMerAutoAmtInfo" parameterType="java.lang.String" resultType="com.dodopal.users.business.model.MerAutoAmt">
+		select mer_code as merCode,
+		 limit_Threshold as limitThreshold,
+		 auto_Limit_Threshold as autoLimitThreshold
+		from MER_AUTO_AMT 		  
+		 where mer_code = #{merCode}
+	</select>
+		<!-- 获取商户管理员ID -->
+	<select id="findManagerIdByMerCode" parameterType="java.lang.String" resultType="String">
+		select id from merchant_user
+		 where  mer_code = #{merCode}
+		   and  MER_USER_FLG = '1000'
+	</select>
+	
+	<!-- 获取商户扩展表信息 -->
+	<select id="findMerchantExtend" parameterType="java.lang.String" resultType="MerchantExtend">
+		select ID as id ,MER_CODE as merCode ,OLD_MERCHANT_ID as oldMerchantId ,OLD_MERCHANT_TYPE as oldMerchantType from merchant_extend
+		 where  mer_code = #{merCode}
+	</select>
+	
+</mapper>

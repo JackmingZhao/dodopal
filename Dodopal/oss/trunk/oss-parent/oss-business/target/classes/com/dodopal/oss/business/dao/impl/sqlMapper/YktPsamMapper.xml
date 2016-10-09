@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.YktPsamMapper">
+
+	<select id="getMerchantByMerCode" resultType="Merchant" parameterType="java.lang.String">
+		select MER_CODE as merCode, 
+			   MER_NAME as merName
+		  from merchant
+		 where mer_code = #{merCode}
+	</select>
+	
+	<select id="checkPosMerBind" resultType="Boolean" parameterType="java.lang.String">
+		select count(*) from pos_mer_tb t where t.code = #{posCode,jdbcType=VARCHAR} and t.mer_code = #{merCode,jdbcType=VARCHAR}
+	</select>
+	
+<!-- 根据samNo查询psam卡信息 -->
+	<select id="getPsamBySamNo" resultType="YktPsam" parameterType="java.lang.String">
+		select SAMNO    as samNo,
+		       YKTCODE  as yktCode,
+		       YKTNAME  as yktName,
+		       CITYCODE as cityCode,
+		       CITYNAME as cityName,
+		       MERCODE  as merCode,
+		       MERNANME as merName
+		  from YKT_PSAM
+		 where SAMNO = #{samNo}
+	</select>
+
+	<insert id="insertPsamBatch" parameterType="java.util.List">
+		insert into ykt_psam(ID,SAMNO,YKTCODE,YKTNAME,CITYCODE,CITYNAME,MERCODE,MERNANME)
+		select ykt_psam_id_seq.nextval,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select #{item.samNo,jdbcType=VARCHAR},
+			       #{item.yktCode,jdbcType=VARCHAR},#{item.yktName,jdbcType=VARCHAR},
+			       #{item.cityCode,jdbcType=VARCHAR},#{item.cityName,jdbcType=VARCHAR},
+			       #{item.merCode,jdbcType=VARCHAR},#{item.merName,jdbcType=VARCHAR}
+			  from dual
+		</foreach>
+		) a
+	</insert>
+	
+	<insert id="insertSamSigninOffBatch" parameterType="java.util.List">
+		insert into SAMSIGNINOFFTB(ID,YKTCODE,SAMNO,MCHNTID,POSID,POSTYPE,BATCHNO,LIMITTIME,POSICSEQ,POSACCSEQ,POSCOMMSEQ,
+		                           SIGNINFLAG,SIGNINDATE,SIGNOFFFLAG,SIGNOFFDATE,SETTDATE,DOWNLOADFLAG,NEEDDOWNLOAD,BATCHSTEP)
+		select SAMSIGNINOFFTB_ID_SEQ.nextval,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select #{item.yktCode,jdbcType=VARCHAR},#{item.samNo,jdbcType=VARCHAR},
+				   #{item.mchntid,jdbcType=VARCHAR},#{item.posId,jdbcType=VARCHAR},#{item.posType,jdbcType=VARCHAR},
+				   #{item.batchNo,jdbcType=VARCHAR},#{item.limitTime,jdbcType=VARCHAR},
+				   #{item.posIcSeq,jdbcType=VARCHAR},#{item.posAccSeq,jdbcType=VARCHAR},	
+				   #{item.posCommSeq,jdbcType=VARCHAR},#{item.signinFlag,jdbcType=VARCHAR},
+				   #{item.signinDate,jdbcType=VARCHAR},#{item.signoffFlag,jdbcType=VARCHAR},#{item.signoffDate,jdbcType=VARCHAR},
+				   #{item.settDate,jdbcType=VARCHAR},#{item.downLoadFlag,jdbcType=VARCHAR},#{item.needDownLoad,jdbcType=VARCHAR},
+				   #{item.batchStep,jdbcType=VARCHAR}
+			  from dual
+		</foreach>
+		) a
+	</insert>
+
+</mapper>

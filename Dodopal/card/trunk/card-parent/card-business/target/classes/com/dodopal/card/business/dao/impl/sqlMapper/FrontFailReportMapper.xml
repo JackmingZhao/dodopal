@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.FrontFailReportMapper">
+	<select id="queryCrdOrderCountByPrdOrderId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(1) FROM CRD_SYS_LOAD_ORDER T WHERE T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</select>
+	<select id="queryCardSysOrderStatus" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT CRD_ORDER_STATES FROM CRD_SYS_LOAD_ORDER T WHERE T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</select>
+	<update id="updateCardSysOrderByPrdOrderNum" parameterType="java.util.HashMap">
+		UPDATE CRD_SYS_LOAD_ORDER T
+		   SET T.RESP_CODE          = #{RESP_CODE,jdbcType=VARCHAR},
+		       T.CRD_BEFOREORDER_STATES = T.CRD_ORDER_STATES,
+		       T.CRD_ORDER_STATES       = #{CRD_ORDER_STATES,jdbcType=VARCHAR},
+		       T.UPDATE_USER	   = #{UPDATE_USER,jdbcType=VARCHAR},
+		       T.UPDATE_DATE	   = SYSDATE
+		WHERE T.PRO_ORDER_NUM 	   = #{PRO_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+	<update id="queryCardSysOrderNumByPrdOrderNum" parameterType="java.lang.String">
+		SELECT CRD_ORDER_NUM FROM CRD_SYS_LOAD_ORDER T WHERE T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</update>
+	
+</mapper>

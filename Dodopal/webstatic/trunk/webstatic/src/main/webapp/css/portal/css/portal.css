@@ -1,0 +1,11 @@
+a[disabled] {
+	color: gray !important;
+}
+
+.error{ color: #ff0000; font-size: 12px;}
+
+.icon-right{ background: url(images/com_ico.png) no-repeat -378px -325px; width: 17px; height: 14px; display: inline-block; margin-left: 5px;}
+
+.remark{
+	white-space: pre-wrap;
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.PosMapper">
+
+	<insert id="addPos" parameterType="Pos">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select POS_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		POS(ID,CODE,POS_COMPANY_CODE,POS_TYPE_CODE,STATUS,MER_CODE,MER_NAME,CITY_CODE,CITY_NAME,VERSION,SERIAL_NO,UNIT_COST,
+		MAX_TIMES,COMMENTS,BUNDLING_DATE,BIND,PROVINCE_CODE,PROVINCE_NAME,UPDATE_USER,UPDATE_DATE,CREATE_USER,CREATE_DATE)
+		VALUES (#{id,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{posCompanyCode,jdbcType=VARCHAR},
+		#{posTypeCode,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},
+		#{merName,jdbcType=VARCHAR},
+		#{cityCode,jdbcType=VARCHAR},
+		#{cityName,jdbcType=VARCHAR},
+		#{version,jdbcType=VARCHAR},
+		#{serialNo,jdbcType=VARCHAR},
+		#{unitCost,jdbcType=VARCHAR},
+		#{maxTimes,jdbcType=BIGINT},
+		#{comments,jdbcType=VARCHAR},
+		#{bundlingDate,jdbcType=TIMESTAMP},
+		#{bind,jdbcType=VARCHAR},
+		#{provinceCode,jdbcType=VARCHAR},
+		#{provinceName,jdbcType=VARCHAR},
+		#{updateUser,jdbcType=VARCHAR},
+		#{updateDate,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP})
+	</insert>
+
+	<insert id="batchAddPos" parameterType="java.util.List">
+		INSERT INTO POS
+		(ID,CODE,POS_COMPANY_CODE,POS_TYPE_CODE,STATUS,MER_CODE,MER_NAME,CITY_CODE,CITY_NAME,VERSION,SERIAL_NO,UNIT_COST,
+		MAX_TIMES,COMMENTS,BUNDLING_DATE,BIND,PROVINCE_CODE,PROVINCE_NAME,UPDATE_USER,UPDATE_DATE,CREATE_USER,CREATE_DATE)
+		select POS_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.code,jdbcType=VARCHAR},
+			#{item.posCompanyCode,jdbcType=VARCHAR},
+			#{item.posTypeCode,jdbcType=VARCHAR},
+			#{item.status,jdbcType=VARCHAR},
+			#{item.merCode,jdbcType=VARCHAR},
+			#{item.merName,jdbcType=VARCHAR},
+			#{item.cityCode,jdbcType=VARCHAR},
+			#{item.cityName,jdbcType=VARCHAR},
+			#{item.version,jdbcType=VARCHAR},
+			#{item.serialNo,jdbcType=VARCHAR},
+			#{item.unitCost,jdbcType=VARCHAR},
+			#{item.maxTimes,jdbcType=BIGINT},
+			#{item.comments,jdbcType=VARCHAR},
+			#{item.bundlingDate,jdbcType=TIMESTAMP},
+			#{item.bind,jdbcType=VARCHAR},
+			#{item.provinceCode,jdbcType=VARCHAR},
+			#{item.provinceName,jdbcType=VARCHAR},
+			#{item.updateUser,jdbcType=VARCHAR},
+			#{item.updateDate,jdbcType=TIMESTAMP},
+			#{item.createUser,jdbcType=VARCHAR},
+			#{item.createDate,jdbcType=TIMESTAMP}
+			from dual
+		</foreach>
+		) a
+	</insert>
+</mapper>

@@ -1,0 +1,791 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.CrdSysConsOrderMapper">
+
+	<sql id="sqlColumn">t.ID,
+	    t.BLACK_AMT,
+		t.CRD_ORDER_NUM,
+		t.PRO_ORDER_NUM,
+		t.PRO_CODE,
+		t.MER_CODE,
+		t.MER_ORDER_CODE,
+		t.CRD_ORDER_STATES,
+		t.CRD_BEFOREORDER_STATES,
+		t.RESP_CODE,
+		t.USER_CODE,
+		t.USER_ID,
+		t.CITY_CODE,
+		t.YKT_CODE,
+		t.CARD_INNER_NO,
+		t.CARD_FACE_NO,
+		t.ORDER_CARD_NO,
+		t.CARD_TYPE,
+		t.POS_TYPE,
+		t.POS_CODE,
+		t.POS_SEQ,
+		t.BEFBAL,
+		t.TXN_AMT,
+		t.CARD_LIMIT,
+		t.SOURCE,
+		t.TXN_TYPE,
+		t.TXN_SEQ,
+		t.TXN_DATE,
+		t.TXN_TIME,
+		t.CHECK_CARD_NO,
+		t.CHECK_SEND_CARD_DATE,
+		t.CHECK_RES_CARD_DATE,
+		t.CHECK_CARD_POS_CODE,
+		t.CONSUME_CARD_NO,
+		t.CONSUME_CARD_POS_CODE,
+		t.CONSUME_SEND_CARD_DATE,
+		t.CONSUME_RES_CARD_DATE,
+		t.RESULT_SEND_CARD_DATE,
+		t.RESULT_RES_CARD_DATE,
+		t.CHARGE_TYPE,
+		t.METROPASS_TYPE,
+		t.METROPASS_CHARGE_START_DATE,
+		t.METROPASS_CHARGE_END_DATE,
+		t.DOUNKNOW_FLAG,
+		t.CARD_COUNTER,
+		t.SECMAC,
+		t.AFTER_CARD_NOTES,
+		t.BEFORE_CARD_NOTES,
+		t.TRADE_STEP,
+		t.TRADE_STEP_VER,
+		t.TRADE_END_FLAG,
+		t.CREATE_USER,
+		t.CREATE_DATE,
+		t.UPDATE_USER,
+		t.UPDATE_DATE
+	</sql>
+
+	<select id="findCrdSysConsOrderByPage" resultMap="crdSysConsOrderMap"  resultType="CrdSysConsOrder" parameterType="CrdSysConsOrder">
+		select <include refid="sqlColumn"/> from CRD_SYS_CONS_ORDER t
+		<where>
+			<if test="crdOrderNum != null and crdOrderNum !=''">
+			t.CRD_ORDER_NUM like '%'||#{crdOrderNum}||'%'
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+			and t.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proCode != null and proCode !=''">
+			and t.PRO_CODE = #{proCode, jdbcType=VARCHAR}
+			</if>
+			<if test="merCode != null and merCode !=''">
+			and t.MER_CODE = #{merCode, jdbcType=VARCHAR}
+			</if>
+			<if test="merOrderCode != null and merOrderCode !=''">
+			and t.MER_ORDER_CODE = #{merOrderCode, jdbcType=VARCHAR}
+			</if>
+			<if test="crdOrderStates != null and crdOrderStates !=''">
+			and t.CRD_ORDER_STATES = #{crdOrderStates, jdbcType=VARCHAR}
+			</if>
+	
+			<if test="crdBeforeorderStates != null and crdBeforeorderStates !=''">
+			and t.CRD_BEFOREORDER_STATES = #{crdBeforeorderStates, jdbcType=VARCHAR}
+			</if>
+			
+			<if test="posCode != null and posCode !=''">
+			and t.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			
+			<if test="checkCardNo != null and checkCardNo !=''">
+			and t.CHECK_CARD_NO like '%'||#{checkCardNo}||'%'
+			</if>
+			
+			<if test="cardType != null and cardType !=''">
+			and t.CARD_TYPE = #{cardType,jdbcType=VARCHAR}
+			</if>
+			<if test="txnDataTimStart != null and txnDataTimStart !=''">   
+           	  <![CDATA[
+           	 AND t.TXN_DATE>=#{txnDataTimStart}  
+           	 ]]>
+      		</if>
+		    <if test="txnDataTimEnd != null and txnDataTimEnd !=''">   
+		      <![CDATA[
+		        AND t.TXN_DATE <= #{txnDataTimEnd}   
+		      ]]>
+		    </if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and t.TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and t.TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+	
+	<select id="findCrdSysConsOrder" resultMap="crdSysConsOrderMap"  resultType="CrdSysConsOrder" parameterType="CrdSysConsOrder">
+		select <include refid="sqlColumn"/> from CRD_SYS_CONS_ORDER t
+		<where>
+			<if test="crdOrderNum != null and crdOrderNum !=''">
+			t.CRD_ORDER_NUM like '%'||#{crdOrderNum}||'%'
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+			and t.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proCode != null and proCode !=''">
+			and t.PRO_CODE = #{proCode, jdbcType=VARCHAR}
+			</if>
+			<if test="merCode != null and merCode !=''">
+			and t.MER_CODE = #{merCode, jdbcType=VARCHAR}
+			</if>
+			<if test="merOrderCode != null and merOrderCode !=''">
+			and t.MER_ORDER_CODE = #{merOrderCode, jdbcType=VARCHAR}
+			</if>
+			<if test="crdOrderStates != null and crdOrderStates !=''">
+			and t.CRD_ORDER_STATES = #{crdOrderStates, jdbcType=VARCHAR}
+			</if>
+	
+			<if test="crdBeforeorderStates != null and crdBeforeorderStates !=''">
+			and t.CRD_BEFOREORDER_STATES = #{crdBeforeorderStates, jdbcType=VARCHAR}
+			</if>
+			
+			<if test="posCode != null and posCode !=''">
+			and t.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			
+			<if test="checkCardNo != null and checkCardNo !=''">
+			and t.CHECK_CARD_NO like '%'||#{checkCardNo}||'%'
+			</if>
+			
+			<if test="cardType != null and cardType !=''">
+			and t.CARD_TYPE = #{cardType,jdbcType=VARCHAR}
+			</if>
+			<if test="txnDataTimStart != null and txnDataTimStart !=''">   
+           	  <![CDATA[
+           	 AND t.TXN_DATE>=#{txnDataTimStart}  
+           	 ]]>
+      		</if>
+		    <if test="txnDataTimEnd != null and txnDataTimEnd !=''">   
+		      <![CDATA[
+		        AND t.TXN_DATE <= #{txnDataTimEnd}   
+		      ]]>
+		    </if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and t.TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and t.TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+	
+	<select id="checkCrdOrderByPrdId" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		SELECT COUNT(1) FROM CRD_SYS_CONS_ORDER T WHERE
+		T.PRO_ORDER_NUM = #{pro_order_num}
+	</select>
+
+	<select id="queryCrdSysConsOrdercodeSeq" resultType="String">
+		SELECT
+		CRD_SYS_CONS_ORDERCODE_SEQ.Nextval from dual
+	</select>
+
+	<insert id="insertCrdSysConsOrder" parameterType="CrdSysConsOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select CRD_SYS_CONS_ORDER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO CRD_SYS_CONS_ORDER
+		(ID,
+		CRD_ORDER_NUM,
+		PRO_ORDER_NUM,
+		PRO_CODE,
+		MER_CODE,
+		MER_ORDER_CODE,
+		CRD_ORDER_STATES,
+		CRD_BEFOREORDER_STATES,
+		RESP_CODE,
+		USER_CODE,
+		USER_ID,
+		CITY_CODE,
+		YKT_CODE,
+		CARD_INNER_NO,
+		CARD_FACE_NO,
+		ORDER_CARD_NO,
+		CARD_TYPE,
+		POS_TYPE,
+		POS_CODE,
+		POS_SEQ,
+		BEFBAL,
+		TXN_AMT,
+		CARD_LIMIT,
+		SOURCE,
+		TXN_TYPE,
+		TXN_SEQ,
+		TXN_DATE,
+		TXN_TIME,
+		CHECK_CARD_NO,
+		CHECK_SEND_CARD_DATE,
+		CHECK_RES_CARD_DATE,
+		CHECK_CARD_POS_CODE,
+		CONSUME_CARD_NO,
+		CONSUME_CARD_POS_CODE,
+		CONSUME_SEND_CARD_DATE,
+		CONSUME_RES_CARD_DATE,
+		RESULT_SEND_CARD_DATE,
+		RESULT_RES_CARD_DATE,
+		CHARGE_TYPE,
+		METROPASS_TYPE,
+		METROPASS_CHARGE_START_DATE,
+		METROPASS_CHARGE_END_DATE,
+		DOUNKNOW_FLAG,
+		CARD_COUNTER,
+		SECMAC,
+		AFTER_CARD_NOTES,
+		BEFORE_CARD_NOTES,
+		TRADE_STEP,
+		TRADE_STEP_VER,
+		TRADE_END_FLAG,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE)
+		VALUES (#{id, jdbcType=VARCHAR},
+		#{crdOrderNum,jdbcType=VARCHAR},#{proOrderNum,jdbcType=VARCHAR},
+		#{proCode,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},#{merOrderCode,jdbcType=VARCHAR},
+		#{crdOrderStates, jdbcType=VARCHAR},
+		#{crdBeforeorderStates,jdbcType=VARCHAR},#{respCode,jdbcType=VARCHAR},
+		#{userCode, jdbcType=VARCHAR},#{userId,
+		jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},
+		#{cardInnerNo,jdbcType=VARCHAR},#{cardFaceNo,jdbcType=VARCHAR},#{orderCardNo,jdbcType=VARCHAR},
+		#{cardType,jdbcType=INTEGER},#{posType,jdbcType=INTEGER},#{posCode,jdbcType=VARCHAR},
+		#{posSeq,jdbcType=INTEGER},#{befbal, jdbcType=INTEGER},
+		#{txnAmt,jdbcType=INTEGER},#{cardLimit,jdbcType=INTEGER},#{source,jdbcType=INTEGER},
+		#{txnType,jdbcType=INTEGER},#{txnSeq,
+		jdbcType=INTEGER},#{txnDate,jdbcType=VARCHAR},
+		#{txnTime,jdbcType=VARCHAR},#{checkCardNo, jdbcType=VARCHAR},SYSDATE,
+		SYSDATE,#{checkCardPosCode,jdbcType=VARCHAR},#{consumeCardNo,jdbcType=VARCHAR},
+		#{consumeCardPosCode,
+		jdbcType=VARCHAR},#{consumeSendCardDate,jdbcType=DATE},#{consumeResCardDate,jdbcType=DATE},
+		#{resultSendCardDate,
+		jdbcType=DATE},#{resultResCardDate,jdbcType=DATE},#{chargeType,jdbcType=INTEGER},
+		#{metropassType,jdbcType=INTEGER},#{metropassChargeStartDate,jdbcType=DATE},#{metropassChargeEndDate,jdbcType=DATE},
+		#{dounknowFlag,
+		jdbcType=INTEGER},#{cardCounter,jdbcType=VARCHAR},#{secmac,jdbcType=VARCHAR},#{afterCardNotes,jdbcType=VARCHAR},
+		#{beforeCardNotes,
+		jdbcType=VARCHAR},#{tradeStep,jdbcType=VARCHAR},#{tradeStepVer,jdbcType=VARCHAR},
+		#{tradeEndFlag,jdbcType=INTEGER},#{createUser,
+		jdbcType=VARCHAR},SYSDATE,
+		#{updateUser, jdbcType=VARCHAR},SYSDATE)
+	</insert>
+	
+	<insert id="insertCrdSysConsOrderOfflineForV71" parameterType="CrdSysConsOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select CRD_SYS_CONS_ORDER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO CRD_SYS_CONS_ORDER
+		(ID,
+		CRD_ORDER_NUM,
+		PRO_ORDER_NUM,
+		PRO_CODE,
+		MER_CODE,
+		MER_ORDER_CODE,
+		CRD_ORDER_STATES,
+		CRD_BEFOREORDER_STATES,
+		RESP_CODE,
+		USER_CODE,
+		USER_ID,
+		CITY_CODE,
+		YKT_CODE,
+		CARD_INNER_NO,
+		CARD_FACE_NO,
+		ORDER_CARD_NO,
+		CARD_TYPE,
+		POS_TYPE,
+		POS_CODE,
+		POS_SEQ,
+		BEFBAL,
+		BLACK_AMT,
+		TXN_AMT,
+		CARD_LIMIT,
+		SOURCE,
+		TXN_TYPE,
+		TXN_SEQ,
+		TXN_DATE,
+		TXN_TIME,
+		CHECK_CARD_NO,
+		CHECK_SEND_CARD_DATE,
+		CHECK_RES_CARD_DATE,
+		CHECK_CARD_POS_CODE,
+		CONSUME_CARD_NO,
+		CONSUME_CARD_POS_CODE,
+		CONSUME_SEND_CARD_DATE,
+		CONSUME_RES_CARD_DATE,
+		RESULT_SEND_CARD_DATE,
+		RESULT_RES_CARD_DATE,
+		CHARGE_TYPE,
+		METROPASS_TYPE,
+		METROPASS_CHARGE_START_DATE,
+		METROPASS_CHARGE_END_DATE,
+		DOUNKNOW_FLAG,
+		CARD_TAC,
+		CARD_COUNTER,
+		SECMAC,
+		AFTER_CARD_NOTES,
+		BEFORE_CARD_NOTES,
+		TRADE_STEP,
+		TRADE_STEP_VER,
+		TRADE_END_FLAG,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		CARD_LOGIC_TYPE,
+		POS_TRANS_SEQ,
+		KEY_INDEX,
+		APP_ID,
+		OFFLINE_FLAG,
+		SAM_NO)
+		VALUES (#{id, jdbcType=VARCHAR},
+		#{crdOrderNum,jdbcType=VARCHAR},#{proOrderNum,jdbcType=VARCHAR},
+		#{proCode,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},#{merOrderCode,jdbcType=VARCHAR},
+		#{crdOrderStates, jdbcType=VARCHAR},
+		#{crdBeforeorderStates,jdbcType=VARCHAR},#{respCode,jdbcType=VARCHAR},
+		#{userCode, jdbcType=VARCHAR},#{userId,
+		jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},
+		#{cardInnerNo,jdbcType=VARCHAR},#{cardFaceNo,jdbcType=VARCHAR},#{orderCardNo,jdbcType=VARCHAR},
+		#{cardType,jdbcType=INTEGER},#{posType,jdbcType=INTEGER},#{posCode,jdbcType=VARCHAR},
+		#{posSeq,jdbcType=INTEGER},#{befbal, jdbcType=INTEGER},#{blackAmt, jdbcType=INTEGER},
+		#{txnAmt,jdbcType=INTEGER},#{cardLimit,jdbcType=INTEGER},#{source,jdbcType=INTEGER},
+		#{txnType,jdbcType=INTEGER},#{txnSeq,
+		jdbcType=INTEGER},#{txnDate,jdbcType=VARCHAR},
+		#{txnTime,jdbcType=VARCHAR},#{checkCardNo, jdbcType=VARCHAR},SYSDATE,
+		SYSDATE,#{checkCardPosCode,jdbcType=VARCHAR},#{consumeCardNo,jdbcType=VARCHAR},
+		#{consumeCardPosCode,jdbcType=VARCHAR},SYSDATE,SYSDATE,
+		SYSDATE,SYSDATE,#{chargeType,jdbcType=INTEGER},
+		#{metropassType,jdbcType=INTEGER},#{metropassChargeStartDate,jdbcType=DATE},#{metropassChargeEndDate,jdbcType=DATE},
+		#{dounknowFlag,
+		jdbcType=INTEGER},#{cardTac,jdbcType=VARCHAR},#{cardCounter,jdbcType=VARCHAR},#{secmac,jdbcType=VARCHAR},#{afterCardNotes,jdbcType=VARCHAR},
+		#{beforeCardNotes,
+		jdbcType=VARCHAR},#{tradeStep,jdbcType=VARCHAR},#{tradeStepVer,jdbcType=VARCHAR},
+		#{tradeEndFlag,jdbcType=INTEGER},#{createUser,
+		jdbcType=VARCHAR},SYSDATE,
+		#{updateUser, jdbcType=VARCHAR},
+		#{cardLogicType, jdbcType=VARCHAR},#{posTransSeq, jdbcType=VARCHAR},#{keyIndex, jdbcType=VARCHAR},
+		#{appId, jdbcType=VARCHAR},#{offlineFlag, jdbcType=VARCHAR},#{samNo, jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<insert id="insertSupplementOfflineForV71" parameterType="CrdSysSupplement">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select CRD_SYS_SUPPLEMENT_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO CRD_SYS_SUPPLEMENT
+		(ID,
+		CRD_ORDER_NUM,
+		TXN_TYPE,
+		CHECK_YKTMW,
+		CHECK_YKTKEY,
+		CHARGE_YKTMW,
+		CHARGE_KEY,
+		RESULT_YKTMW,
+		TXN_DATE,
+		TXN_TIME,
+		LAST_READ_KEY_TIME,
+		LAST_CHARGE_KEY_TIME,
+		LAST_RESULT_TIME,
+		REQUEST_READ_KEY_COUNT,
+		REQUEST_CHARGE_KEY_COUNT,
+		SEND_RESULT_COUNT,
+		CREATE_USER,
+		CREATE_DATE)
+		VALUES (#{id, jdbcType=INTEGER}, #{crdOrderNum, jdbcType=VARCHAR},
+		#{txnType,jdbcType=INTEGER},
+		#{checkYktmw, jdbcType=VARCHAR}, #{checkYktkey,jdbcType=VARCHAR},#{chargeYktmw,
+		jdbcType=VARCHAR},
+		#{chargeKey, jdbcType=VARCHAR}, #{resultYktmw,jdbcType=VARCHAR},
+		#{txnDate,jdbcType=INTEGER},
+		#{txnTime,
+		jdbcType=VARCHAR},#{lastReadKeyTime,
+		jdbcType=VARCHAR},#{lastChargeKeyTime, jdbcType=VARCHAR},
+		#{lastResultTime, jdbcType=VARCHAR},#{requestReadKeyCount,
+		jdbcType=INTEGER},#{requestChargeKeyCount, jdbcType=INTEGER},
+		#{sendResultCount, jdbcType=INTEGER},#{createUser,
+		jdbcType=VARCHAR},SYSDATE)
+	</insert>
+	
+	
+	<insert id="insertCrdSys100000" parameterType="CrdSys100000">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select CRD_SYS_100000_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO CRD_SYS_100000
+			  (ID,
+			   CRD_ORDER_NUM,
+			   PRD_ORDER_NUM,
+			   PLIVATEMSG,
+			   CARD_NO,
+			   AMT_NEED_RECV,
+			   AMT_RECV,
+			   DIS_TYPE_ONE,
+			   DIS_TYPE_ONE_AMT,
+			   DIS_TYPE_TWO,
+			   DIS_TYPE_TWO_AMT,
+			   DIS_TYPE_THREE,
+			   DIS_TYPE_THREE_AMT,
+			   UNIT_ID,
+			   ACCOUNT_ID,
+			   BATCH_ID,
+			   HOST_SEQ,
+			   DEV_ID,
+			   RESV,
+			   AMT_RECEIVABLE,
+			   USER_DISCOUNT,
+			   SETTL_DISCOUNT,
+			   CREATE_USER,
+			   CREATE_DATE,TXN_DATE,TXN_TIME) 
+			   VALUES (#{id, jdbcType=INTEGER}, #{crdOrderNum, jdbcType=VARCHAR},
+			   #{prdOrderNum, jdbcType=VARCHAR},#{plivatemsg, jdbcType=VARCHAR},#{cardNo, jdbcType=VARCHAR},
+			   #{amtNeedRecv, jdbcType=VARCHAR},#{amtRecv, jdbcType=VARCHAR},#{disTypeOne, jdbcType=VARCHAR},
+			   #{disTypeOneAmt, jdbcType=VARCHAR},#{disTypeTwo, jdbcType=VARCHAR},#{disTypeTwoAmt, jdbcType=VARCHAR},
+			   #{disTypeThree, jdbcType=VARCHAR},#{disTypeThreeAmt, jdbcType=VARCHAR},#{unitId, jdbcType=VARCHAR},
+			   #{accountId, jdbcType=VARCHAR},#{batchId, jdbcType=VARCHAR},#{hostSeq, jdbcType=VARCHAR},
+			   #{devId, jdbcType=VARCHAR},#{resv, jdbcType=VARCHAR},#{amtReceivable, jdbcType=VARCHAR},
+			   #{userDiscount, jdbcType=VARCHAR},#{settlDiscount, jdbcType=VARCHAR},#{createUser, jdbcType=VARCHAR},
+			   SYSDATE,#{txndate, jdbcType=VARCHAR},#{txntime, jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertBjCrdSysConsOrder" parameterType="CrdSysConsOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select CRD_SYS_CONS_ORDER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO CRD_SYS_CONS_ORDER
+		(ID,
+		CRD_ORDER_NUM,
+		PRO_ORDER_NUM,
+		PRO_CODE,
+		MER_CODE,
+		MER_ORDER_CODE,
+		CRD_ORDER_STATES,
+		CRD_BEFOREORDER_STATES,
+		RESP_CODE,
+		USER_CODE,
+		USER_ID,
+		CITY_CODE,
+		YKT_CODE,
+		CARD_INNER_NO,
+		CARD_FACE_NO,
+		ORDER_CARD_NO,
+		CARD_TYPE,
+		POS_TYPE,
+		POS_CODE,
+		POS_SEQ,
+		BEFBAL,
+		TXN_AMT,
+		CARD_LIMIT,
+		SOURCE,
+		TXN_TYPE,
+		TXN_SEQ,
+		TXN_DATE,
+		TXN_TIME,
+		CHECK_CARD_NO,
+		CHECK_SEND_CARD_DATE,
+		CHECK_RES_CARD_DATE,
+		CHECK_CARD_POS_CODE,
+		CONSUME_CARD_NO,
+		CONSUME_CARD_POS_CODE,
+		CONSUME_SEND_CARD_DATE,
+		CONSUME_RES_CARD_DATE,
+		RESULT_SEND_CARD_DATE,
+		RESULT_RES_CARD_DATE,
+		CHARGE_TYPE,
+		METROPASS_TYPE,
+		METROPASS_CHARGE_START_DATE,
+		METROPASS_CHARGE_END_DATE,
+		DOUNKNOW_FLAG,
+		CARD_COUNTER,
+		SECMAC,
+		AFTER_CARD_NOTES,
+		BEFORE_CARD_NOTES,
+		TRADE_STEP,
+		TRADE_STEP_VER,
+		TRADE_END_FLAG,
+		CARD_LOGIC_TYPE,
+		POS_TRANS_SEQ,
+		KEY_INDEX,
+		APP_ID,
+		OFFLINE_FLAG,
+		SAM_NO,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE)
+		VALUES (#{id, jdbcType=VARCHAR},
+		#{crdOrderNum,jdbcType=VARCHAR},#{proOrderNum,jdbcType=VARCHAR},
+		#{proCode,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},#{merOrderCode,jdbcType=VARCHAR},
+		#{crdOrderStates, jdbcType=VARCHAR},
+		#{crdBeforeorderStates,jdbcType=VARCHAR},#{respCode,jdbcType=VARCHAR},
+		#{userCode, jdbcType=VARCHAR},#{userId,
+		jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},
+		#{cardInnerNo,jdbcType=VARCHAR},#{cardFaceNo,jdbcType=VARCHAR},#{orderCardNo,jdbcType=VARCHAR},
+		#{cardType,jdbcType=INTEGER},#{posType,jdbcType=INTEGER},#{posCode,jdbcType=VARCHAR},
+		#{posSeq,jdbcType=INTEGER},#{befbal, jdbcType=INTEGER},
+		#{txnAmt,jdbcType=INTEGER},#{cardLimit,jdbcType=INTEGER},#{source,jdbcType=INTEGER},
+		#{txnType,jdbcType=INTEGER},#{txnSeq,
+		jdbcType=INTEGER},#{txnDate,jdbcType=VARCHAR},
+		#{txnTime,jdbcType=VARCHAR},#{checkCardNo, jdbcType=VARCHAR},SYSDATE,
+		SYSDATE,#{checkCardPosCode,jdbcType=VARCHAR},#{consumeCardNo,jdbcType=VARCHAR},
+		#{consumeCardPosCode,
+		jdbcType=VARCHAR},#{consumeSendCardDate,jdbcType=DATE},#{consumeResCardDate,jdbcType=DATE},
+		#{resultSendCardDate,
+		jdbcType=DATE},#{resultResCardDate,jdbcType=DATE},#{chargeType,jdbcType=INTEGER},
+		#{metropassType,jdbcType=INTEGER},#{metropassChargeStartDate,jdbcType=DATE},#{metropassChargeEndDate,jdbcType=DATE},
+		#{dounknowFlag,
+		jdbcType=INTEGER},#{cardCounter,jdbcType=VARCHAR},#{secmac,jdbcType=VARCHAR},#{afterCardNotes,jdbcType=VARCHAR},
+		#{beforeCardNotes,
+		jdbcType=VARCHAR},#{tradeStep,jdbcType=VARCHAR},#{tradeStepVer,jdbcType=VARCHAR},
+		#{tradeEndFlag,jdbcType=INTEGER},
+		#{cardLogicType,jdbcType=VARCHAR},
+		#{posTransSeq,jdbcType=VARCHAR},
+		#{keyIndex,jdbcType=VARCHAR},
+		#{appId,jdbcType=VARCHAR},
+		#{offlineFlag,jdbcType=VARCHAR},
+		#{samNo,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},SYSDATE,
+		#{updateUser, jdbcType=VARCHAR},SYSDATE)
+	</insert>
+
+	<select id="findCrdSysConsOrderByPrdnum" resultType="CrdSysConsOrder"
+		resultMap="crdSysConsOrderMap" parameterType="String">
+		select
+		ID,
+		CRD_ORDER_NUM,
+		PRO_ORDER_NUM,
+		PRO_CODE,
+		MER_CODE,
+		MER_ORDER_CODE,
+		CRD_ORDER_STATES,
+		CRD_BEFOREORDER_STATES,
+		RESP_CODE,
+		USER_CODE,
+		CITY_CODE,
+		YKT_CODE,
+		CARD_INNER_NO,
+		CARD_FACE_NO,
+		ORDER_CARD_NO,
+		CARD_TYPE,
+		POS_TYPE,
+		POS_CODE,
+		POS_SEQ,
+		BEFBAL,
+		BLACK_AMT,
+		TXN_AMT,
+		CARD_LIMIT,
+		SOURCE,
+		TXN_TYPE,
+		TXN_SEQ,
+		TXN_DATE,
+		TXN_TIME,
+		CHECK_CARD_NO,
+		CHECK_SEND_CARD_DATE,
+		CHECK_RES_CARD_DATE,
+		CHECK_CARD_POS_CODE,
+		CONSUME_CARD_NO,
+		CONSUME_CARD_POS_CODE,
+		CONSUME_SEND_CARD_DATE,
+		CONSUME_RES_CARD_DATE,
+		RESULT_SEND_CARD_DATE,
+		RESULT_RES_CARD_DATE,
+		CHARGE_TYPE,
+		METROPASS_TYPE,
+		METROPASS_CHARGE_START_DATE,
+		METROPASS_CHARGE_END_DATE,
+		DOUNKNOW_FLAG,
+		CARD_COUNTER,
+		SECMAC,
+		AFTER_CARD_NOTES,
+		BEFORE_CARD_NOTES,
+		TRADE_STEP,
+		TRADE_STEP_VER,
+		TRADE_END_FLAG,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE
+		FROM CRD_SYS_CONS_ORDER T
+		WHERE T.PRO_ORDER_NUM = #{prdordernum,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateCrdSysConsOrderByCrdnum" parameterType="CrdSysConsOrder">
+		UPDATE CRD_SYS_CONS_ORDER
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="crdOrderStates != null and crdOrderStates !=''">
+				CRD_ORDER_STATES=#{crdOrderStates},
+			</if>
+			<if test="consumeCardNo != null and consumeCardNo !=''">
+				CONSUME_CARD_NO=#{consumeCardNo},
+			</if>
+			<if test="consumeCardPosCode != null and consumeCardPosCode !=''">
+				CONSUME_CARD_POS_CODE=#{consumeCardPosCode},
+			</if>
+			<if test="tradeStep != null and tradeStep !=''">
+				TRADE_STEP=#{tradeStep},
+			</if>
+			<if test="respCode != null and respCode !=''">
+				RESP_CODE=#{respCode},
+			</if>
+			<if test="tradeStepVer != null and tradeStepVer !=''">
+				TRADE_STEP_VER=#{tradeStepVer},
+			</if>
+			<if test="tradeEndFlag == null or tradeEndFlag ==''">
+				CONSUME_SEND_CARD_DATE=SYSDATE,
+			</if>
+			<if test="tradeEndFlag != null and tradeEndFlag !=''">
+				TRADE_END_FLAG=#{tradeEndFlag},CONSUME_RES_CARD_DATE=SYSDATE,
+			</if>
+			<if test="cardCounter != null and cardCounter !=''">
+				CARD_COUNTER=#{cardCounter},
+			</if>
+			<if test="secmac != null and secmac !=''">
+				SECMAC=#{secmac},
+			</if>
+			<if test="posTransSeq != null and posTransSeq !=''">
+				POS_TRANS_SEQ=#{posTransSeq},
+			</if>
+		</trim>
+		,CRD_BEFOREORDER_STATES = CRD_ORDER_STATES ,UPDATE_DATE = SYSDATE
+		where CRD_ORDER_NUM=#{crdOrderNum} and PRO_ORDER_NUM=#{proOrderNum}
+	</update>
+	
+	<update id="uploadOfflineUpdOrder" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET
+		<if test="blackAmt != null">
+			T.BLACK_AMT = #{blackAmt},
+		</if>
+		<if test="cardTac != null and cardTac !=''">
+			T.CARD_TAC = #{cardTac},
+		</if>
+		<if test="cardCounter != null and cardCounter !=''">
+			T.CARD_COUNTER = #{cardCounter},
+		</if>
+		<if test="consumeCardNo != null and consumeCardNo !=''">
+			T.CONSUME_CARD_NO = #{consumeCardNo},
+		</if>
+		<if test="consumeCardPosCode != null and consumeCardPosCode !=''">
+			T.CONSUME_CARD_POS_CODE = #{consumeCardPosCode},
+		</if>
+		T.CRD_ORDER_STATES = #{crdOrderStates},T.CRD_BEFOREORDER_STATES =
+		CRD_ORDER_STATES,T.UPDATE_USER = #{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE
+		T.CRD_ORDER_NUM = #{crdOrderNum}
+	</update>
+
+	<update id="updateConsOrderChkUpd" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET
+		<if test="blackAmt != null">
+			T.BLACK_AMT = #{blackAmt},
+		</if>
+		<if test="cardTac != null and cardTac !=''">
+			T.CARD_TAC = #{cardTac},
+		</if>
+		T.CRD_ORDER_STATES = #{crdOrderStates},T.CRD_BEFOREORDER_STATES =
+		CRD_ORDER_STATES,T.UPDATE_USER = #{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE
+		T.CRD_ORDER_NUM = #{crdOrderNum}
+	</update>
+	
+	<update id="updateConsOrderForV61Offline" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET
+		<if test="blackAmt != null">
+			T.BLACK_AMT = #{blackAmt},
+		</if>
+		<if test="cardTac != null and cardTac !=''">
+			T.CARD_TAC = #{cardTac},
+		</if>
+		<if test="consumeCardNo != null and consumeCardNo !=''">
+			T.CONSUME_CARD_NO = #{consumeCardNo},
+		</if>
+		<if test="consumeCardPosCode != null and consumeCardPosCode !=''">
+			T.CONSUME_CARD_POS_CODE = #{consumeCardPosCode},
+		</if>
+		<if test="cardCounter != null and cardCounter !=''">
+			T.CARD_COUNTER = #{cardCounter},
+		</if>
+		<if test="tradeStep != null and tradeStep !=''">
+			T.TRADE_STEP = #{tradeStep},
+		</if>
+		<if test="tradeStepVer != null and tradeStepVer !=''">
+			T.TRADE_STEP_VER = #{tradeStepVer},
+		</if>
+		T.CRD_ORDER_STATES = #{crdOrderStates},T.CRD_BEFOREORDER_STATES =CRD_ORDER_STATES,
+		T.CONSUME_SEND_CARD_DATE = SYSDATE,T.CONSUME_RES_CARD_DATE = SYSDATE,
+		T.RESULT_SEND_CARD_DATE = SYSDATE,T.RESULT_RES_CARD_DATE = SYSDATE,
+		T.UPDATE_USER = #{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE
+		T.CRD_ORDER_NUM = #{crdOrderNum}
+	</update>
+
+	<update id="updateSupplementChkUpd" parameterType="CrdSysSupplement">
+		UPDATE
+		CRD_SYS_SUPPLEMENT T
+		SET T.RESULT_YKTMW = #{resultYktmw},
+		<if test="lastResultTime != null">
+			T.LAST_RESULT_TIME = #{lastResultTime},
+		</if>
+		T.SEND_RESULT_COUNT = T.SEND_RESULT_COUNT + 1
+		,T.UPDATE_USER= #{updateUser}
+		,T.UPDATE_DATE = SYSDATE
+		WHERE
+		T.CRD_ORDER_NUM = #{crdOrderNum}
+	</update>
+
+	<update id="updateConsOrderBefore" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET T.CRD_ORDER_STATES =
+		#{crdOrderStates},T.CRD_BEFOREORDER_STATES = CRD_ORDER_STATES,
+		T.RESULT_SEND_CARD_DATE = SYSDATE,T.TRADE_STEP =
+		#{tradeStep},T.TRADE_STEP_VER = #{tradeStepVer},
+		T.UPDATE_USER =
+		#{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE T.CRD_ORDER_NUM =
+		#{crdOrderNum}
+	</update>
+
+	<update id="updateConsOrderAfter" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET T.CRD_ORDER_STATES =
+		#{crdOrderStates},T.CRD_BEFOREORDER_STATES = CRD_ORDER_STATES,
+		T.RESULT_RES_CARD_DATE = SYSDATE,T.TRADE_STEP =
+		#{tradeStep},T.TRADE_STEP_VER = #{tradeStepVer},
+		T.TRADE_END_FLAG =
+		#{tradeEndFlag},T.RESP_CODE = #{respCode},
+		T.UPDATE_USER =
+		#{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE T.CRD_ORDER_NUM =
+		#{crdOrderNum}
+	</update>
+
+	<update id="updateConsOrderFailReport" parameterType="CrdSysConsOrder">
+		UPDATE
+		CRD_SYS_CONS_ORDER T
+		SET T.CRD_ORDER_STATES = #{crdOrderStates},T.CRD_BEFOREORDER_STATES
+		= CRD_ORDER_STATES,
+		T.RESULT_SEND_CARD_DATE = SYSDATE,
+		<if test="tradeStep != null">
+			T.TRADE_STEP = #{tradeStep},
+		</if>
+		<if test="tradeStepVer != null">
+			T.TRADE_STEP_VER = #{tradeStepVer},
+		</if>
+		<if test="respCode != null">
+			T.RESP_CODE = #{respCode},
+		</if>
+		T.UPDATE_USER = #{updateUser},T.UPDATE_DATE = SYSDATE
+		WHERE
+		T.PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+</mapper>

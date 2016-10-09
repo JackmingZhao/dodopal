@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.GroupinfotbMapper">
+
+	<select id="findGroupinfotb" resultType="Groupinfotb">
+		 select 
+                t.groupid         		 	 as groupid,
+                t.zh              			 as zh,
+                t.address               	 as address,
+               	t.auto_Add_Arrive_Max_Limit  as autoAddArriveMaxLimit,
+                t.auto_Sum_Proxy_Max_Limit   as autoSumProxyMaxLimit,
+                t.bal               		 as bal,
+                t.cityno                     as cityno,
+                t.czzbs                      as czzbs,
+                t.edittime        			 as edittime,
+                t.edituser              	 as edituser,
+                t.groupname    				 as groupname,
+                t.grouptypeid        		 as grouptypeid,
+                t.identityid         		 as identityid,
+                t.isinfo           			 as isinfo,
+                t.lastipaddreess             as lastipaddreess,
+                t.lastlogintime              as lastlogintime,
+                t.lastloginuserid            as lastloginuserid,
+                t.lxmobile             		 as lxmobile,
+                t.lxperson              	 as lxperson,
+                t.lxtel                		 as lxtel,
+                t.point       				 as point,
+                t.rateamt       			 as rateamt,
+                t.registtime 				 as registtime,
+                t.remarks  					 as remarks,
+                t.starttime 				 as starttime,
+                t.status               		 as status,
+                t.topayedupwd                as topayedupwd,
+                t.xfzbs         			 as xfzbs,
+                t.zipcode             		 as zipcode
+           from icpay.groupinfotb  t
+		 where
+	 		t.cityno = #{cityno} and (t.trans_flag != '0' or t.trans_flag is null)
+	</select>
+	<select id="findGroupinfotbALL" resultType="Groupinfotb">
+		 select 
+                t.groupid         		 	 as groupid,
+                t.zh              			 as zh,
+                t.address               	 as address,
+               	t.auto_Add_Arrive_Max_Limit  as autoAddArriveMaxLimit,
+                t.auto_Sum_Proxy_Max_Limit   as autoSumProxyMaxLimit,
+                t.bal               		 as bal,
+                t.cityno                     as cityno,
+                t.czzbs                      as czzbs,
+                t.edittime        			 as edittime,
+                t.edituser              	 as edituser,
+                t.groupname    				 as groupname,
+                t.grouptypeid        		 as grouptypeid,
+                t.identityid         		 as identityid,
+                t.isinfo           			 as isinfo,
+                t.lastipaddreess             as lastipaddreess,
+                t.lastlogintime              as lastlogintime,
+                t.lastloginuserid            as lastloginuserid,
+                t.lxmobile             		 as lxmobile,
+                t.lxperson              	 as lxperson,
+                t.lxtel                		 as lxtel,
+                t.point       				 as point,
+                t.rateamt       			 as rateamt,
+                t.registtime 				 as registtime,
+                t.remarks  					 as remarks,
+                t.starttime 				 as starttime,
+                t.status               		 as status,
+                t.topayedupwd                as topayedupwd,
+                t.xfzbs         			 as xfzbs,
+                t.zipcode             		 as zipcode
+           from icpay.groupinfotb  t
+		 where
+	 		t.cityno = #{cityno} and t.trans_flag = '0'
+	</select>
+	<select id="findGroupinfoByCityNO" resultType="Groupinfotb"  parameterType="java.lang.String">
+		 select 
+	                t.groupid         		 	 as groupid,
+	                t.zh              			 as zh,
+	                t.address               	 as address,
+	               	t.auto_Add_Arrive_Max_Limit  as autoAddArriveMaxLimit,
+	                t.auto_Sum_Proxy_Max_Limit   as autoSumProxyMaxLimit, 
+	                t.bal               		 as bal,
+	                t.cityno                     as cityno,
+	                t.czzbs                      as czzbs,
+	                t.edittime        			 as edittime,
+	                t.edituser              	 as edituser,
+	                t.groupname    				 as groupname,
+	                t.grouptypeid        		 as grouptypeid,
+	                t.identityid         		 as identityid,
+	                t.isinfo           			 as isinfo,
+	                t.lastipaddreess             as lastipaddreess,
+	                t.lastlogintime              as lastlogintime,
+	                t.lastloginuserid            as lastloginuserid,
+	                t.lxmobile             		 as lxmobile,
+	                t.lxperson              	 as lxperson,
+	                t.lxtel                		 as lxtel,
+	                t.point       				 as point,
+	                t.rateamt       			 as rateamt,
+	                t.registtime 				 as registtime,
+	                t.remarks  					 as remarks,
+	                t.starttime 				 as starttime,
+	                t.status               		 as status,
+	                t.topayedupwd                as topayedupwd,
+	                t.xfzbs         			 as xfzbs,
+	                t.zipcode             		 as zipcode
+	           from icpay.groupinfotb  t
+	        <where>
+			<if test="groupid != null and groupid != '' ">
+				t.groupid = #{groupid}
+			</if>
+			</where>
+	</select>
+	
+	<select id="findGroupuserinfoByGroupId" resultType="Groupuserinfotb" parameterType="java.lang.String">
+		 select 
+                t.loginuserid         		 	 as loginuserid,
+                t.answer              			 as answer,
+                t.createtime               	     as createtime,
+               	t.edittime      				 as edittime,
+                t.edituser      				 as edituser,
+                t.edituserid               		 as edituserid,
+                t.email                    		 as email,
+                t.groupid                     	 as groupid,
+                t.loginname        				 as loginname,
+                t.lxmobile              		 as lxmobile,
+                t.lxperson    					 as lxperson,
+                t.lxtel        					 as lxtel,
+                t.operaction         			 as operaction,
+                t.password           			 as password,
+                t.question             			 as question,
+                t.remarks              			 as remarks,
+                t.status            			 as status,
+                t.userqx             			 as userqx
+           from icpay.Groupuserinfotb  t
+          <where>
+		 <if test="groupid != null and groupid !=''">
+	  		and t.groupid =#{groupid}
+		 </if>
+		  </where>
+	</select>
+	
+		<select id="findGroupuserinfoByList" resultType="Groupuserinfotb" parameterType="java.lang.String">
+		 select 
+                t.loginuserid         		 	 as loginuserid,
+                t.answer              			 as answer,
+                t.createtime               	     as createtime,
+               	t.edittime      				 as edittime,
+                t.edituser      				 as edituser,
+                t.edituserid               		 as edituserid,
+                t.email                    		 as email,
+                t.groupid                     	 as groupid,
+                t.loginname        				 as loginname,
+                t.lxmobile              		 as lxmobile,
+                t.lxperson    					 as lxperson,
+                t.lxtel        					 as lxtel,
+                t.operaction         			 as operaction,
+                t.password           			 as password,
+                t.question             			 as question,
+                t.remarks              			 as remarks,
+                t.status            			 as status,
+                t.userqx             			 as userqx
+           from icpay.Groupuserinfotb  t
+          <where>
+		 <if test="groupid != null and groupid !=''">
+	  		and t.groupid =#{groupid}
+		 </if>
+		  </where>
+	</select>
+	
+	
+	<!-- <select id="findGroupinproxyByGroupId" resultType="Groupinproxytb" parameterType="java.lang.String">
+		 select 
+                t.proxyid         		 	 as proxyid,
+                t.groupid					 as groupid
+           from icpay.groupinproxytb  t
+         <where>
+		 <if test="groupid != null and groupid !=''">
+	  		and t.groupid =#{groupid}
+		 </if>
+		 </where>
+	</select> -->
+	
+	<select id="findGroupposinfoByGroupId" resultType="Groupposinfotb" parameterType="java.lang.String">
+		 select 
+                t.groupid         		 	 as groupid,
+                t.posid              		 as posid,
+                t.addtime               	 as addtime,
+               	t.adddate     			     as adddate,
+                t.remarks      				 as remarks,
+                t.isdistribution             as isdistribution
+           from icpay.Groupposinfotb  t
+          <where>
+		 <if test="groupid != null and groupid !=''">
+	  		and t.groupid =#{groupid}
+		 </if>
+		 </where>
+	</select>
+
+<!-- 更新老系统迁移标志，0已迁移，1未迁移 -->
+<update id="updateTransFlag" parameterType="java.lang.String">
+	update icpay.groupinfotb set trans_flag='0'
+	where groupid=#{groupid}
+</update>
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.VUserInfoMapper">
+	<resultMap type="VUserInfo" id="vuserInfoResultMapper">
+		<id property="id" column="ID" />  
+		<result property="logName" column="LOGIN_NAME" />
+		<result property="nickName" column="NICK_NAME" />
+		<result property="source" column="SOURCE" />
+	</resultMap>
+</mapper>

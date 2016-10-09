@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="card-web">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="card-business-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/card-business/card-business">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="card-api-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/card-api/card-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="card-delegate-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/card-delegate/card-delegate">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dodopal-common-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dodopal-common/dodopal-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dodopal-hessian-0.0.5-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dodopal-hessian/dodopal-hessian">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="card-web"/>
+        <property name="java-output-path" value="/card-web/target/classes"/>
+    </wb-module>
+</project-modules>

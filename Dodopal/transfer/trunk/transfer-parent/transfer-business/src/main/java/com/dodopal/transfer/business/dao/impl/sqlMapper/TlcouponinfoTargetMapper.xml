@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.TlcouponinfoTargetMapper">
+
+	<insert id="addTlcouponinfoTarget" parameterType="TlcouponinfoTarget">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select tlcouponinfo_id_seq.NEXTVAL from dual
+   		</selectKey>
+		insert into TLCOUPONINFO 
+			(ID,
+			ACTIVEID,	
+			COUPONCODE,	
+			COUPON_ACCOUNT_CODE	,
+			MER_CODE,	
+			SORDERID,	
+			SORDERSTATES,
+			CORDERID,	
+			CORDERSTATES,
+			USER_CODE,	
+			STATUS,
+			AMT,	
+			BORNDATE,	
+			BORNTIME,	
+			FINISHDATE,	
+			FINISHTIME,	
+			UPDATEDATE,	
+			UPDATETIME,	
+			UPDATEUSER,	
+			REMARKS,		
+			RESERVEVAR,	
+			RESERVECHA,	
+			RESERVENUM,	
+			RESERVENDATE,
+			RESERVENTIME,
+			RESERVEDATE,	
+			OVERDUESTATUS,	
+			OVERDUETIME
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+			#{activeid, jdbcType=VARCHAR},
+			#{couponcode, jdbcType=VARCHAR},
+			#{couponAccountcode, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR},
+			#{sorderid, jdbcType=VARCHAR}, 
+			#{sorderstates, jdbcType=VARCHAR}, 
+			#{corderid, jdbcType=VARCHAR}, 
+			#{corderstates, jdbcType=VARCHAR}, 
+			#{userCode, jdbcType=VARCHAR}, 
+			#{status, jdbcType=VARCHAR},
+			#{amt, jdbcType=DECIMAL}, 
+			#{borndate, jdbcType=DECIMAL}, 
+			#{borntime, jdbcType=DECIMAL}, 
+			#{finishdate, jdbcType=DECIMAL}, 
+			#{finishtime, jdbcType=DECIMAL}, 
+			#{updatedate, jdbcType=DECIMAL}, 
+			#{updatetime, jdbcType=DECIMAL}, 
+			#{updateuser, jdbcType=VARCHAR}, 
+			#{remarks, jdbcType=VARCHAR}, 
+			#{reservevar, jdbcType=VARCHAR}, 
+			#{reservecha, jdbcType=VARCHAR}, 
+			#{reservenum, jdbcType=DECIMAL},
+			#{reservendate, jdbcType=DECIMAL},
+			#{reserventime, jdbcType=DECIMAL},
+			#{reservedate, jdbcType=DATE},
+			#{overduestatus, jdbcType=VARCHAR},
+			#{overduetime, jdbcType=DECIMAL}
+			)
+	</insert>
+</mapper>

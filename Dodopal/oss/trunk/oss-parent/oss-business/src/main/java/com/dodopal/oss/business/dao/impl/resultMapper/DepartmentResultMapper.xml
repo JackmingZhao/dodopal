@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.DepartmentMapper">
+	<resultMap type="Department" id="departmentResultMap">
+		<result property="id" column="ID" />
+		<result property="depCode" column="DEP_CODE" />
+		<result property="depName" column="DEP_NAME" />
+		<result property="chargeId" column="CHARGE_ID" />
+		<result property="chargeName" column="NAME" />
+		<result property="remark" column="REMARK" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+</mapper>

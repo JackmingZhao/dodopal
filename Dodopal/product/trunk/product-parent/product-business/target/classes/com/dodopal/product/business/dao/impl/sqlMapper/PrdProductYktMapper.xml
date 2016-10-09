@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.PrdProductYktMapper">
+
+	<!-- 按条件查询一卡通产品列表' -->
+	<select id="findPrdProductYkt" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="PrdProductYkt">
+		select 
+		t.ID,
+		t.CREATE_USER,
+		t.CREATE_DATE,
+		t.UPDATE_USER,
+		t.UPDATE_DATE,
+		t.PRO_CODE,
+		t.PRO_NAME,
+		t.YKT_CODE,
+		y.YKT_NAME,
+		t.CITYID,
+		c.CITYNAME,
+		t.PRO_PRICE,
+		t.PRO_STATUS,
+		t.REMARK
+		from PRD_PRODUCT_YKT t left join PRD_YKT_INFO y on y.YKT_CODE = t.YKT_CODE  left join OSS_CITY_INFO c on c.CITYCODE = t.CITYID
+		where	 t.PRO_TYPE = '0'
+       		<if test="proCode != null and proCode !=''">   
+           	 AND t.PRO_CODE = #{proCode}
+       		</if>
+       		<if test="proName != null and proName !=''">   
+           	 AND t.PRO_NAME = #{proName}
+       		</if>
+			<if test="yktCode != null and yktCode !=''">   
+           	 AND t.YKT_CODE = #{yktCode}
+       		</if>
+       		<if test="cityId != null and cityId !=''">   
+           	 AND t.CITYID = #{cityId}
+       		</if>
+       		<if test="proPrice != -1 ">   
+           	 AND t.PRO_PRICE = #{proPrice}
+       		</if>       		
+       		<if test="proStatus != null and proStatus !=''">   
+           	 AND t.PRO_STATUS = #{proStatus}
+       		</if>
+    	ORDER by t.id DESC 
+	</select>
+	
+	<!-- 保存一卡通充值产品 -->
+	<insert id="insertPrdProductYkt" parameterType="PrdProductYkt">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select PRD_PRODUCT_YKT_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+   		insert into PRD_PRODUCT_YKT
+   		(ID,
+   		CREATE_USER,
+   		CREATE_DATE,
+   		PRO_CODE,
+   		PRO_NAME,
+   		YKT_CODE,
+   		CITYID,
+   		PRO_PRICE,
+   		PRO_STATUS,
+   		REMARK,
+   		PRO_TYPE
+   		)
+   		values (
+   			#{id, jdbcType=VARCHAR},
+   			#{createUser,jdbcType=VARCHAR},
+			sysdate,
+   			#{proCode, jdbcType=VARCHAR}, 
+		 	#{proName, jdbcType=VARCHAR}, 
+			#{yktCode, jdbcType=VARCHAR}, 
+			#{cityId, jdbcType=VARCHAR}, 
+			#{proPrice, jdbcType=VARCHAR}, 
+			#{proStatus, jdbcType=VARCHAR}, 
+			#{remark, jdbcType=VARCHAR},
+			#{proType, jdbcType=VARCHAR}
+   		)
+	</insert>
+	
+	<!-- 修改一卡通充值产品,'用户只能修改备注' -->
+	<update id="updatePrdProductYkt" parameterType="PrdProductYkt" >
+		update PRD_PRODUCT_YKT t set
+		    t.REMARK=#{remark, jdbcType=VARCHAR},
+			t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			t.UPDATE_DATE=sysdate
+			where t.PRO_CODE=#{proCode}
+	</update>
+	
+	
+	<!-- 检查一卡通充值产品是否存在 -->
+	<select id="checkExist" resultType="boolean" parameterType="PrdProductYkt">
+		select count(1) from PRD_PRODUCT_YKT
+		<where>
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="cityId != null and cityId !=''">
+				and CITYID = #{cityId}
+			</if>
+			<if test="proPrice != null and proPrice !='' ">
+				and PRO_PRICE = #{proPrice}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取一卡通产品sequences -->
+	<select id="getProCodeSeq" resultType="String">
+		select PRD_PRODUCT_YKT_ID_SEQ.NEXTVAL from dual
+	</select>
+	
+	
+	<!-- 获取一卡通业务城市名称 -->
+	<select id="getCityName" resultType="String" parameterType="java.lang.String">
+		select t.CITYNAME from OSS_CITY_INFO t where t.CITYCODE = #{cityId}
+	</select>
+	
+	
+	<!-- 批量上/下架一卡通充值产品 -->
+	<update id="updatePrdProductYktStatus">
+		update PRD_PRODUCT_YKT t set
+		t.PRO_STATUS = #{proStatus},t.UPDATE_DATE=sysdate,t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.PRO_CODE in
+    	<foreach collection="proCodes" item= "code" index ="index"  open= "(" close =")" separator=",">
+			#{code}
+	    </foreach>
+	</update>
+	
+	
+	
+	<!-- 按条件查询一卡通产品列表'-->
+	<select id="findPrdProductYktListPage" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="PrdProductYktQuery">
+		select 
+		t.ID,
+		t.CREATE_USER,
+		t.CREATE_DATE,
+		t.UPDATE_USER,
+		t.UPDATE_DATE,
+		t.PRO_CODE,
+		t.PRO_NAME,
+		t.YKT_CODE,
+		y.YKT_NAME,
+		t.CITYID,
+		c.CITYNAME,
+		t.PRO_PRICE,
+		t.PRO_STATUS,
+		t.REMARK,
+		y.YKT_RECHARGE_RATE as proRate,
+		trunc(((nvl(t.PRO_PRICE,0)/100)*(1-nvl(y.YKT_RECHARGE_RATE/1000,0)))*100) as proPayPrice
+		from PRD_PRODUCT_YKT t left join PRD_YKT_INFO y on y.YKT_CODE = t.YKT_CODE  left join OSS_CITY_INFO c on c.CITYCODE = t.CITYID
+		where	 t.PRO_TYPE = '0'
+       		<if test="proCode != null and proCode !=''">   
+           	 AND t.PRO_CODE = #{proCode}
+       		</if>
+       		<if test="proName != null and proName !=''">   
+           	 AND t.PRO_NAME like '%'||#{proName}||'%'
+       		</if>
+			<if test="yktCode != null and yktCode !=''">   
+           	 AND t.YKT_CODE = #{yktCode}
+       		</if>
+       		<if test="cityId != null and cityId !=''">   
+           	 AND t.CITYID = #{cityId}
+       		</if>
+       		<if test="proPrice != -1 ">   
+           	 AND t.PRO_PRICE = #{proPrice}
+       		</if>       		
+       		<if test="proStatus != null and proStatus !=''">   
+           	 AND t.PRO_STATUS = #{proStatus}
+       		</if>
+    	ORDER by t.id DESC 
+	</select>
+	
+	<select id="getCountForIcdcPrductExportExcel" resultType="int" parameterType="PrdProductYktQuery">
+		select count(*)
+		from PRD_PRODUCT_YKT t left join PRD_YKT_INFO y on y.YKT_CODE = t.YKT_CODE  left join OSS_CITY_INFO c on c.CITYCODE = t.CITYID
+		where	 t.PRO_TYPE = '0'
+       		<if test="proCode != null and proCode !=''">   
+           	 AND t.PRO_CODE = #{proCode}
+       		</if>
+       		<if test="proName != null and proName !=''">   
+           	 AND t.PRO_NAME like '%'||#{proName}||'%'
+       		</if>
+			<if test="yktCode != null and yktCode !=''">   
+           	 AND t.YKT_CODE = #{yktCode}
+       		</if>
+       		<if test="cityId != null and cityId !=''">   
+           	 AND t.CITYID = #{cityId}
+       		</if>
+       		<if test="proPrice != -1 ">   
+           	 AND t.PRO_PRICE = #{proPrice}
+       		</if>       		
+       		<if test="proStatus != null and proStatus !=''">   
+           	 AND t.PRO_STATUS = #{proStatus}
+       		</if>
+	</select>
+	
+	<select id="getListForIcdcPrductExportExcel" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="PrdProductYktQuery">
+		select 
+		t.ID,
+		a.nick_name as CREATE_USER,
+		t.CREATE_DATE,
+		b.nick_name as UPDATE_USER,
+		t.UPDATE_DATE,
+		t.PRO_CODE,
+		t.PRO_NAME,
+		t.YKT_CODE,
+		y.YKT_NAME,
+		t.CITYID,
+		c.CITYNAME,
+		t.PRO_PRICE,
+		t.PRO_STATUS,
+		t.REMARK,
+		y.YKT_RECHARGE_RATE as proRate,
+		trunc(((nvl(t.PRO_PRICE,0)/100)*(1-nvl(y.YKT_RECHARGE_RATE/1000,0)))*100) as proPayPrice
+		from PRD_PRODUCT_YKT t 
+		left join PRD_YKT_INFO y on y.YKT_CODE = t.YKT_CODE  
+		left join OSS_CITY_INFO c on c.CITYCODE = t.CITYID
+		left join v_user_info a on t.CREATE_USER=a.id 
+		left join v_user_info b on t.UPDATE_USER=b.id
+		where	 t.PRO_TYPE = '0'
+       		<if test="proCode != null and proCode !=''">   
+           	 AND t.PRO_CODE = #{proCode}
+       		</if>
+       		<if test="proName != null and proName !=''">   
+           	 AND t.PRO_NAME like '%'||#{proName}||'%'
+       		</if>
+			<if test="yktCode != null and yktCode !=''">   
+           	 AND t.YKT_CODE = #{yktCode}
+       		</if>
+       		<if test="cityId != null and cityId !=''">   
+           	 AND t.CITYID = #{cityId}
+       		</if>
+       		<if test="proPrice != -1 ">   
+           	 AND t.PRO_PRICE = #{proPrice}
+       		</if>       		
+       		<if test="proStatus != null and proStatus !=''">   
+           	 AND t.PRO_STATUS = #{proStatus}
+       		</if>
+    	ORDER by t.id DESC 
+	</select>
+	
+	<!-- 根据产品编号查询一卡通充值产品信息 -->
+	<select id="findPrdProductYktByProCode" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="java.lang.String">
+		select 
+		t.ID,
+		a.nick_name as CREATE_USER,
+		t.CREATE_DATE,
+		b.nick_name as UPDATE_USER,
+		t.UPDATE_DATE,
+		t.PRO_CODE,
+		t.PRO_NAME,
+		t.YKT_CODE,
+		y.YKT_NAME,
+		t.CITYID,
+		c.CITYNAME,
+		t.PRO_PRICE,
+		t.PRO_STATUS,
+		t.REMARK,
+		y.YKT_RECHARGE_RATE as proRate,
+		trunc(((nvl(t.PRO_PRICE,0)/100)*(1-nvl(y.YKT_RECHARGE_RATE/1000,0)))*100) as proPayPrice
+		from PRD_PRODUCT_YKT t
+		 left join PRD_YKT_INFO y on y.YKT_CODE = t.YKT_CODE  
+		 left join OSS_CITY_INFO c on c.CITYCODE = t.CITYID
+		 left join v_user_info a on t.CREATE_USER=a.id 
+		 left join v_user_info b on t.UPDATE_USER=b.id
+		where t.PRO_CODE = #{proCode}
+		  and t.PRO_TYPE = '0'
+	</select>
+	
+	<!-- 基于城市查询公交卡充值产品 -->
+	<select id="findAvailableIcdcProductsInCity" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="java.lang.String">
+		select t.PRO_CODE,t.PRO_NAME,t.PRO_PRICE,t.YKT_CODE,oc.CITYNAME FROM PRD_PRODUCT_YKT t,oss_city_info oc where t.PRO_STATUS='0' AND t.PRO_TYPE = '0' and oc.citycode = t.cityid 
+		<if test="cityId != null and cityId !=''">   
+           and t.CITYID = #{cityId}
+       	</if>
+		 ORDER by t.PRO_PRICE 
+	</select>
+	
+		<!-- 基于城市查询公交卡充值产品 -->
+	<select id="getAvailableProductsByCity" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="java.lang.String" >
+		SELECT PRO_CODE,
+       		   PRO_NAME,
+               PRO_PRICE,
+               CITYID
+          FROM PRD_PRODUCT_YKT
+         where PRO_STATUS = '0'
+           AND PRO_TYPE = '0'
+           AND CITYID = #{cityId}
+      ORDER by PRO_PRICE
+	</select>
+	
+	<!-- 基于城市查询公交卡充值产品 （分页） -->
+	<select id="findAvailableIcdcProductsInCityByPage" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="java.lang.String">
+		select t.PRO_CODE,t.PRO_NAME,t.PRO_PRICE,t.YKT_CODE,oc.CITYNAME FROM PRD_PRODUCT_YKT t,oss_city_info oc where t.PRO_STATUS='0' AND t.PRO_TYPE = '0' AND oc.citycode = t.cityid AND t.CITYID = #{cityId}   ORDER by t.PRO_PRICE 
+	</select>
+	
+	<!-- 基于城市查询公交卡充值产品 -->
+	<select id="findAvailableIcdcProductsForMerchant" resultType="PrdProductYkt" resultMap="prdProductYktResultMap">
+		select 
+		t.pro_code,
+		t.pro_name,
+		t.pro_price,
+		t.ykt_code,
+		t.cityid,
+		(case m.rate_type
+	      when '1' then (t.pro_price/100-m.rate)*100
+	      when '2' then ceil(((nvl(t.pro_price,0)/100)*(1-nvl(m.rate/1000,0)))*100)
+	      end
+	     ) as proPayPrice,
+		oc.cityname,
+		py.ykt_name 
+		from prd_product_ykt t,mer_bus_rate m,oss_city_info oc,prd_ykt_info py 
+		where t.ykt_code = m.provider_code and oc.citycode = t.cityid and t.ykt_code = py.ykt_code
+		and t.pro_status='0' and t.pro_type = '0' and m.mer_code=#{merchantNum} and m.activate='0' and m.rate_code='01'
+		<if test="cityId != null and cityId !=''">   
+           and t.cityid = #{cityId}
+       	</if>
+       	<if test="yktCode != null and yktCode !=''">   
+           and t.ykt_code = #{yktCode}
+       	</if>
+        ORDER by t.PRO_PRICE 
+	</select>
+	
+	<!-- 基于城市查询公交卡充值产品(分页) -->
+	<select id="findAvailableIcdcProductsForMerchantByPage" resultType="PrdProductYkt" resultMap="prdProductYktResultMap" parameterType="PrdProductYktQuery">
+	select * from (
+	select distinct t.pro_code,
+	t.pro_name,
+	t.pro_price,
+	t.ykt_code,
+	t.cityid,
+	m.rate_type,
+	(case m.rate_type
+	when '1' then (t.pro_price/100-m.rate)*100
+	when '2' then ceil(((nvl(t.pro_price,0)/100)*(1-nvl(m.rate/1000,0)))*100)
+	end
+	) as proPayPrice,
+	oc.cityname,
+	py.ykt_name
+	from prd_product_ykt t
+	inner join mer_bus_rate m
+	on t.ykt_code = m.provider_code
+	and m.activate = '0'
+	and m.rate_code = '01'
+	and t.pro_status = '0'
+	and t.pro_type = '0'
+	and t.cityid = #{cityId}
+	and m.mer_code = #{merCode}
+	left outer join oss_city_info oc on oc.citycode = t.cityid
+	left outer join prd_ykt_info py on py.cityid = t.cityid
+	union all
+	select distinct t.pro_code,
+	t.pro_name,
+	t.pro_price,
+	t.ykt_code,
+	t.cityid,
+	m.rate_type,
+	(case m.rate_type
+	when '1' then (t.pro_price/100-m.rate)*100
+	when '2' then ceil(((nvl(t.pro_price,0)/100)*(1-nvl(m.rate/1000,0)))*100)
+	end
+	) as proPayPrice,
+	oc.cityname,
+	py.ykt_name
+	from prd_product_ykt t
+	inner join mer_bus_rate m
+	on t.ykt_code = m.provider_code
+	and m.activate = '0'
+	and m.rate_code = '01'
+	inner join merchant T1
+	on T1.MER_PARENT_CODE = m.mer_code
+	inner join merchant T2
+	on T2.MER_CODE = T1.MER_CODE
+	and T2.mer_code = #{merCode}
+	left outer join oss_city_info oc on oc.citycode = t.cityid
+	left outer join prd_ykt_info py on py.cityid = t.cityid
+	where t.pro_status = '0'
+	and t.pro_type = '0'
+	and t.cityid = #{cityId}
+	)tt
+	ORDER by tt.PRO_PRICE 
+	</select>
+	
+	<!-- 一卡通充值 流程，产品合法性验证    add by shenxiang -->
+	<select id="getProductInfoForIcdcRecharge" resultType="PrdProductYktInfoForIcdcRecharge" parameterType="java.lang.String">
+	    select 
+	           t1.pro_code           as proCode,
+	           t1.pro_name           as proName,
+	           t1.cityId             as cityCode,
+	           t1.ykt_code           as yktCode,
+	           t1.pro_price          as proPrice,
+	           t1.pro_status         as proStatus
+	      from prd_product_ykt t1
+		 where t1.pro_code = #{proCode}
+	</select>
+	
+	<select id="getProductInfoByCityId" resultType = "PrdProductYktInfoForIcdcRecharge" parameterType="java.lang.String">
+	    select 
+	           t1.pro_code           as proCode,
+	           t1.pro_name           as proName,
+	           t1.cityId             as cityCode,
+	           t1.ykt_code           as yktCode
+		from PRD_PRODUCT_YKT t1
+		where pro_type = '1' and cityid = #{cityid}
+	</select>
+	
+    <!-- 03终端运营参数（机具运营参数）  -->
+	<select id="findTerminalParameter" resultType="com.dodopal.api.card.dto.TerminalParameter" parameterType="java.lang.String">
+		SELECT t.SAMNO samno,t.UNITID unitid,t.SENDUNITID sendunitid,t.RECEUNITID receunitid,
+		t.MCHNTCODE mchntcode,t.MCHNTID mchntid,t.MCHNTNAME mchntname,t.NETNAME netname,t.POSID posid,
+		t.FHTXNCRITICAL fhtxncritical,t.KEYTYPE keytype,t.DATAUPMODE dataupmode,t.TIMINGUPMODE timingupmode,t.REFUNDTYPE refundtype
+		 FROM TERMINAL t  WHERE t.SAMNO = #{psamno,jdbcType=VARCHAR}
+	</select>
+</mapper>

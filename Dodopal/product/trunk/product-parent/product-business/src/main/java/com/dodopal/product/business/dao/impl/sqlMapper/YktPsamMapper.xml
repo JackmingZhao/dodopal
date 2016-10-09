@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.YktPsamMapper">
+
+	<!-- 查询psam卡信息 分页 -->
+	<select id="findYktPsamByPage" resultType="YktPsam"
+		parameterType="YktPsamQuery">
+		select
+		t1.ID              as id,
+		t1.SAMNo           as samNo,
+		t1.YKTCODE         as yktCode,
+		t1.YKTNAME         as yktName,
+		t1.CITYCODE        as cityCode,
+		t1.CITYNAME        as cityName,
+		t1.MERCODE         as merCode,
+		t1.MERNANME        as merName,
+		t2.MCHNTID         as mchntid,
+		t2.POSID           as posId,
+		t2.POSTYPE         as posType,
+		t2.BATCHNO         as batchNo,
+		t2.LIMITTIME       as limitTime,
+		t2.POSICSEQ        as posIcSeq,
+		t2.POSACCSEQ       as posAccSeq,
+		t2.POSCOMMSEQ      as posCommSeq,
+		t2.SIGNINFLAG      as signinFlag,
+		t2.SIGNINDATE      as signinDate,
+		t2.SIGNOFFFLAG     as signoffFlag,
+		t2.SIGNOFFDATE     as signoffDate,
+		t2.SETTDATE        as settDate,
+		t2.DOWNLOADFLAG    as downLoadFlag,
+		t2.NEEDDOWNLOAD    as needDownLoad,
+		t2.BATCHSTEP       as batchStep,
+		t2.ID              as samSignId
+	<!-- 	t3.ID              as posSeqId,
+		t4.ID              as posMertbId -->
+		
+		FROM YKT_PSAM t1
+		left join SAMSIGNINOFFTB t2
+		    on t1.SAMNO = t2.SAMNO
+			and t1.YKTCODE = t2.YKTCODE
+		<!-- left join pos t3
+		    on t3.code = t2.POSID
+		left join pos_mer_tb t4
+		   on t4.code = t3.code -->
+		<where>
+			<if test="samNo != null and samNo !=''">
+				 t1.SAMNo like CONCAT('%', CONCAT(#{samNo}, '%'))
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and t1.YKTCODE like CONCAT('%', CONCAT(#{yktCode}, '%'))
+			</if>
+			<if test="yktName != null and yktName !=''">
+				and t1.YKTNAME like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="mchntid != null and mchntid !=''">
+				and t2.MCHNTID like CONCAT('%', CONCAT(#{mchntid}, '%'))
+			</if>
+			<if test="posId != null and posId !=''">
+				and t2.POSID like CONCAT('%', CONCAT(#{posId}, '%'))
+			</if>
+		</where>
+		order by t1.id desc
+	</select>
+
+    <!-- 新增psam -->
+	<insert id="addYktPsam" parameterType="YktPsam">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ykt_psam_id_seq.nextval from dual
+		</selectKey>
+		insert into
+		ykt_psam(ID,SAMNO,YKTCODE,YKTNAME,CITYCODE,CITYNAME,MERCODE,MERNANME)
+		values (#{id,jdbcType=VARCHAR},
+		#{samNo,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{yktName,jdbcType=VARCHAR},
+		#{cityCode,jdbcType=VARCHAR},#{cityName,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},#{merName,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+		<!-- 新增SAMSIGNINOFFTB 记录 -->
+	<insert id="addSamSigninOfftb" parameterType="YktPsam">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select SAMSIGNINOFFTB_ID_SEQ.nextval from dual
+		</selectKey>
+		insert into
+		SAMSIGNINOFFTB(ID,YKTCODE,SAMNO,MCHNTID,POSID,POSTYPE,BATCHNO,LIMITTIME,POSICSEQ,POSACCSEQ,POSCOMMSEQ,
+		SIGNINFLAG,SIGNINDATE,SIGNOFFFLAG,SIGNOFFDATE,SETTDATE,DOWNLOADFLAG,NEEDDOWNLOAD,BATCHSTEP)
+		values (#{id,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{samNo,jdbcType=VARCHAR},
+		#{mchntid,jdbcType=VARCHAR},#{posId,jdbcType=VARCHAR},#{posType,jdbcType=VARCHAR},
+		#{batchNo,jdbcType=VARCHAR},#{limitTime,jdbcType=VARCHAR},
+		#{posIcSeq,jdbcType=VARCHAR},#{posAccSeq,jdbcType=VARCHAR},	
+		#{posCommSeq,jdbcType=VARCHAR},#{signinFlag,jdbcType=VARCHAR},
+		#{signinDate,jdbcType=VARCHAR},#{signoffFlag,jdbcType=VARCHAR},#{signoffDate,jdbcType=VARCHAR},
+		#{settDate,jdbcType=VARCHAR},#{downLoadFlag,jdbcType=VARCHAR},#{needDownLoad,jdbcType=VARCHAR},
+		#{batchStep,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	 <!-- 新增pos -->
+	<insert id="addPos" parameterType="YktPsam">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select pos_id_seq.nextval from dual
+		</selectKey>
+		insert into
+		pos(ID,CODE,STATUS,CITY_CODE,MER_CODE,MER_NAME,BIND)
+		values (#{id,jdbcType=VARCHAR},
+		#{posId,jdbcType=VARCHAR},#{posStatus,jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR},
+		#{merName,jdbcType=VARCHAR},#{bind,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	
+	<!-- 修改pos -->
+	<update id="updatePos" parameterType="YktPsam">
+		update POS t  set
+		  t.BIND = #{bind,jdbcType=VARCHAR},
+		  t.CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+		  t.MER_CODE = #{merCode,jdbcType=VARCHAR},
+		  t.MER_NAME = #{merName,jdbcType=VARCHAR},
+		  t.CODE = #{posId,jdbcType=VARCHAR}
+		  where t.ID=#{posSeqId}
+	</update>
+	
+	
+	
+    <!-- 根据posid更新pos记录 -->
+	<update id="updatePosByCode" parameterType="YktPsam">
+		update POS t  set
+		  t.BIND = #{bind,jdbcType=VARCHAR},
+		  t.CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+		  t.MER_CODE = #{merCode,jdbcType=VARCHAR},
+		  t.MER_NAME = #{merName,jdbcType=VARCHAR}
+		  where t.CODE=#{posId}
+	</update>
+	
+	
+	<!-- 根据posid更新pos记录 -->
+	<update id="updatePosByid" parameterType="YktPsam">
+		update POS t  set
+		  t.BIND = #{bind,jdbcType=VARCHAR},
+		  t.CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+		  t.MER_CODE = #{merCode,jdbcType=VARCHAR},
+		  t.MER_NAME = #{merName,jdbcType=VARCHAR}
+		  where t.ID=#{posSeqId}
+	</update>
+	
+	
+    <!-- 新增pos_mer_tb -->
+	<insert id="addPosMertb" parameterType="YktPsam">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select POS_MER_ID_SEQ.nextval from dual
+		</selectKey>
+		insert into
+		pos_mer_tb(ID,CODE,MER_CODE)
+		values (#{id,jdbcType=VARCHAR},
+		#{posId,jdbcType=VARCHAR},
+		#{merCode,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+		<!-- 修改pos_mer_tb -->
+	<update id="updatePosMertb" parameterType="YktPsam">
+		update pos_mer_tb t  set
+		  t.MER_CODE = #{merCode,jdbcType=VARCHAR},
+		  t.CODE = #{merCode,jdbcType=VARCHAR}
+		  where t.ID=#{posMertbId}
+	</update>
+	
+
+	<!-- 根据id查询psam卡信息 -->
+	<select id="findPsamById" resultType="YktPsam"
+		parameterType="java.lang.String">
+		select
+		t1.ID as id,
+		t1.SAMNo as samNo,
+		t1.YKTCODE as yktCode,
+		t1.YKTNAME as yktName,
+		t1.CITYCODE as cityCode,
+		t1.CITYNAME as cityName,
+		t1.MERCODE as merCode,
+		t1.MERNANME as merName,
+		t2.MCHNTID as mchntid,
+		t2.POSID as posId,
+		t2.POSTYPE as posType,
+		t2.BATCHNO as batchNo,
+		t2.LIMITTIME as limitTime,
+		t2.POSICSEQ as posIcSeq,
+		t2.POSACCSEQ as posAccSeq,
+		t2.POSCOMMSEQ as posCommSeq,
+		t2.SIGNINFLAG as signinFlag,
+		t2.SIGNINDATE as signinDate,
+		t2.SIGNOFFFLAG as signoffFlag,
+		t2.SIGNOFFDATE as signoffDate,
+		t2.SETTDATE as settDate,
+		t2.DOWNLOADFLAG as downLoadFlag,
+		t2.NEEDDOWNLOAD as needDownLoad,
+		t2.BATCHSTEP as batchStep,
+		t2.ID            as samSignId
+		<!-- t3.ID              as posSeqId,
+		t4.ID              as posMertbId -->
+		FROM YKT_PSAM t1
+		left join SAMSIGNINOFFTB t2
+		    on  t1.SAMNO = t2.SAMNO
+			and t1.YKTCODE = t2.YKTCODE
+	<!--	left join pos t3
+		    on t3.code = t2.POSID
+		left join pos_mer_tb t4
+		   on t4.code = t3.code-->
+		<where>
+			 t1.ID = #{id}
+		</where>
+		order by t1.id desc
+	</select>
+
+
+
+	<!-- 根据samNo查询psam卡信息 -->
+	<select id="findYktPsamByPsam" resultType="YktPsam"
+		parameterType="java.lang.String">
+		select
+		t1.ID as id,
+		t1.SAMNo as samNo,
+		t1.YKTCODE as yktCode,
+		t1.YKTNAME as yktName,
+		t1.CITYCODE as cityCode,
+		t1.CITYNAME as cityName,
+		t1.MERCODE as merCode,
+		t1.MERNANME as merName,
+		t2.MCHNTID as mchntid,
+		t2.POSID as posId,
+		t2.POSTYPE as posType,
+		t2.BATCHNO as batchNo,
+		t2.LIMITTIME as limitTime,
+		t2.POSICSEQ as posIcSeq,
+		t2.POSACCSEQ as posAccSeq,
+		t2.POSCOMMSEQ as posCommSeq,
+		t2.SIGNINFLAG as signinFlag,
+		t2.SIGNINDATE as signinDate,
+		t2.SIGNOFFFLAG as signoffFlag,
+		t2.SIGNOFFDATE as signoffDate,
+		t2.SETTDATE as settDate,
+		t2.DOWNLOADFLAG as downLoadFlag,
+		t2.NEEDDOWNLOAD as needDownLoad,
+		t2.BATCHSTEP as batchStep,
+		t2.ID              as samSignId
+		<!-- t3.ID              as posSeqId,
+		t4.ID              as posMertbId-->
+		FROM YKT_PSAM t1
+		left join SAMSIGNINOFFTB t2
+		    on  t1.SAMNO = t2.SAMNO
+			and t1.YKTCODE = t2.YKTCODE
+		<!-- left join pos t3
+		    on t3.code = t2.POSID
+		left join pos_mer_tb t4
+		   on t4.code = t3.code -->
+		<where>
+			 t1.SAMNo = #{samNo}
+		</where>
+		order by t1.id desc
+	</select>
+
+
+    <!-- 批量删除 -->
+	<delete id="batchDeleteYktPsamByIds">
+       delete from YKT_PSAM
+       where id in 
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</delete>
+	
+	<!-- 批量修改重新下载参数 -->
+	<update id="batchNeedDownLoadPsamByIds">
+		update SAMSIGNINOFFTB t set
+		t.NEEDDOWNLOAD = '2'
+		where t.SAMNO in
+		 <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</update>
+	
+		<!-- 批量重启商户 -->
+	<update id="batchActivateMerByIds">
+		update SAMSIGNINOFFTB t set
+		t.NEEDDOWNLOAD = '1'
+		where t.SAMNO in
+		 <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</update>
+	
+	<!-- 编辑psam卡信息 -->
+	<update id="updateYktPsam" parameterType="YktPsam">
+		update YKT_PSAM t  set
+		  t.SAMNO = #{samNo,jdbcType=VARCHAR},
+		  t.YKTCODE = #{yktCode,jdbcType=VARCHAR},
+		  t.YKTNAME = #{yktName,jdbcType=VARCHAR},
+		  t.CITYCODE = #{cityCode,jdbcType=VARCHAR},
+		  t.CITYNAME = #{cityName,jdbcType=VARCHAR},
+		  t.MERCODE = #{merCode,jdbcType=VARCHAR},
+		  t.MERNANME = #{merName,jdbcType=VARCHAR}
+		  where t.id=#{id}
+	</update>
+	
+		<!-- 编辑签到控制表卡信息 -->
+	<update id="updateSamSigninOfftb" parameterType="YktPsam">
+		update SAMSIGNINOFFTB t set
+		  t.SAMNO = #{samNo,jdbcType=VARCHAR},
+		  t.YKTCODE = #{yktCode,jdbcType=VARCHAR},
+		  t.MCHNTID = #{mchntid,jdbcType=VARCHAR},
+		  t.POSID = #{posId,jdbcType=VARCHAR},
+		  t.POSTYPE = #{posType,jdbcType=VARCHAR}
+		  where t.Id=#{samSignId}
+	</update>
+	
+	   <!-- 删除 pos-->
+	<delete id="deletePos">
+       delete from pos
+       where id = #{posSeqId}
+	</delete>
+	
+    <!-- 删除 SamSigninOfftb-->
+	<delete id="deleteSamSigninOfftb">
+       delete from SamSigninOfftb
+       where samNo = #{samNo}
+	</delete>
+	
+	    <!-- 删除 pos_mer_tb-->
+	<delete id="deletePosMerTb">
+       delete from pos_mer_tb
+       where id = #{posMertbId}
+	</delete>
+</mapper>

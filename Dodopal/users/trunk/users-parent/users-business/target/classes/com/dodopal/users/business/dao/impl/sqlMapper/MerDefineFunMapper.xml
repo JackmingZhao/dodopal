@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerDefineFunMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,MER_FUN_CODE,MER_FUN_NAME
+	</sql>
+
+	<select id="findMerDefineFunById" resultType="MerDefineFun" resultMap="merDefineFunResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_DEFINE_FUN where id = #{id}
+	</select>
+
+	<select id="findMerDefineFunByMerCode" resultType="MerDefineFun" resultMap="merDefineFunResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_DEFINE_FUN where mer_code = #{merCode}
+	</select>
+
+	<insert id="batchAddMerDefineFunList" parameterType="java.util.List">
+		INSERT INTO MER_DEFINE_FUN(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,MER_FUN_CODE,MER_FUN_NAME,ACTIVATE
+		)
+		select MER_DEFINE_FUN_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{item.merCode},
+			#{item.merFunCode},
+			#{item.merFunName},
+			'0'
+			from dual
+		</foreach>
+		) a
+	</insert>
+
+	<delete id="deleteMerDefineFunById" parameterType="java.lang.String">
+		delete from MER_DEFINE_FUN where id = #{id}
+	</delete>
+
+	<delete id="deleteMerDefineFunByMerCode" parameterType="java.lang.String">
+		delete from MER_DEFINE_FUN where MER_CODE = #{merCode}
+	</delete>
+
+	<delete id="batchDelDefineFunByMerCodes">
+		delete from MER_DEFINE_FUN where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.MchnitlimitinfotbMapper">
+	<resultMap type="Mchnitlimitinfotb" id="mchnitlimitResultMap">
+		<result property="mchnitid" column="MCHNITID" />
+		<result property="currency" column="CURRENCY" />
+		<result property="amtlimit" column="AMTLIMIT" />
+		<result property="extralimitamt" column="EXTRALIMITAMT" />
+		<result property="usedlimit" column="USEDLIMIT" />
+		<result property="surpluslimit" column="SURPLUSLIMIT" />
+		<result property="warnlimt" column="WARNLIMT" />
+		<result property="lasttime" column="LASTTIME" />
+		<result property="remarks" column="REMARKS" />
+		<result property="lastdate" column="LASTDATE" />
+	</resultMap>
+</mapper>

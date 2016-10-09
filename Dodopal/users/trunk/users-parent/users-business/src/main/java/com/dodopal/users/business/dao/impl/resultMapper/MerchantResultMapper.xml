@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerchantMapper">
+	<resultMap type="Merchant" id="merchantResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="merName" column="MER_NAME" />
+		<result property="merAdds" column="MER_ADDS" />
+		<result property="merType" column="MER_TYPE" />
+		<result property="merLinkUser" column="MER_LINK_USER" />
+		<result property="merZip" column="MER_ZIP" />
+		<result property="merLinkUserMobile" column="MER_LINK_USER_MOBILE" />
+		<result property="merTelephone" column="MER_TELEPHONE" />
+		<result property="merEmail" column="MER_EMAIL" />
+		<result property="merParentCode" column="MER_PARENT_CODE" />
+		<result property="merState" column="MER_STATE" />
+		<result property="merActivateDate" column="MER_ACTIVATE_DATE" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="merDeactivateDate" column="MER_DEACTIVATE_DATE" />
+		<result property="merFax" column="MER_FAX" />
+		<result property="merRegisterDate" column="MER_REGISTER_DATE" />
+		<result property="merBankName" column="MER_BANK_NAME" />
+		<result property="merBankAccount" column="MER_BANK_ACCOUNT" />
+		<result property="merBankUserName" column="MER_BANK_USER_NAME" />
+		<result property="merBusinessScopeId" column="MER_BUSINESS_SCOPE_ID" />
+		<result property="merArea" column="MER_AREA" />
+		<result property="merPro" column="MER_PRO" />
+		<result property="merCity" column="MER_CITY" />
+		<result property="delFlg" column="DEL_FLG" />
+		<result property="merClassify" column="MER_CLASSIFY" />
+		<result property="merProperty" column="MER_PROPERTY" />
+		<result property="merStateUser" column="MER_STATE_USER" />
+		<result property="merStateDate" column="MER_STATE_DATE" />
+		<result property="source" column="SOURCE" />
+		<result property="merRejectReason" column="MER_REJECT_REASON" />
+		<result property="merPayMoneyUser" column="MER_PAY_MONEY_USER" />
+	</resultMap>
+</mapper>

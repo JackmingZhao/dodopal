@@ -1,0 +1,1561 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductOrderMapper">
+	<sql id="prdStandOrders">
+		       P.ID                     as id,
+		       P.PRO_ORDER_NUM          as proOrderNum,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.TXN_AMT                as txnAmt,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.RECEIVED_PRICE         as receivedPrice,
+		       P.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       P.MER_GAIN               as merGain,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.POS_CODE               as posCode,
+		       P.CITY_NAME              as cityName,
+		       P.PAY_TYPE               as payType,
+		       P.PAY_WAY                as payWay,	
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.CREATE_USER            as userId,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.MER_NAME				as merName,
+		       P.MER_CODE				as merCode,
+		       P.MER_ORDER_NUM          as merOrderNum ,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciouStates,
+		       P.MER_USER_TYPE          as merUserType,
+		       V.nick_name 			    as userName
+	</sql>
+	
+	
+	<sql id="prdOrderDetail">
+		       P.ID                     as id,
+		       P.PRO_ORDER_NUM          as proOrderNum,
+		       P.PRO_CODE               as proCode,
+		       P.PRO_NAME               as proName,
+		       P.TXN_AMT                as txnAmt,
+		       P.CITY_NAME              as cityName,
+		       P.YKT_NAME               as yktName,
+		       P.RECEIVED_PRICE         as receivedPrice,
+		       P.MER_RATE               as merRate,
+		       P.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.PRD_ORDER_DAY          as proOrderDay,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.POS_CODE               as posCode,
+		       P.MER_GAIN               as merGain,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.PAY_TYPE               as payType,
+		       P.PAY_WAY                as payWay,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       P.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       P.MER_CODE               as merCode,
+		       P.MER_NAME               as merName,
+		       P.MER_USER_TYPE          as merUserType,
+		       P.LOAD_FLAG              as loadFlag,
+		       P.MER_ORDER_NUM          as merOrderNum,
+		       P.LOAD_ORDER_NUM         as loadOrderNum,
+		       P.SOURCE                 as source,
+		       P.CLEARING_MARK          as clearingMark,
+		       P.USER_ID                as userId,
+		       P.USER_NAME              as userName,
+		       P.COMMENTS               as comments,
+		       P.PAGE_CALLBACK_URL      as pageCallBackURL,
+		       P.SERVICE_NOTICE_URL     as serviceNoticeURL,
+		       P.FUND_PROCESS_RESULT    as fundProcessResult,
+		       P.CREATE_DATE            as createDate,
+		       P.UPDATE_DATE            as updateDate,
+		       P.CREATE_USER            as userId,
+		       V.nick_name 				as createUser,				
+			   V2.nick_name             as updateUser,
+			   P.MER_RATE_TYPE          as merRateType,
+			   P.PAY_SERVICE_TYPE       as payServiceType,
+			   P.PAY_SERVICE_RATE       as payServiceRate,
+			   P.YKT_RECHARGE_RATE      as yktRechargeRate,
+			   o.comments               as posComments
+			   
+	</sql>
+	
+	
+	<sql id="pageWhere">
+		<where>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				 PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merType != null and merType !=''">
+				and MER_USER_TYPE = #{merType}
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+				and P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} and (P.PRO_ORDER_STATES !='3' and P.PRO_INNER_STATES != '31')
+			</if>
+			<if test="suspiciouStates == '1'.toString()">
+				and (P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} or ((pro_order_states = '1' and pro_inner_states = '11') or
+       																  (pro_order_states = '2' and pro_inner_states = '21') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '22' and load_flag = '1') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '24') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '30') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '31') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '40' and load_flag = '1') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '42') or
+                                                                      (pro_order_states = '5' and pro_inner_states = '50')))
+			</if>
+			<if test="suspiciouStates == '2'.toString()">
+				and P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} 
+			</if> 
+	        and P.CREATE_USER = V.id(+)
+		</where>
+	</sql>
+	
+	<sql id="pageExceptionWhere">
+		<where>
+				  ((pro_order_states = '1' and pro_inner_states = '11')
+			    or (pro_order_states = '2' and pro_inner_states = '21')
+			    or (pro_order_states = '2' and pro_inner_states = '22' and load_flag = '1')
+			    or (pro_order_states = '2' and pro_inner_states = '24')
+			    or (pro_order_states = '3' and pro_inner_states = '30')
+			    or (pro_order_states = '3' and pro_inner_states = '31')
+			    or (pro_order_states = '4' and pro_inner_states = '40'and load_flag = '1')
+			    or (pro_order_states = '4' and pro_inner_states = '42')
+			    or (pro_order_states = '5' and pro_inner_states = '50'))
+			<if test="proOrderNum != null and proOrderNum !=''">
+				 and PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE =#{yktCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merType != null and merType !=''">
+				and MER_USER_TYPE = #{merType}
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+		</where>
+	</sql>
+	
+	<!--产品库订单查询条件（含管理员查询操作员-->
+	<sql id="pageAdminWhere">
+		<where>
+			<!--USER_CODE in 
+			<foreach item="userCodes" collection="list" index ="index"  open= "(" close =")" separator=",">
+		  		#{userCodes}
+		 	</foreach>-->
+		 	<if test="merCode != null and merCode !=''">
+				 MER_CODE  = #{merCode}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+		</where>
+	</sql>
+
+<!--产品库订单查询条件（含管理员查询操作员-->
+	<sql id="exportOrderExportWhere">
+		<where>
+		 	<if test="merCode != null and merCode !=''">
+				 MER_CODE  = #{merCode}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>  
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+				and PRO_SUSPICIOUS_STATES = #{suspiciouStates} and (PRO_ORDER_STATES !='3' and pro_inner_states != '31')
+			</if>
+			<if test="suspiciouStates == '1'.toString()">
+				and (P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} or ((pro_order_states = '1' and pro_inner_states = '11') or
+       																  (pro_order_states = '2' and pro_inner_states = '21') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '22' and load_flag = '1') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '24') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '30') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '31') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '40' and load_flag = '1') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '42') or
+                                                                      (pro_order_states = '5' and pro_inner_states = '50')))
+			</if>
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merType != null and merType !=''">
+				and MER_USER_TYPE = #{merType}
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+			and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+	</sql>
+	
+<!--产品库订单查询条件（含管理员查询操作员-->
+	<sql id="exportCountOrderExportWhere">
+		<where>
+		 	<if test="merCode != null and merCode !=''">
+				 MER_CODE  = #{merCode}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and YKT_CODE = #{yktCode}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+				and PRO_SUSPICIOUS_STATES = #{suspiciouStates} and (PRO_ORDER_STATES !='3' and pro_inner_states != '31')
+			</if>
+			<if test="suspiciouStates == '1'.toString()">
+				and (P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} or ((pro_order_states = '1' and pro_inner_states = '11') or
+       																  (pro_order_states = '2' and pro_inner_states = '21') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '22' and load_flag = '1') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '24') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '30') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '31') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '40' and load_flag = '1') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '42') or
+                                                                      (pro_order_states = '5' and pro_inner_states = '50')))
+			</if>
+
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merType != null and merType !=''">
+				and MER_USER_TYPE = #{merType}
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 验证查询产品库订单是否存在 -->
+	<select id="getProductOrderByProOrderNum" resultType="ProductOrder" parameterType="java.lang.String">
+		select ID                     as id,
+		       PRO_ORDER_NUM          as proOrderNum,
+		       PRO_CODE               as proCode,
+		       PRO_NAME               as proName,
+		       TXN_AMT                as txnAmt,
+		       CITY_CODE              as cityCode,
+		       YKT_CODE               as yktCode,
+		       CITY_NAME              as cityName,
+		       YKT_NAME               as yktName,
+		       RECEIVED_PRICE         as receivedPrice,
+		       MER_RATE               as merRate,
+		       MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       PRD_ORDER_DATE         as proOrderDate,
+		       PRD_ORDER_DAY          as proOrderDay,
+		       ORDER_CARDNO           as orderCardno,
+		       CARD_FACENO            as cardFaceno,
+		       POS_CODE               as posCode,
+		       MER_GAIN               as merGain,
+		       BEFBAL                 as befbal,
+		       BLACK_AMT              as blackAmt,
+		       PAY_TYPE               as payType,
+		       PAY_WAY                as payWay,
+		       PRO_ORDER_STATES       as proOrderState,
+		       PRO_INNER_STATES       as proInnerState,
+		       PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       MER_CODE               as merCode,
+		       MER_NAME               as merName,
+		       MER_USER_TYPE          as merUserType,
+		       LOAD_FLAG              as loadFlag,
+		       MER_ORDER_NUM          as merOrderNum,
+		       LOAD_ORDER_NUM         as loadOrderNum,
+		       SOURCE                 as source,
+		       CLEARING_MARK          as clearingMark,
+		       USER_ID                as userId,
+		       USER_NAME              as userName,
+		       COMMENTS               as comments,
+		       PAGE_CALLBACK_URL      as pageCallBackURL,
+		       SERVICE_NOTICE_URL     as serviceNoticeURL,
+		       FUND_PROCESS_RESULT    as fundProcessResult,
+		       USER_CODE              as userCode,
+		       DEP_ID                 as depId,
+		       EXT_USER_CODE          as extUserCode,
+		       CREATE_USER            as createUser,
+		       UPDATE_USER            as updateUser,
+		       CREATE_DATE            as createDate,
+		       UPDATE_DATE            as updateDate,
+		       MER_RATE_TYPE          as merRateType,
+		       PAY_SERVICE_TYPE       as payServiceType,
+		       PAY_SERVICE_RATE       as payServiceRate,
+		       YKT_RECHARGE_RATE      as yktRechargeRate,
+		       RESEND_SIGN            as resendSign
+		  from PRD_ORDER
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</select>
+	
+	<!-- 通过外部订单号、商户编号，查询产品库订单是否存在,验证外接商户是否重复下单 -->
+	<select id="checkProductOrderExistByExternalOrderNum" resultType="boolean" parameterType="java.lang.String">
+		select count(1)
+		  from PRD_ORDER
+		 where MER_ORDER_NUM = #{externalOrderNum}
+		   and MER_CODE = #{merchantNum}
+	</select>
+	
+	
+	<!-- 第一次进入申请充值密钥环节将“重发标志位”：置为1（产品库接收到DLL请求时，以此判断是否为重发请求） add by shenXiang 2015-11-10 -->
+	<update id="updateReSignByProOrderNum" parameterType="java.lang.String">
+		update PRD_ORDER
+		   set RESEND_SIGN = '1'
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	
+	<!-- 通过外部订单号、商户编号，查询产品库订单是否存在,外接商户没有重复下单，更新字段外部订单号 -->
+	<update id="updateProductOrderExternalOrderNum" parameterType="java.lang.String">
+		update PRD_ORDER
+		   set MER_ORDER_NUM = #{externalOrderNum,jdbcType=VARCHAR}
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	<!-- 更新产品库订单状态（主状态，内部状态，前内部状态） -->
+	<update id="updateProductOrderStates" parameterType="ProductOrder">
+		update PRD_ORDER
+		   set PRO_ORDER_STATES = #{proOrderState,jdbcType=VARCHAR},
+		       <if test="proBeforInnerState != null and proBeforInnerState !=''">
+			   PRO_BEFOREINNER_STATES =  #{proBeforInnerState},
+			   </if>
+			   PRO_INNER_STATES = #{proInnerState,jdbcType=VARCHAR},
+			   UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE = sysdate
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	<!-- 明确充值失败，更新产品库订单状态（主状态，内部状态，前内部状态，充值后金额==充值前金额） -->
+	<update id="updateProductOrderFailedStates" parameterType="ProductOrder">
+		update PRD_ORDER
+		   set PRO_ORDER_STATES = #{proOrderState,jdbcType=VARCHAR},
+		       <if test="proBeforInnerState != null and proBeforInnerState !=''">
+			   PRO_BEFOREINNER_STATES =  #{proBeforInnerState},
+			   </if>
+			   PRO_INNER_STATES = #{proInnerState,jdbcType=VARCHAR},
+			   BLACK_AMT =  #{blackAmt,jdbcType=VARCHAR},
+			   UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE = sysdate
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	<!-- 充值结果上传，更新产品库订单状态（主状态，内部状态，前内部状态）和充值后金额 -->
+	<update id="updateOrderStatusForResultUpload" parameterType="ProductOrder">
+		update PRD_ORDER
+		   set PRO_ORDER_STATES = #{proOrderState,jdbcType=VARCHAR},
+			   PRO_INNER_STATES = #{proInnerState,jdbcType=VARCHAR},
+			   PRO_BEFOREINNER_STATES =  #{proBeforInnerState,jdbcType=VARCHAR},
+			   BLACK_AMT =  #{blackAmt,jdbcType=VARCHAR},
+			   PRO_SUSPICIOUS_STATES =  #{proSuspiciousState,jdbcType=VARCHAR},
+			   UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE = sysdate
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	<!-- 产品库公交卡充值订单编号生成规则O + 20150428222211 +五位数据库cycle sequence（循环使用） -->
+	<select id="getPrdOrderCodeSeq" resultType = "java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select PRD_ORDERCODE_SEQ.NEXTVAL as orderCode from dual ]]>
+	</select>
+	
+	<!-- 创建公交卡充值产品库订单 -->
+	<insert id="addProductOrder" parameterType="ProductOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select PRD_ORDER_ID_SEQ.nextval from dual
+   		</selectKey>
+		insert into prd_order (ID, PRO_ORDER_NUM, PRO_CODE, PRO_NAME, TXN_AMT, 
+								CITY_NAME, YKT_NAME, RECEIVED_PRICE, MER_RATE, MER_PURCHAASE_PRICE, 
+								PRD_ORDER_DATE, PRD_ORDER_DAY, ORDER_CARDNO, POS_CODE, MER_GAIN, 
+								BEFBAL, BLACK_AMT, PAY_TYPE, PAY_WAY, PRO_ORDER_STATES, 
+								PRO_INNER_STATES, PRO_BEFOREINNER_STATES, PRO_SUSPICIOUS_STATES, PRO_SUSPICIOUS_EXPLAIN, 
+								MER_CODE, MER_NAME, MER_USER_TYPE, LOAD_FLAG, MER_ORDER_NUM, 
+								LOAD_ORDER_NUM, SOURCE, CLEARING_MARK, USER_ID, USER_NAME, 
+								COMMENTS, PAGE_CALLBACK_URL, SERVICE_NOTICE_URL, FUND_PROCESS_RESULT, 
+								CREATE_USER, CREATE_DATE, USER_CODE, DEP_ID, EXT_USER_CODE, 
+								MER_RATE_TYPE, PAY_SERVICE_TYPE, PAY_SERVICE_RATE,
+								CITY_CODE, YKT_CODE, YKT_RECHARGE_RATE, CARD_FACENO)
+		  				values (#{id,jdbcType=VARCHAR}, #{proOrderNum,jdbcType=VARCHAR}, #{proCode,jdbcType=VARCHAR}, #{proName,jdbcType=VARCHAR}, #{txnAmt,jdbcType=NUMERIC},
+								#{cityName,jdbcType=VARCHAR}, #{yktName,jdbcType=VARCHAR}, #{receivedPrice,jdbcType=NUMERIC}, #{merRate,jdbcType=NUMERIC}, #{merPurchaasePrice,jdbcType=NUMERIC},
+								sysdate, TO_CHAR(sysdate,'yyyymmdd'), #{orderCardno,jdbcType=VARCHAR}, #{posCode,jdbcType=VARCHAR}, #{merGain,jdbcType=NUMERIC},
+								#{befbal,jdbcType=NUMERIC}, #{blackAmt,jdbcType=VARCHAR}, #{payType,jdbcType=VARCHAR}, #{payWay,jdbcType=VARCHAR}, #{proOrderState,jdbcType=VARCHAR}, 
+								#{proInnerState,jdbcType=VARCHAR}, #{proBeforInnerState,jdbcType=VARCHAR}, #{proSuspiciousState,jdbcType=VARCHAR}, #{proSuspiciousExplain,jdbcType=VARCHAR}, 
+								#{merCode,jdbcType=VARCHAR}, #{merName,jdbcType=VARCHAR}, #{merUserType,jdbcType=VARCHAR}, #{loadFlag,jdbcType=VARCHAR}, #{merOrderNum,jdbcType=VARCHAR}, 
+								#{loadOrderNum,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{clearingMark,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+								#{comments,jdbcType=VARCHAR}, #{pageCallBackURL,jdbcType=VARCHAR}, #{serviceNoticeURL,jdbcType=VARCHAR}, #{fundProcessResult,jdbcType=VARCHAR},
+								#{createUser,jdbcType=VARCHAR},sysdate,#{userCode,jdbcType=VARCHAR},#{depId,jdbcType=VARCHAR},#{extUserCode,jdbcType=VARCHAR},
+								#{merRateType,jdbcType=VARCHAR},#{payServiceType,jdbcType=VARCHAR},#{payServiceRate,jdbcType=NUMERIC},
+								#{cityCode,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{yktRechargeRate,jdbcType=NUMERIC}, #{cardFaceno,jdbcType=VARCHAR})
+
+	</insert>
+	
+	<!--产品库中公交卡充值订单查询-->
+	<select id="findProductOrdersByPage" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />  from PRD_ORDER P, V_USER_INFO V
+		<include refid="pageWhere" />
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<!-- OSS异常充值订单查询分页  add by shenXiang  2015-11-05 -->
+	<select id="findExceptionProductOrderByPage" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />  from PRD_ORDER P, V_USER_INFO V
+		<include refid="pageExceptionWhere" />
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<!-- 充值异常订单导出 -->
+	<select id="findProductExceptionOrdersForExport" resultType="ProductOrder">
+		select <include refid="prdStandOrders" /> ,
+		P.pro_suspicious_states as proSuspiciousState,P.Pro_Suspicious_Explain as proSuspiciousExplain,P.Clearing_Mark as clearingMark,
+		P.Pro_Code as proCode,P.Pro_Name as proName,P.Mer_Purchaase_Price as merPurchaasePrice,P.Mer_User_Type as merUserType
+		from PRD_ORDER P, V_USER_INFO V
+		<include refid="pageExceptionWhere" />
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<select id="getOrderListByLoadOrderNum" resultType="ProductOrder" parameterType="java.lang.String">
+		select P.PRO_ORDER_NUM          as proOrderNum,
+		       P.PRO_CODE               as proCode,
+		       P.PRO_NAME               as proName,
+		       P.TXN_AMT                as txnAmt,
+		       P.CITY_CODE              as cityCode,
+		       P.YKT_CODE               as yktCode,
+		       P.CITY_NAME              as cityName,
+		       P.YKT_NAME               as yktName,
+		       P.RECEIVED_PRICE         as receivedPrice,
+		       P.MER_RATE               as merRate,
+		       P.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.PRD_ORDER_DAY          as proOrderDay,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.POS_CODE               as posCode,
+		       P.MER_GAIN               as merGain,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.PAY_TYPE               as payType,
+		       P.PAY_WAY                as payWay,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       P.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       P.MER_CODE               as merCode,
+		       P.MER_NAME               as merName,
+		       P.MER_USER_TYPE          as merUserType,
+		       P.LOAD_FLAG              as loadFlag,
+		       P.MER_ORDER_NUM          as merOrderNum,
+		       P.LOAD_ORDER_NUM         as loadOrderNum,
+		       P.SOURCE                 as source,
+		       P.CLEARING_MARK          as clearingMark,
+		       P.USER_ID                as userId,
+		       P.USER_CODE              as userCode,
+		       P.USER_NAME              as userName,
+		       P.COMMENTS               as comments,
+		       P.PAGE_CALLBACK_URL      as pageCallBackURL,
+		       P.SERVICE_NOTICE_URL     as serviceNoticeURL,
+		       P.FUND_PROCESS_RESULT    as fundProcessResult,
+		       P.CREATE_DATE            as createDate,
+		       P.UPDATE_DATE            as updateDate,
+			   P.MER_RATE_TYPE          as merRateType,
+			   P.PAY_SERVICE_TYPE       as payServiceType,
+			   P.PAY_SERVICE_RATE       as payServiceRate,
+			   P.YKT_RECHARGE_RATE      as yktRechargeRate
+		  from PRD_ORDER P
+		 where P.LOAD_ORDER_NUM = #{loadOrderNum}
+      order by P.CREATE_DATE desc
+	</select>
+
+	<select id="getListProductOrdersForExport" resultType="com.dodopal.api.product.dto.ProductOrderForExport">
+		select P.PRO_ORDER_NUM          as proOrderNum,
+		       P.PRO_CODE               as proCode,
+		       P.PRO_NAME               as proName,
+		       P.TXN_AMT                as txnAmt,
+		       P.CITY_CODE              as cityCode,
+		       P.YKT_CODE               as yktCode,
+		       P.CITY_NAME              as cityName,
+		       P.YKT_NAME               as yktName,
+		       P.RECEIVED_PRICE         as receivedPrice,
+		       P.MER_RATE               as merRate,
+		       P.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.PRD_ORDER_DAY          as proOrderDay,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.POS_CODE               as posCode,
+		       P.MER_GAIN               as merGain,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.PAY_TYPE               as payType,
+		       P.PAY_WAY                as payWay,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       P.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       P.MER_CODE               as merCode,
+		       P.MER_NAME               as merName,
+		       P.MER_USER_TYPE          as merUserType,
+		       P.LOAD_FLAG              as loadFlag,
+		       P.MER_ORDER_NUM          as merOrderNum,
+		       P.LOAD_ORDER_NUM         as loadOrderNum,
+		       P.SOURCE                 as source,
+		       P.CLEARING_MARK          as clearingMark,
+		       P.USER_ID                as userId,
+		       P.USER_CODE              as userCode,
+		       P.USER_NAME              as userName,
+		       P.COMMENTS               as comments,
+		       P.PAGE_CALLBACK_URL      as pageCallBackURL,
+		       P.SERVICE_NOTICE_URL     as serviceNoticeURL,
+		       P.FUND_PROCESS_RESULT    as fundProcessResult,
+		       P.CREATE_DATE            as createDate,
+		       P.UPDATE_DATE            as updateDate,
+			   P.MER_RATE_TYPE          as merRateType,
+			   P.PAY_SERVICE_TYPE       as payServiceType,
+			   P.PAY_SERVICE_RATE       as payServiceRate,
+			   P.YKT_RECHARGE_RATE      as yktRechargeRate,
+		       V.nick_name 				as createUser,				
+			   V2.nick_name             as updateUser
+		  from PRD_ORDER P, V_USER_INFO V, V_USER_INFO V2
+		<include refid="exportOrderExportWhere" />
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<select id="getCountProductOrdersForExport" resultType="Integer">
+		select count(*) from PRD_ORDER P
+		<include refid="exportCountOrderExportWhere" />
+	</select>
+	
+	<!---产品库中公交卡充值订单查询（含管理员查询操作员）-->
+	<select id="findAdminProductOrdersByPage" resultType="ProductOrder">
+		select 
+		       P.ID                     as id,
+		       P.PRO_ORDER_NUM          as proOrderNum,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.TXN_AMT                as txnAmt,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.RECEIVED_PRICE         as receivedPrice,
+		       P.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       P.MER_GAIN               as merGain,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.POS_CODE               as posCode,
+		       P.CITY_NAME              as cityName,
+		       P.PAY_TYPE               as payType,
+		       P.PAY_WAY                as payWay,	
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.CREATE_USER            as userId,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.MER_NAME				as merName,
+		       P.MER_CODE				as merCode,
+		       P.MER_ORDER_NUM          as merOrderNum ,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciouStates,
+		       P.MER_USER_TYPE          as merUserType,
+		       V.nick_name 			    as userName,
+		       o.comments               as posComments
+        from PRD_ORDER P, V_USER_INFO V, POS  o
+        <where>
+		    <if test="merCode != null and merCode !=''">
+				P.MER_CODE  = #{merCode}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and P.USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and P.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and P.PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and P.TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and P.TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and P.MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			
+			<if test="proInnerState != null and proInnerState !=''">
+				and P.PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and P.MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and P.PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and P.PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and P.ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+	        and P.POS_CODE  = o.code(+)
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+
+	<!--产品库中公交卡充值订单查询详情-->
+	<select id="findProductOrderDetails" resultType="ProductOrder" parameterType="java.lang.String">
+		select <include refid="prdOrderDetail" />  from PRD_ORDER P, V_USER_INFO V, V_USER_INFO V2 ,pos o
+		where PRO_ORDER_NUM = #{proOrderNum} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		and P.POS_CODE  = o.code(+)
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<!--产品库中公交卡充值订单查询导出数据-->
+	<select id="findProductOrdersExcel" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />  from PRD_ORDER P, V_USER_INFO V
+		<where>
+			<if test="merCode != null and merCode !=''">
+				 MER_CODE  = #{merCode}
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and PRO_ORDER_NUM = #{proOrderNum}
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+	
+	
+	<!--子商户产品库中公交卡充值订单查询-->
+	<select id="findChildMerProductOrdersByPage" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />,o.comments as posComments  from PRD_ORDER P, V_USER_INFO V,pos o
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.MER_CODE in  (select m.mer_code from merchant m where m.mer_parent_code = #{merCode})
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and P.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and P.PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and P.TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and P.TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				and P.MER_NAME like '%'||#{merName}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+	        and p.POS_CODE = o.code(+)
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<!--子商户产品库中公交卡充值订单导出-->
+	<select id="findChildProductOrdersExcel" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />,o.comments as posComments  from PRD_ORDER P, V_USER_INFO V ,pos o
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.MER_CODE in  (select m.mer_code from merchant m where m.mer_parent_code = #{merCode})
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				and P.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="proOrderState != null and proOrderState !=''">
+				and P.PRO_ORDER_STATES =  #{proOrderState}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and P.TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and P.TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				and P.MER_NAME like '%'||#{merName}||'%'
+			</if>
+	        and P.CREATE_USER = V.id(+)
+	        and p.POS_CODE = o.code(+)
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+	
+	
+	<!--一卡通消费  收单记录查询-->
+	<select id="findProductConsumeOrdersByPage" resultType="ProductConsumeOrder">
+		select 
+		       P.ID                     as id,
+		       P.ORDER_NUM              as OrderNum,
+		       P.CARD_NUM               as cardNum,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.CITY_NAME              as cityName,
+		       P.POS_CODE               as posCode,
+		       P.ORDER_DATE             as proOrderDate,
+		       P.ORDER_DAY              as proOrderDay,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       p.YKT_NAME               as yktName,
+		       p.MER_DISCOUNT           as merDiscount,
+		       p.YKT_DISCOUNT_SIGN      as yktDisCountSign,
+		       p.INNER_STATES           as innerStates,
+		       P.SUSPICIOUS_STATES		as suspiciouStates,
+		       C.ORIGINAL_PRICE         as originalPrice,
+		       C.RECEIVED_PRICE         as receivedPrice,
+		       C.MER_GAIN               as merGain,
+		       C.MER_RATE               as merRate,	
+		       V.nick_name 			    as userName,
+		       C.STATES                 as states,
+		       C.CUSTOMER_CODE          as customerCode,
+		       C.CUSTOMER_TYPE          as customerType,
+		       C.CUSTOMER_NAME          as merName,
+		       C.USER_ID                as userId,
+		       C.CUSTOMER_TYPE          as merType,
+		       o.COMMENTS               as comments
+		  from PRD_PURCHASE_ORDER C
+    inner join PRD_PURCHASE_ORDER_RECORD P on P.ORDER_NUM = C.ORDER_NUM
+     left join V_USER_INFO V on V.ID = C.USER_ID
+     left join pos o on P.POS_CODE = o.code
+		 <where>
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				and  C.CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="customerType != null and customerType !=''">
+				and  C.CUSTOMER_TYPE  =  #{customerType}
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and P.YKT_CODE =  #{yktCode}
+			</if>
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="innerStates != null and innerStates !=''">
+				and  p.INNER_STATES  =  #{innerStates}
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} and (C.STATES !='0' and P.inner_states != '02')
+     		 </if>
+     		 <if test="suspiciouStates == '1'.toString()">
+      			  and (P.SUSPICIOUS_STATES = #{suspiciouStates} or (C.STATES ='0' and P.inner_states = '02'))
+      		</if>
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="userId != null and userId !=''">
+				and  C.USER_ID =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+		 </where>
+	
+		order by P.CREATE_DATE desc
+	</select>
+	
+	
+	
+	<!--一卡通消费  收单记录（ 导出）-->
+	<select id="findProductConsumeOrdersByList" resultType="ProductConsumeOrder">
+		select 
+		       P.ID                     as id,
+		       P.ORDER_NUM              as OrderNum,
+		       P.CARD_NUM               as cardNum,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.CITY_NAME              as cityName,
+		       P.POS_CODE               as posCode,
+		       P.ORDER_DATE             as proOrderDate,
+		       P.ORDER_DAY              as proOrderDay,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       p.YKT_NAME               as yktName,
+		       p.MER_DISCOUNT           as merDiscount,
+		       p.INNER_STATES           as innerStates,
+		       C.ORIGINAL_PRICE         as originalPrice,
+		       C.RECEIVED_PRICE         as receivedPrice,
+		       C.MER_GAIN               as merGain,
+		       C.MER_RATE               as merRate,	
+		       V.nick_name 			    as userName,
+		       C.STATES                 as states,
+		       C.CUSTOMER_CODE          as customerCode,
+		       C.CUSTOMER_TYPE          as customerType,
+		       C.CUSTOMER_NAME          as merName,
+		       C.USER_ID                as userId,
+		       o.COMMENTS               as comments
+		  from PRD_PURCHASE_ORDER C
+          inner join PRD_PURCHASE_ORDER_RECORD P on P.ORDER_NUM = C.ORDER_NUM
+          left join V_USER_INFO V on V.ID = C.USER_ID
+          left join pos o on P.POS_CODE = o.code
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} and (C.STATES !='0' and P.inner_states != '02')
+     		 </if>
+     		 <if test="suspiciouStates == '1'.toString()">
+      			  and (P.SUSPICIOUS_STATES = #{suspiciouStates} or (C.STATES ='0' and P.inner_states = '02'))
+      		</if>
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="userId != null and userId !=''">
+				and C.USER_ID  =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+		order by P.CREATE_DATE desc
+	</select>
+	
+	
+	<!--产品库中公交卡消费订单记录详情-->
+	<select id="findProductConsumeOrderDetails" resultType="ProductConsumeOrderDetail" parameterType="java.lang.String">
+		select 
+		       P.ID                     as id,
+		       P.ORDER_NUM              as OrderNum,
+		       P.CARD_NUM               as cardNum,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.CITY_NAME              as cityName,
+		       P.POS_CODE               as posCode,
+		       P.ORDER_DATE             as proOrderDate,
+		       P.ORDER_DAY              as proOrderDay,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       p.YKT_NAME               as yktName,
+		       p.MER_DISCOUNT           as merDiscount,
+		       p.INNER_STATES           as innerStates,
+		       C.ORIGINAL_PRICE         as originalPrice,
+		       C.RECEIVED_PRICE         as receivedPrice,
+		       C.MER_GAIN               as merGain,
+		       C.MER_RATE               as merRate,	
+		       C.SERVICE_RATE           as serviceRate,	
+		       C.SERVICE_RATE_TYPE      as serviceRateType,
+		       V.nick_name 			    as userName,
+		       C.STATES                 as states,
+		       C.CUSTOMER_CODE          as customerCode,
+		       C.CUSTOMER_TYPE          as customerType,
+		       C.CUSTOMER_NAME          as merName,
+		       C.USER_ID                as userId,
+		       C.COMMENTS               as comments,
+		       o.comments               as posComments
+		  from PRD_PURCHASE_ORDER C
+          inner join PRD_PURCHASE_ORDER_RECORD P on P.ORDER_NUM = C.ORDER_NUM
+          left join V_USER_INFO V on V.ID = C.USER_ID
+          left join pos o on P.POS_CODE = o.code
+		 where P.ORDER_NUM = #{orderNum}
+	</select>
+	
+	<!--一卡通消费  消费异常            记录查询-->
+	<select id="findProductConsumeOrdersExptionByPage" resultType="ProductConsumeOrder">
+	    select 
+			   P.ID                     as id,
+		       P.ORDER_NUM              as OrderNum,
+		       P.CARD_NUM               as cardNum,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.CITY_NAME              as cityName,
+		       P.POS_CODE               as posCode,
+		       P.ORDER_DATE             as proOrderDate,
+		       P.ORDER_DAY              as proOrderDay,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       p.YKT_NAME               as yktName,
+		       p.MER_DISCOUNT           as merDiscount,
+		       p.INNER_STATES           as innerStates,
+		       C.ORIGINAL_PRICE         as originalPrice,
+		       C.RECEIVED_PRICE         as receivedPrice,
+		       C.MER_GAIN               as merGain,
+		       C.MER_RATE               as merRate,	
+		       V.nick_name 			    as userName,
+		       C.STATES                 as states,
+		       C.CUSTOMER_CODE          as customerCode,
+		       C.CUSTOMER_TYPE          as customerType,
+		       C.CUSTOMER_NAME          as merName,
+		       C.USER_ID                as userId
+		  from PRD_PURCHASE_ORDER C
+         inner join PRD_PURCHASE_ORDER_RECORD P on P.ORDER_NUM = C.ORDER_NUM
+          left join V_USER_INFO V on V.ID = C.USER_ID
+		 <where>
+   			 ((c.states = '0' and p.inner_states = '02') or
+      		 (c.states = '3' and p.inner_states = '30')) 
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+		   	<if test="customerType != null and customerType !=''">
+				and  C.CUSTOMER_TYPE  = #{customerType}
+			</if>
+			<if test="merName != null and merName !=''">
+				and  C.CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and P.YKT_CODE  =  #{yktCode}
+			</if>
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="innerStates != null and innerStates !=''">
+				and  P.INNER_STATES  =  #{innerStates}
+			</if>
+			<if test="userId != null and userId !=''">
+				and  C.USER_ID =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+		 </where>
+	
+		order by P.CREATE_DATE desc
+	</select>
+	
+	<select id="excelExceptionProductOrderExport" resultType="ProductConsumeOrder">
+	    select 
+			   P.ID                     as id,
+		       P.ORDER_NUM              as OrderNum,
+		       P.CARD_NUM               as cardNum,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.CITY_NAME              as cityName,
+		       P.POS_CODE               as posCode,
+		       P.ORDER_DATE             as proOrderDate,
+		       P.ORDER_DAY              as proOrderDay,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       p.YKT_NAME               as yktName,
+		       p.MER_DISCOUNT           as merDiscount,
+		       p.INNER_STATES           as innerStates,
+		       C.ORIGINAL_PRICE         as originalPrice,
+		       C.RECEIVED_PRICE         as receivedPrice,
+		       C.MER_GAIN               as merGain,
+		       C.MER_RATE               as merRate,	
+		       V.nick_name 			    as userName,
+		       C.STATES                 as states,
+		       C.CUSTOMER_CODE          as customerCode,
+		       C.CUSTOMER_TYPE          as customerType,
+		       C.CUSTOMER_NAME          as merName,
+		       C.USER_ID                as userId,
+		       C.SERVICE_RATE_TYPE		as payServiceType,
+		       C.SERVICE_RATE			as payServiceRate
+		  from PRD_PURCHASE_ORDER C
+         inner join PRD_PURCHASE_ORDER_RECORD P on P.ORDER_NUM = C.ORDER_NUM
+          left join V_USER_INFO V on V.ID = C.USER_ID
+		 <where>
+   			 ((c.states = '0' and p.inner_states = '02') or
+      		 (c.states = '3' and p.inner_states = '30')) 
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				and  C.CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+					
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="userId != null and userId !=''">
+				and  C.USER_ID =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+		 </where>
+	
+		order by P.CREATE_DATE desc
+	</select>
+
+
+	<!--OSS一卡通消费  收单记录（ 导出）-->
+	<select id="getCountForConsumerOrderExportExcel" resultType="Integer">
+			select count(*)
+  			from PRD_PURCHASE_ORDER_RECORD P 
+		 	inner join PRD_PURCHASE_ORDER C on P.ORDER_NUM = C.ORDER_NUM 
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				and  C.CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="customerType != null and customerType !=''">
+				and  C.CUSTOMER_TYPE  =  #{customerType}
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and P.YKT_CODE =  #{yktCode}
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} and (C.STATES !='0' and P.inner_states != '02')
+     		 </if>
+     		 <if test="suspiciouStates == '1'.toString()">
+      			  and (P.SUSPICIOUS_STATES = #{suspiciouStates} or (C.STATES ='0' and P.inner_states = '02'))
+      		</if>
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="innerStates != null and innerStates !=''">
+				and  P.INNER_STATES  =  #{innerStates}
+			</if>
+			<if test="userId != null and userId !=''">
+				and C.USER_ID  =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+	</select>
+	
+	<!--一卡通消费  收单记录（ 导出）-->
+	<select id="getListForConsumerOrderExportExcel" resultType="com.dodopal.api.product.dto.ProductConsumerOrderForExport">
+		select C.ORDER_NUM           as orderNum,
+		       C.ORIGINAL_PRICE      as originalPrice,
+		       C.RECEIVED_PRICE      as receivedPrice,
+		       C.CUSTOMER_TYPE       as customerType,
+		       C.CUSTOMER_CODE       as customerCode,
+		       C.CUSTOMER_NAME       as customerName,
+		       C.BUSINESS_TYPE       as businessType,
+		       C.MER_RATE_TYPE       as merRateType,
+		       C.MER_RATE            as merRate,
+		       C.SERVICE_RATE_TYPE   as serviceRateType,
+		       C.SERVICE_RATE        as serviceRate,
+		       C.MER_GAIN            as merGain,
+		       C.PAY_GATEWAY         as payGateway,
+		       C.PAY_TYPE            as payType,
+		       C.PAY_WAY             as payWay,
+		       C.STATES              as states,
+		       C.SOURCE              as source,
+		       C.CLEARING_MARK       as clearingMark,
+		       C.USER_ID             as userId,
+		       C.COMMENTS            as comments,
+		       C.FUND_PROCESS_RESULT as fundProcessResult,
+		       P.ORDER_DATE          as orderDate,
+		       P.ORDER_DAY           as orderDay,
+		       P.CITY_CODE           as cityCode,
+		       P.YKT_CODE            as ytkCode,
+		       P.CITY_NAME           as cityName,
+		       P.YKT_NAME            as ytkName,
+		       P.YKT_PAY_RATE        as yktPayRate,
+	           P.MER_DISCOUNT        as merDiscount,
+		       P.ORDER_DATE          as orderDate,
+		       P.ORDER_DAY           as orderDay,
+		       P.CARD_NUM            as cardNum,
+		       P.CARD_FACENO         as cardFaceno,
+		       P.POS_CODE            as posCode,
+		       P.BEFBAL              as befbal,
+		       P.BLACK_AMT           as blackAmt,
+		       P.INNER_STATES        as innerStates,
+		       P.BEFOREINNER_STATES  as beforInnerStates,
+		       P.SUSPICIOUS_STATES   as suspiciousStates,
+		       P.SUSPICIOUS_EXPLAIN  as suspiciousExplain,
+		       V.nick_name           as userName,
+		       P.CREATE_DATE            as createDate,
+		       P.UPDATE_DATE            as updateDate,
+		       P.CREATE_USER            as userId,
+		       V.nick_name 				as createUser,				
+			   V2.nick_name             as updateUser
+		  from PRD_PURCHASE_ORDER_RECORD P 
+		 	inner join PRD_PURCHASE_ORDER C on P.ORDER_NUM = C.ORDER_NUM 
+		   	<if test="customerCode != null and customerCode !=''">
+				and  C.CUSTOMER_CODE  = #{customerCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				and  C.CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="customerType != null and customerType !=''">
+				and  C.CUSTOMER_TYPE  =  #{customerType}
+			</if>
+		   	<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+				and P.ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="cardNum != null and cardNum !=''">
+				and  P.CARD_NUM   like '%'||#{cardNum}||'%'
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				and P.YKT_CODE =  #{yktCode}
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} and (C.STATES !='0' and P.inner_states != '02')
+     		 </if>
+     		 <if test="suspiciouStates == '1'.toString()">
+      			  and (P.SUSPICIOUS_STATES = #{suspiciouStates} or (C.STATES ='0' and P.inner_states = '02'))
+      		</if>
+     		 <if test="suspiciouStates == '2'.toString()">
+       			 and P.SUSPICIOUS_STATES = #{suspiciouStates} 
+      		</if> 
+			<if test="states != null and states !=''">
+				and  C.STATES  =  #{states}
+			</if>
+			<if test="innerStates != null and innerStates !=''">
+				and  P.INNER_STATES  =  #{innerStates}
+			</if>
+			<if test="userId != null and userId !=''">
+				and C.USER_ID  =  #{userId}
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and C.RECEIVED_PRICE >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and C.RECEIVED_PRICE <=  #{txnAmtEnd} ]]>
+			</if>
+	 		left join V_USER_INFO V on V.ID = C.CREATE_USER
+	 		left join V_USER_INFO V2 on V2.ID = C.UPDATE_USER
+		order by P.CREATE_DATE desc
+	</select>
+	
+	
+	
+	
+	<!--门户中根据商户查询一卡通充值订单  -->
+	<select id="findRechargeProductOrderByPage" resultType="ProductOrder">
+		select <include refid="prdStandOrders" />,o.comments as posComments  from PRD_ORDER P, V_USER_INFO V ,pos o
+		<where>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="userCode != null and userCode !=''">
+				and USER_CODE = #{userCode}
+			</if>
+			
+			<if test="prdOrderDay != null and prdOrderDay !=''">
+				and P.PRD_ORDER_DAY = #{prdOrderDay}
+			</if>
+			
+			<if test="proOrderState != null and proOrderState !=''">
+			   <if test="proOrderState==5">
+				   and p.PRO_ORDER_STATES in (3,5)
+				</if>
+				<if test="proOrderState==2 or proOrderState==4">
+				   and p.PRO_ORDER_STATES =  #{proOrderState}
+				</if>
+				<!--    and P.PRO_ORDER_STATES = #{proOrderState}-->
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="cityName != null and cityName !=''">
+				and P.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="txnAmtStart != null and txnAmtStart !=''">
+				<![CDATA[ and TXN_AMT >=  #{txnAmtStart} ]]>
+			</if>
+			<if test="txnAmtEnd != null and txnAmtEnd !=''">
+				<![CDATA[ and TXN_AMT <=  #{txnAmtEnd} ]]>
+			</if>
+			<if test="posCode != null and posCode !=''">
+				and P.POS_CODE like '%'||#{posCode}||'%'
+			</if>
+			<if test="merOrderNum != null and merOrderNum !=''">
+				and MER_ORDER_NUM like '%'||#{merOrderNum}||'%'
+			</if>
+			
+			<if test="proInnerState != null and proInnerState !=''">
+				and PRO_INNER_STATES =  #{proInnerState}
+			</if>
+			<if test="merName != null and merName !=''">
+				and P.MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="payWay != null and payWay !=''">
+				and PAY_WAY like '%'||#{payWay}||'%'
+			</if>
+			<if test="payType != null and payType !=''">
+				and PAY_TYPE =  #{payType}
+			</if>
+			<if test="orderCardno != null and orderCardno !=''">
+				and ORDER_CARDNO like '%'||#{orderCardno}||'%'
+			</if>
+			<if test="suspiciouStates == '0'.toString()">
+				and P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} and (P.PRO_ORDER_STATES !='3' and P.PRO_INNER_STATES != '31')
+			</if>
+			<if test="suspiciouStates == '1'.toString()">
+				and (P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} or ((pro_order_states = '1' and pro_inner_states = '11') or
+       																  (pro_order_states = '2' and pro_inner_states = '21') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '22' and load_flag = '1') or
+                                                                      (pro_order_states = '2' and pro_inner_states = '24') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '30') or
+                                                                      (pro_order_states = '3' and pro_inner_states = '31') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '40' and load_flag = '1') or
+                                                                      (pro_order_states = '4' and pro_inner_states = '42') or
+                                                                      (pro_order_states = '5' and pro_inner_states = '50')))
+			</if>
+			<if test="suspiciouStates == '2'.toString()">
+				and P.PRO_SUSPICIOUS_STATES = #{suspiciouStates} 
+			</if> 
+	        and P.CREATE_USER = V.id(+)
+	        and P.POS_CODE = o.code(+)
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+</mapper>

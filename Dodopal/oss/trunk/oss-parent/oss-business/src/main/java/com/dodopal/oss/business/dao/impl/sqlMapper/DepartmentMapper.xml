@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.DepartmentMapper">
+   <select id="findDepartmentByPage" resultType="Department" resultMap="departmentResultMap" parameterType="DepartmentQuery">
+          select 
+          osd.id       as id,
+          osd.dep_code as dep_code,
+          osd.dep_name as dep_name,
+          osd.remark   as remark,
+          osd.activate as activate,
+          osu.name as name,
+          osd.charge_id  as charge_id
+     from oss_sys_department osd, oss_sys_user osu
+        <where> 
+        	osd.charge_id = osu.id(+)
+	        <if test="depName != null and depName !=''"> 
+	        	and osd.DEP_NAME like '%'||#{depName}||'%'
+	        </if>  
+	         <if test="activate != null and activate !=''">  
+	            and osd.ACTIVATE = #{activate}  
+	        </if>  
+    	</where>  
+    	 order by osd.CREATE_DATE DESC,osd.ID DESC
+    </select>
+    
+    <select id="findDepartments" resultType="Department" resultMap="departmentResultMap" parameterType="Department">
+        select * from OSS_SYS_DEPARTMENT 
+        <where>  
+	         <if test="depCode != null and depCode !=''">  
+	             DEP_CODE = #{depCode}  
+	        </if> 
+	         <if test="depName != null and depName !=''">  
+	           AND  DEP_NAME = #{depName}  
+	        </if>
+	        <if test="activate != null and activate !=''">  
+	            and ACTIVATE = #{activate}  
+	        </if>
+	    </where>  
+    </select>
+    
+    
+    <select id="findDepartmentById" resultType="Department" resultMap="departmentResultMap" parameterType="java.lang.String">
+        select * from OSS_SYS_DEPARTMENT where  DEP_CODE= #{depCode}
+    </select>
+    
+    <insert id="insertDepartment" parameterType="Department">
+ 	<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select OSS_SYS_DEPARTMENT_ID_SEQ.NEXTVAL from dual
+   	</selectKey>
+        INSERT INTO OSS_SYS_DEPARTMENT(ID, DEP_CODE, DEP_NAME, CHARGE_ID, REMARK, ACTIVATE,CREATE_USER,CREATE_DATE) 
+        VALUES (#{id, jdbcType=VARCHAR}, #{depCode,jdbcType=VARCHAR}, #{depName,jdbcType=VARCHAR}, #{chargeId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},'0',#{createUser,jdbcType=VARCHAR},sysdate)
+    </insert>
+    
+    <update id="updateDepartment" parameterType="Department">
+  		update OSS_SYS_DEPARTMENT
+  		<trim prefix="SET" suffixOverrides=",">
+		      <if test="depName != null and depName !=''"> 
+		      	DEP_NAME=#{depName},
+		      </if>
+		   
+		      <if test="activate != null and activate !=''">  
+		      	ACTIVATE=#{activate},
+		      </if>		    
+		      CHARGE_ID=#{chargeId,jdbcType=VARCHAR},
+		      REMARK=#{remark,jdbcType=VARCHAR},
+		      UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+		      UPDATE_DATE = sysdate
+    </trim>
+	  where ID=#{id}  
+	</update>
+    
+	<delete id="deleteDepartment"> 
+        delete from OSS_SYS_DEPARTMENT where DEP_CODE in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+    </delete> 
+    
+    
+    <update id="startActivateDepartment" parameterType="java.lang.String">
+		update OSS_SYS_DEPARTMENT 
+		set ACTIVATE = 0 
+		where DEP_CODE in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</update>
+	
+	<update id="disableActivateDepartment" parameterType="java.lang.String">
+		update OSS_SYS_DEPARTMENT 
+		set ACTIVATE = 1 
+		where DEP_CODE in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</update>
+    
+</mapper>

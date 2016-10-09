@@ -1,0 +1,43 @@
+* {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+
+.b {
+	width: 150px;
+	overflow: hidden;
+}
+/*ѡ�*/
+.main {
+	width: 440px;
+	height: 175px;
+	border: solid 1px #999;
+	overflow: hidden;
+	margin: 15px;
+}
+
+.biaoti {
+	width: 500px;
+	height: 30px;
+}
+
+.biaoti a {
+	width: 70px;
+	line-height: 18px;
+	text-decoration: none;
+	float: left;
+	text-align: center;
+	border-bottom: solid 1px #999;
+	cursor: pointer;
+}
+
+.biaoti .corrent {
+	border-right: none 0;
+	width: 200px;
+}
+
+.neirong {
+	width: 600px;
+	height: 370px;
+}

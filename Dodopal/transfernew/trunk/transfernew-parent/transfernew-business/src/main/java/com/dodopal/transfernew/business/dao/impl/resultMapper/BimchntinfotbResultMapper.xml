@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.BimchntinfotbMapper">
+	<resultMap type="Bimchntinfotb" id="bimchntinfotbResultMap">
+		<result property="mchnitid" column="MCHNITID" />
+		<result property="address" column="ADDRESS" />
+		<result property="areaid" column="AREAID" />
+		<result property="backpaypwd" column="BACKPAYPWD" />
+		<result property="bankacc" column="BANKACC" />
+		<result property="bankaccname" column="BANKACCNAME" />
+		<result property="biunittbpkid" column="BIUNITTBPKID" />
+		<result property="cityid" column="CITYID" />
+		<result property="fax" column="FAX" />
+		<result property="headflag" column="HEADFLAG" />
+		<result property="lasttime" column="LASTTIME" />
+		<result property="linkman" column="LINKMAN" />
+		<result property="mchnitip" column="MCHNITIP" />
+		<result property="mchnitname" column="MCHNITNAME" />
+		<result property="mchzcflag" column="MCHZCFLAG" />
+		<result property="orderurl" column="ORDERURL" />
+		<result property="parentmchnitid" column="PARENTMCHNITID" />
+		<result property="paypwd" column="PAYPWD" />
+		<result property="point" column="POINT" />
+		<result property="posfalg" column="POSFALG" />
+		<result property="provinceid" column="PROVINCEID" />
+		<result property="queryurl" column="QUERYURL" />
+		<result property="rateamt" column="RATEAMT" />
+		<result property="returnurl" column="RETURNURL" />
+		<result property="sale" column="SALE" />
+		<result property="salebak" column="SALEBAK" />
+		<result property="setsale" column="SETSALE" />
+		<result property="setsalebak" column="SETSALEBAK" />
+		<result property="status" column="STATUS" />
+		<result property="tel" column="TEL" />
+		<result property="tradeid" column="TRADEID" />
+		<result property="transfermark" column="TRANSFERMARK" />
+		<result property="transfertype" column="TRANSFERTYPE" />
+		<result property="unioncode" column="UNIONCODE" />
+		<result property="zipcode" column="ZIPCODE" />
+	</resultMap>
+</mapper>

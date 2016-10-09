@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.AcctReChargeClearingMapper">
+<sql id="sqlExcelColumn">                                                                       
+<!-- 		 t.ID                                 AS  ID                              , -->
+		 t.ORDER_NO                           AS  orderNo                         ,
+		 t.ORDER_DATE                         AS  orderDate                       ,
+		 t.ORDER_DAY                          AS  orderDay                        ,
+		 t.CUSTOMER_NO                        AS  customerNo                      ,
+		 t.CUSTOMER_NAME                      AS  customerName                    ,
+		 t.CUSTOMER_TYPE                      AS  customerType                    ,
+		 t.BUSINESS_TYPE                      AS  businessType                    ,
+		 t.CUSTOMER_RATE_TYPE                 AS  customerRateType                ,
+		 t.CUSTOMER_RATE                      AS  customerRate                    ,
+		 t.ORDER_AMOUNT                       AS  orderAmount                     ,
+		 t.CUSTOER_REAL_PAY_AMOUNT            AS  custoerRealPayAmount            ,
+		 t.CUSTOMER_SHOULD_PROFIT             AS  customerShouldProfit            ,
+		 t.CUSTOMER_REAL_PROFIT               AS  customerRealProfit              ,
+		 t.CUSTOMER_ACCOUNT_SHOULD_AMOUNT     AS  customerAccountShouldAmount     ,
+		 t.CUSTOMER_ACCOUNT_REAL_AMOUNT       AS  customerAccountRealAmount       ,
+		 t.CUSTOMER_CLEARING_FLAG             AS  customerClearingFlag            ,
+		 t.CUSTOMER_CLEARING_TIME             AS  customerClearingTime            ,
+		 t.CUSTOMER_SETTLEMENT_FLAG           AS  customerSettlementFlag          ,
+		 t.CUSTOMER_SETTLEMENT_TIME           AS  customerSettlementTime          ,
+		 t.DDP_GET_MERCHANT_PAY_FEE           AS  ddpGetMerchantPayFee            ,
+		 t.DDP_TO_CUSTOMER_REAL_FEE           AS  ddpToCustomerRealFee            ,
+		 t.SUB_MERCHANT_CODE                  AS  subMerchantCode                 ,
+		 t.SUB_MERCHANT_NAME                  AS  subMerchantName                 ,
+		 t.SUB_MERCHANT_SHOULD_PROFIT         AS  subMerchantShouldProfit         ,
+		 t.PAY_GATEWAY                        AS  payGateway                      ,
+		 t.PAY_TYPE                           AS  payType                         ,
+		 t.PAY_WAY                            AS  payWay                          ,
+		 t.SERVICE_RATE_TYPE                  AS  serviceRateType                 ,
+		 t.SERVICE_RATE                       AS  serviceRate                     ,
+		 t.DDP_BANK_RATE                      AS  ddpBankRate                     ,
+		 t.DDP_TO_BANK_FEE                    AS  ddpToBankFee                    ,
+		 t.DDP_FROM_BANK_SHOULD_FEE           AS  ddpFromBankShouldFee            ,
+		 t.DDP_FROM_BANK_REAL_FEE             AS  ddpFromBankRealFee              ,
+		 t.BANK_CLEARING_FLAG                 AS  bankClearingFlag                ,
+		 t.BANK_CLEARING_TIME                 AS  bankClearingTime                ,
+		 t.BANK_SETTLEMENT_FLAG               AS  bankSettlementFlag              ,
+		 t.BANK_SETTLEMENT_TIME               AS  bankSettlementTime              ,
+		 t.SUPPLIER_CODE                      AS  supplierCode                    ,
+		 t.SUPPLIER_NAME                      AS  supplierName                    ,
+		 t.CITY_CODE                          AS  cityCode                        ,
+		 t.CITY_NAME                          AS  cityName                        ,
+		 t.DDP_TO_SUPPLIER_SHOULD_AMOUNT      AS  ddpToSupplierShouldAmount       ,
+		 t.DDP_TO_SUPPLIER_REAL_AMOUNT        AS  ddpToSupplierRealAmount         ,
+		 t.DDP_SUPPLIER_RATE                  AS  ddpSupplierRate                 ,
+		 t.SUPPLIER_TO_DDP_SHOULD_REBATE      AS  supplierToDdpShouldRebate       ,
+		 t.SUPPLIER_TO_DDP_REAL_REBATE        AS  supplierToDdpRealRebate         ,
+		 t.SUPPLIER_CLEARING_FLAG             AS  supplierClearingFlag            ,
+		 t.SUPPLIER_CLEARING_TIME             AS  supplierClearingTime            ,
+		 t.SUPPLIER_SETTLEMENT_FLAG           AS  supplierSettlementFlag          ,
+		 t.SUPPLIER_SETTLEMENT_TIME           AS  supplierSettlementTime          ,
+		 t.ORDER_FROM                         AS  orderFrom                       ,
+		 t.ORDER_CIRCLE                       AS  orderCircle                     ,
+		 t.TOP_MERCHANT_PROFIT_FLAG           AS  topMerchantProfitFlag           ,
+		 t.PAY_WAY_NAME                       AS  payWayName                      ,
+		 t.DATA_FLAG                          AS  dataflag                 	  	  
+	</sql>
+
+
+	<!-- 按条件查询账户充值清分列表'--> 
+	<select id="queryAcctRechargeClearingPage" resultType="AcctReChargeClearing" resultMap="acctReChargeClearingResultMap" parameterType="AcctReChargeClearingQuery">
+		select 
+		t.ID,
+		y.CREATE_USER,
+		y.CREATE_DATE,
+		y.UPDATE_USER,
+		y.UPDATE_DATE,
+		t.ORDER_DATE,
+		t.ORDER_NO,
+		NVL(t.ORDER_AMOUNT, 0)/100 as ORDER_AMOUNT,
+		y.TRAN_OUT_STATUS,
+		y.TRAN_IN_STATUS,
+		t.CUSTOMER_NAME,
+		t.CUSTOMER_CLEARING_FLAG,
+		t.PAY_GATEWAY,
+		t.PAY_WAY, 
+		t.PAY_WAY_NAME,
+		t.BANK_CLEARING_FLAG
+		from CLEARING_BASIC_DATA t left join PAY_TRATRANSACTION y on y.ORDER_NUMBER = t.ORDER_NO  
+		 where
+			 t.BUSINESS_TYPE='99' and y.TRAN_TYPE='1' and  t.CUSTOMER_CLEARING_FLAG = '2'  
+       		 <if test="clearingStartDate != null and clearingStartDate !=''">
+			 <![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{clearingStartDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingEndDate != null and clearingEndDate !=''">
+			<![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{clearingEndDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if> 
+       		<if test="customerName != null and customerName !=''">   
+           	 AND t.CUSTOMER_NAME like '%'||#{customerName}||'%'
+       		</if>
+			<if test="orderNo != null and orderNo !=''">   
+           	  AND instr(t.ORDER_NO,#{orderNo}) > 0  
+       		</if>
+    	ORDER by t.ID DESC 
+	</select> 
+	<!-- 根据交易号查询账户充值清分详情 -->
+	<select id="queryAcctRechargeClearingDetails" resultType="AcctReChargeClearing" resultMap="acctReChargeClearingResultMap" parameterType="java.lang.String">
+		select 
+		    t.ID,
+		    y.CREATE_USER,
+		    y.CREATE_DATE,
+		    y.UPDATE_USER,
+		    y.UPDATE_DATE,
+		    t.ORDER_NO,
+		    t.ORDER_DATE,
+		    t.CUSTOMER_NO,
+		    t.CUSTOMER_NAME,
+		    t.CUSTOMER_TYPE,
+		    t.ORDER_FROM,
+		    NVL(t.ORDER_AMOUNT, 0)/100 as ORDER_AMOUNT,
+		    NVL(t.CUSTOER_REAL_PAY_AMOUNT, 0)/100 as CUSTOER_REAL_PAY_AMOUNT,
+		    NVL(t.CUSTOMER_ACCOUNT_SHOULD_AMOUNT, 0)/100 as CUSTOMER_ACCOUNT_SHOULD_AMOUNT,
+		    NVL(t.CUSTOMER_ACCOUNT_REAL_AMOUNT, 0)/100 as CUSTOMER_ACCOUNT_REAL_AMOUNT,
+		    NVL(t.DDP_GET_MERCHANT_PAY_FEE, 0)/100 as DDP_GET_MERCHANT_PAY_FEE,
+		    t.PAY_GATEWAY,
+		    t.PAY_TYPE,
+		    t.PAY_WAY,
+		    t.SERVICE_RATE_TYPE,
+		    t.SERVICE_RATE,
+		    t.DDP_BANK_RATE,
+		     NVL(t.DDP_TO_BANK_FEE, 0)/100 as DDP_TO_BANK_FEE,
+		    NVL(t.DDP_FROM_BANK_SHOULD_FEE, 0)/100 as DDP_FROM_BANK_SHOULD_FEE,
+		    NVL(t.DDP_FROM_BANK_REAL_FEE, 0)/100 as DDP_FROM_BANK_REAL_FEE,
+		    t.BANK_CLEARING_FLAG,
+		    t.BANK_CLEARING_TIME,
+		    t.CUSTOMER_CLEARING_FLAG,
+		    t.CUSTOMER_CLEARING_TIME,
+		    t.BANK_SETTLEMENT_FLAG,
+		    t.BANK_SETTLEMENT_TIME,
+		    t.SUPPLIER_SETTLEMENT_FLAG,
+		    t.SUPPLIER_SETTLEMENT_TIME,
+		    y.TRAN_OUT_STATUS,
+		    y.PAY_WAY, 
+		    t.PAY_WAY_name,
+			y.TRAN_IN_STATUS
+		    from CLEARING_BASIC_DATA t left join PAY_TRATRANSACTION y on y.ORDER_NUMBER = t.ORDER_NO  
+		where t.ID = #{id}
+	</select>
+
+	<!-- 账户充值异常清分总计路数 -->
+	<select id="queryAcctRechargeClearingCount" resultType="java.lang.Integer"  parameterType="AcctReChargeClearingQuery">
+		select count(*) from CLEARING_BASIC_DATA t left join PAY_TRATRANSACTION y on y.ORDER_NUMBER = t.ORDER_NO  
+		 where
+			 t.BUSINESS_TYPE='99' and y.TRAN_TYPE='1' and  t.CUSTOMER_CLEARING_FLAG = '2'  
+       		 <if test="clearingStartDate != null and clearingStartDate !=''">
+			 <![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{clearingStartDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingEndDate != null and clearingEndDate !=''">
+			<![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{clearingEndDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if> 
+       		<if test="customerName != null and customerName !=''">   
+           	 AND t.CUSTOMER_NAME like '%'||#{customerName}||'%'
+       		</if>
+			<if test="orderNo != null and orderNo !=''">   
+           	  AND instr(t.ORDER_NO,#{orderNo}) > 0  
+       		</if>
+    	ORDER by t.ID DESC 
+	</select> 
+	
+	<!-- 账户充值异常清分导出记录数-->
+	<select id="queryAcctRechargeClearingExcel" resultType="com.dodopal.oss.business.model.AcctReChargeClearingDTO"  parameterType="AcctReChargeClearingQuery">
+		select <include refid="sqlExcelColumn" /> ,
+		y.CREATE_USER as createUser,
+		y.CREATE_DATE as createDate,
+		y.UPDATE_USER as updateUser,
+		y.UPDATE_DATE as updateDate,
+		y.TRAN_OUT_STATUS as tranOutStatus,
+		y.TRAN_IN_STATUS as tranInStatus 
+		 from CLEARING_BASIC_DATA t left join PAY_TRATRANSACTION y on y.ORDER_NUMBER = t.ORDER_NO  
+		 where
+			 t.BUSINESS_TYPE='99' and y.TRAN_TYPE='1' and  t.CUSTOMER_CLEARING_FLAG = '2'  
+       		 <if test="clearingStartDate != null and clearingStartDate !=''">
+			 <![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{clearingStartDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingEndDate != null and clearingEndDate !=''">
+			<![CDATA[ and TO_DATE(TO_CHAR(t.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{clearingEndDate},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if> 
+       		<if test="customerName != null and customerName !=''">   
+           	 AND t.CUSTOMER_NAME like '%'||#{customerName}||'%'
+       		</if>
+			<if test="orderNo != null and orderNo !=''">   
+           	  AND instr(t.ORDER_NO,#{orderNo}) > 0  
+       		</if>
+    	ORDER by t.ID DESC 
+	</select> 
+	
+
+</mapper>

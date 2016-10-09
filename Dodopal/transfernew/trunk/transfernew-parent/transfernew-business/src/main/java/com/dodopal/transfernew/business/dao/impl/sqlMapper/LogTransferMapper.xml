@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.LogTransferMapper">
+<sql id="allColumns">
+	  ID,
+  BATCH_ID,
+  OLD_MERCHANT_ID,
+  OLD_MERCHANT_TYPE,
+  NEW_MERCHANT_CODE,
+  NEW_MERCHANT_TYPE,
+  STATE,
+  MEMO
+</sql>
+<insert id="insartLogTransfer" parameterType="LogTransfer">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select log_transfer_id_seq.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO log_transfer(
+			<include refid="allColumns" />
+		)
+		VALUES (
+			#{id},
+			#{batchId, jdbcType=VARCHAR},
+			#{oldMerchantId, jdbcType=VARCHAR},
+			#{oldMerchantType, jdbcType=VARCHAR},
+			#{newMerchantCode, jdbcType=VARCHAR},
+			#{newMerchantType, jdbcType=VARCHAR},
+			#{state, jdbcType=VARCHAR},
+			#{memo, jdbcType=VARCHAR}
+		)
+</insert>
+
+<select id="findAllLogTransfer" resultType="LogTransfer" resultMap="logTransferResultMap" parameterType="LogTransfer">
+select  <include refid="allColumns" /> from  log_transfer 
+	<where>
+			<if test="batchId != null and batchId !=''">
+				BATCH_ID = #{batchId}
+			</if>
+	</where>
+</select>
+</mapper>

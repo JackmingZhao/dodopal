@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.YktLimitBatchReportMapper">
+
+	<select id="findYktLimitBatchReportByPage" resultType="com.dodopal.oss.business.bean.YktLimitBatchReportForExport" parameterType="com.dodopal.oss.business.bean.query.YktLimitBatchReportQuery">
+		select t.ykt_code as yktCode,
+		       t.ykt_name as yktName,
+		       nvl(t.financial_pay_amt, 0) / 100 as financialPayAmt,
+		       t.payment_channel as paymentChannel,
+		       nvl(t.ykt_add_limit, 0) / 100 as yktAddLimit,
+		       to_char(t.ykt_add_limit_date, 'yyyy-mm-dd') as yktAddLimitDate,
+		       nvl(t.financial_pay_amt, 0) / 100 - nvl(t.ykt_add_limit, 0) / 100 as yktUnaddLimit,
+		       to_char(t.financial_pay_date, 'yyyy-mm-dd') as financialPayDate,
+		       nvl(t.financial_pay_fee, 0) / 100 as financialPlayFee
+	      from prd_ykt_limit_batch_info t 
+			<where>
+				<if test="yktName != null and yktName !=''">
+					t.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+				</if>
+				<if test="financialPayDateStart != null and financialPayDateStart !=''">
+					<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{financialPayDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+				</if>
+				<if test="financialPayDateEnd != null and financialPayDateEnd !=''">
+					<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{financialPayDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+				</if>
+				<if test="yktAddLimitDateStart != null and yktAddLimitDateStart !=''">
+					<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{yktAddLimitDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+				</if>
+				<if test="yktAddLimitDateEnd != null and yktAddLimitDateEnd !=''">
+					<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{yktAddLimitDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+				</if>
+				and t.audit_state = '1'
+			</where>
+			order by t.ykt_code, t.batch_code desc
+	</select>
+	
+	<select id="getCountForYktLimitBatchReportExport" resultType="Integer" parameterType="com.dodopal.oss.business.bean.query.YktLimitBatchReportQuery">
+		select count(*)
+          from prd_ykt_limit_batch_info t 
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="financialPayDateStart != null and financialPayDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{financialPayDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="financialPayDateEnd != null and financialPayDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{financialPayDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktAddLimitDateStart != null and yktAddLimitDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{yktAddLimitDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktAddLimitDateEnd != null and yktAddLimitDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{yktAddLimitDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			and t.audit_state = '1'
+		</where>
+	</select>
+	
+	<select id="getListForYktLimitBatchReportExport" resultType="com.dodopal.oss.business.bean.YktLimitBatchReportForExport" parameterType="com.dodopal.oss.business.bean.query.YktLimitBatchReportQuery">
+		select t.ykt_code as yktCode,
+	       t.ykt_name as yktName,
+	       nvl(t.financial_pay_amt, 0) / 100 as financialPayAmt,
+	       t.payment_channel as paymentChannel,
+	       nvl(t.ykt_add_limit, 0) / 100 as yktAddLimit,
+	       to_char(t.ykt_add_limit_date, 'yyyy-mm-dd') as yktAddLimitDate,
+	       nvl(t.financial_pay_amt, 0) / 100 - nvl(t.ykt_add_limit, 0) / 100 as yktUnaddLimit,
+	       to_char(t.financial_pay_date, 'yyyy-mm-dd') as financialPayDate,
+	       nvl(t.financial_pay_fee, 0) / 100 as financialPlayFee
+      from prd_ykt_limit_batch_info t 
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="financialPayDateStart != null and financialPayDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{financialPayDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="financialPayDateEnd != null and financialPayDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.FINANCIAL_PAY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{financialPayDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktAddLimitDateStart != null and yktAddLimitDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{yktAddLimitDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="yktAddLimitDateEnd != null and yktAddLimitDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(t.YKT_ADD_LIMIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{yktAddLimitDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			and t.audit_state = '1'
+		</where>
+		order by t.ykt_code, t.batch_code desc
+	</select>
+	
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.PosTypeMapper">
+<sql id="sqlColumn">
+		        P.ID,
+		        P.CODE,
+		        P.NAME,
+		        P.COMMENTS,
+		        P.ACTIVATE,
+				V.nick_name as CREATE_USER,				
+				P.CREATE_DATE,			
+				V2.nick_name as UPDATE_USER,			
+				P.UPDATE_DATE
+	</sql>
+		
+	<select id="findPosTypesByPage" resultType="PosType" resultMap="posTypeResultMap" parameterType="PosTypeQuery">
+		select <include refid="sqlColumn" />  from POS_TYPE P, V_USER_INFO V, V_USER_INFO V2
+		<where>
+			<if test="code != null and code !=''">
+				code like '%'||#{code}||'%'
+			</if>
+			<if test="name != null and name !=''">
+				and name like '%'||#{name}||'%'
+			</if>
+			<!--
+			<if test="activate != null and activate !=''">  
+	            and activate = #{activate}  
+	        </if> -->
+	        and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		</where>
+		order by ID desc
+	</select>
+	
+	<select id="findPosTypes" resultType="PosType" resultMap="posTypeResultMap" parameterType="PosType">
+		select * from POS_TYPE
+		<where>
+			<if test="code != null and code !=''">
+				code like '%'||#{code}||'%'
+			</if>
+			<if test="name != null and name !=''">
+				and name like '%'||#{name}||'%'
+			</if>
+		</where>
+	</select>
+
+	<select id="findPosTypeById" resultType="PosType" resultMap="posTypeResultMap" parameterType="java.lang.String">
+		select <include refid="sqlColumn" /> 
+		from POS_TYPE P, V_USER_INFO V, V_USER_INFO V2 
+		where P.id = #{id} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+	</select>
+
+	<insert id="insertPosType" parameterType="PosType">
+	<selectKey resultType="String" keyProperty="id" order="BEFORE">
+		select POS_TYPE_ID_SEQ.NEXTVAL from dual
+	</selectKey>
+	INSERT INTO POS_TYPE(ID, CODE, NAME, COMMENTS, ACTIVATE, CREATE_DATE,
+	 CREATE_USER)
+	VALUES (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
+	#{name,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{activate},
+	sysdate,#{createUser,jdbcType=VARCHAR})
+</insert>
+
+	<update id="updatePosType" parameterType="PosType">
+		update POS_TYPE
+		<trim prefix="SET" suffixOverrides=",">
+				code=#{code,jdbcType=VARCHAR},
+				name=#{name,jdbcType=VARCHAR},
+				comments = #{comments,jdbcType=VARCHAR},
+				activate = #{activate},
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deletePosType" parameterType="java.lang.String">
+		delete from POS_TYPE where code in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	<select id="countPosType" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from POS_TYPE where code = #{code}
+	</select>
+
+	<select id="countPosTypeByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from POS_TYPE where name = #{name}
+	</select>
+
+	<select id="loadPosType" resultType="PosType" resultMap="posTypeResultMap" >
+		select code, name from POS_TYPE where ACTIVATE = 0 order by name
+	</select>
+	
+	<update id="batchActivateType">
+		update POS_TYPE
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			activate=#{activate}
+		</trim>
+		where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</update>
+	
+</mapper>

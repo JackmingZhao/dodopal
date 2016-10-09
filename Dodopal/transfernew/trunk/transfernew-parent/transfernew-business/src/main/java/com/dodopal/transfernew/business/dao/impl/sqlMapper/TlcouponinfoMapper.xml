@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.TlcouponinfoMapper">
+
+	<select id="findTlcouponinfoById" resultType="Tlcouponinfo" parameterType="java.lang.String">
+		select 
+		      tlc.COUPONID                     as  couponid,
+      tlc.ACTIVEID                    as  activeid,
+      tlc.AMT                    as  amt,
+      tlc.BORNDATE                    as  borndate,
+      tlc.BORNTIME                    as  borntime,
+      tlc.CORDERID                    as  corderid,
+      tlc.CORDERSTATES                    as  corderstates,
+      tlc.COUPONCODE                    as  couponcode,
+      tlc.FINISHDATE                    as  finishdate,
+      tlc.FINISHTIME                    as  finishtime,
+      tlc.MCHNITID                    as  mchnitid,
+      tlc.OVERDUESTATUS                    as  overduestatus,
+      tlc.OVERDUETIME                    as  overduetime,
+      tlc.REMARKS                    as  remarks,
+      tlc.RESERVECHA                    as  reservecha,
+      tlc.RESERVEDATE                    as   reservedate,
+      tlc.RESERVENDATE                    as  reservendate,
+      tlc.RESERVENTIME                    as  reserventime,
+      tlc.RESERVENUM                    as  reservenum,
+      tlc.RESERVEVAR                    as  reservevar,
+      tlc.SORDERID                    as  sorderid,
+      tlc.SORDERSTATES                    as  sorderstates,
+      tlc.STATUS                    as  status,
+      tlc.UPDATEDATE                    as  updatedate,
+      tlc.UPDATETIME                    as  updatetime,
+      tlc.UPDATEUSER                    as  updateuser,
+      tlc.USERID                    as  userid
+		  from ICPAY.TLCOUPONINFO tlc
+		 where tlc.userid = #{userid} 
+	</select>
+	
+	<select id="findTlcouponinfoCountById" resultType="Tlcouponinfo" parameterType="java.lang.String">
+		select  cc.SURPLUS_ACCOUNT_COUNT as surplusAccountCount,bb.USE_ACCOUNT_COUNT as useAccountCount,aa.COUPON_ACCOUNT_COUNT as couponAccountCount from (select count(*) as COUPON_ACCOUNT_COUNT from ICPAY.tlcouponinfo t where t.userid=#{userid}) aa,(select count(*) as USE_ACCOUNT_COUNT from ICPAY.tlcouponinfo t where t.userid=#{userid} and t.status='2') bb,(select count(*) as SURPLUS_ACCOUNT_COUNT from ICPAY.tlcouponinfo t where t.userid=#{userid} and t.status in ('0','1','3','4')) cc
+	</select>
+
+	<insert id="batchAddTlcouponinfo" parameterType="java.util.List">
+		insert into TLCOUPONINFO 
+			(ID,
+			ACTIVEID,	
+			COUPONCODE,	
+			COUPON_ACCOUNT_CODE,
+			MER_CODE,
+			SORDERID,
+			SORDERSTATES,
+			CORDERID,
+			CORDERSTATES,
+			USER_CODE,
+			STATUS,
+			AMT,
+			BORNDATE,
+			BORNTIME,
+			FINISHDATE,
+			FINISHTIME,
+			UPDATEDATE,
+			UPDATETIME,
+			UPDATEUSER,
+			REMARKS,
+			RESERVEVAR,
+			RESERVECHA,
+			RESERVENUM,
+			RESERVENDATE,
+			RESERVENTIME,
+			RESERVEDATE,
+			OVERDUESTATUS,
+			OVERDUETIME
+			)
+		select tlcouponinfo_id_seq.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{activeid, jdbcType=VARCHAR},
+			#{couponcode, jdbcType=VARCHAR},
+			#{couponAccountcode, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR},
+			#{sorderid, jdbcType=VARCHAR}, 
+			#{sorderstates, jdbcType=VARCHAR}, 
+			#{corderid, jdbcType=VARCHAR}, 
+			#{corderstates, jdbcType=VARCHAR}, 
+			#{userCode, jdbcType=VARCHAR}, 
+			#{status, jdbcType=VARCHAR},
+			#{amt, jdbcType=DECIMAL}, 
+			#{borndate, jdbcType=DECIMAL}, 
+			#{borntime, jdbcType=DECIMAL}, 
+			#{finishdate, jdbcType=DECIMAL}, 
+			#{finishtime, jdbcType=DECIMAL}, 
+			#{updatedate, jdbcType=DECIMAL}, 
+			#{updatetime, jdbcType=DECIMAL}, 
+			#{updateuser, jdbcType=VARCHAR}, 
+			#{remarks, jdbcType=VARCHAR}, 
+			#{reservevar, jdbcType=VARCHAR}, 
+			#{reservecha, jdbcType=VARCHAR}, 
+			#{reservenum, jdbcType=DECIMAL},
+			#{reservendate, jdbcType=DECIMAL},
+			#{reserventime, jdbcType=DECIMAL},
+			#{reservedate, jdbcType=DATE},
+			#{overduestatus, jdbcType=VARCHAR},
+			#{overduetime, jdbcType=DECIMAL}
+			from dual
+		</foreach>
+		) a
+	</insert>     
+</mapper>

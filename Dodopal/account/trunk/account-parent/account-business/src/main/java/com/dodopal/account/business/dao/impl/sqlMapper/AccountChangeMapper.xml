@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountChangeMapper">
+	<sql id="AccountChangeCloumn">
+		FUND_ACCOUNT_CODE,FUND_TYPE,ACCOUNT_CHANGE_TIME,TRAN_CODE,CHANGE_TYPE,CHANGE_AMOUNT,BEFORE_CHANGE_AMOUNT,
+		BEFORE_CHANGE_AVAILABLE_AMOUNT,BEFORE_CHANGE_FROZEN_AMOUNT
+	</sql>
+	<sql id="AccountChangeALLCloumn">
+		t.ID , t.CREATE_USER, t.CREATE_DATE, t.UPDATE_USER, t.UPDATE_DATE,
+		t.FUND_ACCOUNT_CODE, t.FUND_TYPE, t.ACCOUNT_CHANGE_TIME, t.TRAN_CODE,
+		t.CHANGE_TYPE, t.CHANGE_AMOUNT, t.BEFORE_CHANGE_AMOUNT,
+		t.BEFORE_CHANGE_AVAILABLE_AMOUNT, t.BEFORE_CHANGE_FROZEN_AMOUNT,
+		t.CHANGE_DATE
+	</sql>
+	<insert id="addAccountChange" parameterType="AccountChange">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ACCOUNT_CHANGE_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		ACCOUNT_CHANGE(ID,FUND_ACCOUNT_CODE,FUND_TYPE,ACCOUNT_CHANGE_TIME,TRAN_CODE,CHANGE_TYPE,
+		CHANGE_AMOUNT,BEFORE_CHANGE_AMOUNT,BEFORE_CHANGE_AVAILABLE_AMOUNT,BEFORE_CHANGE_FROZEN_AMOUNT,CHANGE_DATE,
+		CREATE_USER,CREATE_DATE,COMMENTS)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},
+		sysdate,#{tranCode,jdbcType=VARCHAR},#{changeType,jdbcType=VARCHAR},
+		#{changeAmount,jdbcType=NUMERIC},#{beforeChangeAmount,jdbcType=NUMERIC},#{beforeChangeAvailableAmount,jdbcType=NUMERIC},
+		#{beforeChangeFrozenAmount,jdbcType=NUMERIC},to_char(sysdate,'yyyyMMdd'),#{createUser,jdbcType=VARCHAR},sysdate,#{comments,jdbcType=VARCHAR})
+	</insert>
+	<select id="queryAccountChange" resultType="AccountChange"
+		resultMap="accountChangeResultMap" parameterType="java.lang.String">
+		select
+		<include refid="AccountChangeCloumn" />
+		FROM ACCOUNT_CHANGE WHERE TRAN_CODE = #{tranNum} AND CHANGE_TYPE =
+		#{changeType}
+	</select>
+
+
+	<select id="findFundsChangeRecordsByPage" resultType="AccountChange"
+		resultMap="accountChangeResultMap" parameterType="FundChangeQuery">
+		select 
+		<include refid="AccountChangeALLCloumn" />
+		from ACCOUNT_CHANGE t, ACCOUNT a, ACCOUNT_FUND b
+		<where>
+			b.fund_account_code=t.fund_account_code
+			and a.account_code = b.account_code
+			<if test="acid != null and acid !=''">
+			and	a.ID = #{acid}
+			</if>
+			<if test="createUser != null and createUser !=''">
+				and  t.CREATE_USER = #{createUser}
+			</if>
+			<if test="fundType != null and fundType !=''">
+				and  t.FUND_TYPE like '%'||#{fundType}||'%'
+			</if>
+			<if test="changeType != null and changeType !=''">
+				and t.CHANGE_TYPE like '%'||#{changeType}||'%'
+			</if>
+			<if test="changeAmountMin != null and changeAmountMin !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT>= #{changeAmountMin}      
+           	 ]]>
+			</if>
+			<if test="changeAmountMax != null and changeAmountMax !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT<= #{changeAmountMax}      
+           	 ]]>
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >=TO_DATE(TO_CHAR(#{startDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	   AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <=TO_DATE(TO_CHAR(#{endDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	  
+           	 ]]>
+			</if>
+			order by t.ID desc
+		</where>
+	</select>
+	
+	<select id="findFundsChangeRecordsAll" resultType="AccountChange"
+		resultMap="accountChangeResultMap" parameterType="FundChangeQuery">
+		select 
+		<include refid="AccountChangeALLCloumn" />
+		from ACCOUNT_CHANGE t, ACCOUNT a, ACCOUNT_FUND b
+		<where>
+			b.fund_account_code=t.fund_account_code
+			and a.account_code = b.account_code
+			<if test="acid != null and acid !=''">
+				and	a.ID = #{acid}
+			</if>
+			<if test="createUser != null and createUser !=''">
+				and  t.CREATE_USER = #{createUser}
+			</if>
+			<if test="fundType != null and fundType !=''">
+				and  t.FUND_TYPE like '%'||#{fundType}||'%'
+			</if>
+			<if test="changeType != null and changeType !=''">
+				and t.CHANGE_TYPE like '%'||#{changeType}||'%'
+			</if>
+			<if test="changeAmountMin != null and changeAmountMin !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT>= #{changeAmountMin}      
+           	 ]]>
+			</if>
+			<if test="changeAmountMax != null and changeAmountMax !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT<= #{changeAmountMax}      
+           	 ]]>
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >=TO_DATE(TO_CHAR(#{startDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	   AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <=TO_DATE(TO_CHAR(#{endDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	  
+           	 ]]>
+			</if>
+			order by t.ID desc
+		</where>
+	</select>
+	
+	<!--根据订单编号，资金变动类型和资金账户号查询资金变动记录是否已存在-->
+	<select id="checkAccountChangeRecordExsit" resultType="boolean" parameterType="java.lang.String">
+		select count(1)
+		  FROM ACCOUNT_CHANGE
+		 WHERE TRAN_CODE = #{tranNum}
+		   AND CHANGE_TYPE = #{changeType}
+		   AND FUND_TYPE = #{fundType}
+	</select>
+	
+	<!--查询资金变更记录（手机、VC端接入）-->
+	<select id="queryAccountChangeByPhone" resultType="AccountChange"
+		resultMap="accountChangeResultMap" parameterType="AccountChangeQuery">
+		select <include refid="AccountChangeALLCloumn" />
+		from ACCOUNT_CHANGE t, ACCOUNT a, ACCOUNT_FUND b
+		<where>
+			b.fund_account_code = t.fund_account_code
+			and a.account_code = b.account_code
+			<if test="custcode != null and custcode !=''">
+				and a.CUSTOMER_NO = #{custcode}
+			</if>
+			<if test="custtype != null and custtype !=''">
+				and a.CUSTOMER_TYPE = #{custtype}
+			</if>
+			<if test="changetype != null and changetype !=''">
+				and t.CHANGE_TYPE  like '%'||#{changetype}||'%'
+			</if>
+			<if test="userid != null and userid !=''">
+				and t.CREATE_USER = #{userid}
+			</if>
+			<if test="stratamt != null and stratamt !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT>= #{stratamt}      
+           	 ]]>
+			</if>
+			<if test="endamt != null and endamt !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT<= #{endamt}      
+           	 ]]>
+			</if>
+			<if test="stratdate != null and stratdate !=''">   
+           	  <![CDATA[
+           	   and TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >= TO_DATE(#{stratdate},'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			<if test="enddate != null and enddate !=''">   
+           	  <![CDATA[
+           	   and TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <= TO_DATE(#{enddate},'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			order by t.ID desc
+		</where>
+	</select>
+	
+	
+</mapper>

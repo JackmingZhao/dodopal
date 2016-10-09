@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.ClearingTaskMapper">
+    <resultMap type="ClearingDataModel" id="clearingDataModelResultMap">
+        <result property ="id" column="ID"/><!--自增id-->
+        <result property ="orderNo" column="ORDER_NO"/><!--订单交易号-->
+        <result property ="orderDate" column="ORDER_DATE"/><!--订单时间-->
+        <result property ="orderDay" column="ORDER_DAY"/><!--订单日期-->
+        <result property ="customerNo" column="CUSTOMER_NO"/><!--商户编号-->
+        <result property ="customerName" column="CUSTOMER_NAME"/><!--商户名称-->
+        <result property ="customerType" column="CUSTOMER_TYPE"/><!--商户类型-->
+        <result property ="businessType" column="BUSINESS_TYPE"/><!--业务类型-->
+        <result property ="customerRateType" column="CUSTOMER_RATE_TYPE"/><!--商户业务费率类型-->
+        <result property ="customerRate" column="CUSTOMER_RATE"/><!--商户业务费率-->
+        <result property ="orderAmount" column="ORDER_AMOUNT"/><!--订单金额-->
+        <result property ="customerRealPayAmount" column="CUSTOER_REAL_PAY_AMOUNT"/><!--商户实际支付金额-->
+        <result property ="customerShouldProfit" column="CUSTOMER_SHOULD_PROFIT"/><!--商户应得分润-->
+        <result property ="customerRealProfit" column="CUSTOMER_REAL_PROFIT"/><!--商户实际分润-->
+        <result property ="customerAccountShouldAmount" column="CUSTOMER_ACCOUNT_SHOULD_AMOUNT"/><!--商户账户应加值-->
+        <result property ="customerAccountRealAmount" column="CUSTOMER_ACCOUNT_REAL_AMOUNT"/><!--商户账户实际加值-->
+        <result property ="ddpGetMerchantPayFee" column="DDP_GET_MERCHANT_PAY_FEE"/><!--DDP应收商户支付方式服务费-->
+        <result property ="subMerchantCode" column="SUB_MERCHANT_CODE"/><!--下级商户编号-->
+        <result property ="subMerchantName" column="SUB_MERCHANT_NAME"/><!--下级商户名称-->
+        <result property ="subMerchantShouldProfit" column="SUB_MERCHANT_SHOULD_PROFIT"/><!--下级商户应得分润-->
+        <result property ="payType" column="PAY_TYPE"/><!--支付类型-->
+        <result property ="payWay" column="PAY_WAY"/><!--支付方式-->
+        <result property ="serviceRateType" column="SERVICE_RATE_TYPE"/><!--服务费率类型-->
+        <result property ="serviceRate" column="SERVICE_RATE"/><!--服务费率-->
+        <result property ="ddpBankRate" column="DDP_BANK_RATE"/><!--DDP与银行的手续费率-->
+        <result property ="ddpToBankFee" column="DDP_TO_BANK_FEE"/><!--DDP支付给银行的手续费-->
+        <result property ="ddpFromBankShouldFee" column="DDP_FROM_BANK_SHOULD_FEE"/><!--DDP从银行应收业务费用-->
+        <result property ="ddpFromBankRealFee" column="DDP_FROM_BANK_REAL_FEE"/><!--DDP从银行实收业务费用-->
+        <result property ="supplierCode" column="SUPPLIER_CODE"/><!--供应商Code-->
+        <result property ="ddpToSupplierShouldAmount" column="DDP_TO_SUPPLIER_SHOULD_AMOUNT"/><!--DDP应支付供应商本金-->
+        <result property ="ddpToSupplierRealAmount" column="DDP_TO_SUPPLIER_REAL_AMOUNT"/><!--DDP实际支付供应商本金-->
+        <result property ="ddpSupplierRate" column="DDP_SUPPLIER_RATE"/><!--DDP与供应商之间的费率-->
+        <result property ="supplierToDdpShouldRebate" column="SUPPLIER_TO_DDP_SHOULD_REBATE"/><!--供应商应支付DDP返点-->
+        <result property ="supplierToDdpRealRebate" column="SUPPLIER_TO_DDP_REAL_REBATE"/><!--供应商实际支付DDP返点-->
+        <result property ="orderFrom" column="ORDER_FROM"/><!--订单来源-->
+        <result property ="orderCircle" column="ORDER_CIRCLE"/><!--是否圈存订单-->
+        <result property ="bankClearingFlag" column="BANK_CLEARING_FLAG"/><!--与银行清分状态-->
+        <result property ="bankClearingTime" column="BANK_CLEARING_TIME"/><!--与银行清分时间-->
+        <result property ="bankSettlementFlag" column="BANK_SETTLEMENT_FLAG"/><!--与银行结算状态-->
+        <result property ="bankSettlementTime" column="BANK_SETTLEMENT_TIME"/><!--与银行结算时间-->
+        <result property ="supplierClearingFlag" column="SUPPLIER_CLEARING_FLAG"/><!--与供应商清分状态-->
+        <result property ="supplierClearingTime" column="SUPPLIER_CLEARING_TIME"/><!--与供应商清分时间-->
+        <result property ="supplierSettlementFlag" column="SUPPLIER_SETTLEMENT_FLAG"/><!--与供应商结算状态-->
+        <result property ="supplierSettlementTime" column="SUPPLIER_SETTLEMENT_TIME"/><!--与供应商结算时间-->
+        <result property ="customerClearingFlag" column="CUSTOMER_CLEARING_FLAG"/><!--与客户清分状态-->
+        <result property ="customerClearingTime" column="CUSTOMER_CLEARING_TIME"/><!--与客户清分时间-->
+        <result property ="customerSettlementFlag" column="CUSTOMER_SETTLEMENT_FLAG"/><!--与客户结算状态-->
+        <result property ="customerSettlementTime" column="CUSTOMER_SETTLEMENT_TIME"/><!--与客户结算时间-->
+        <result property ="ddpToCustomerRealFee" column="PAY_GATEWAY"/><!--DDP实际转给商户业务费用-->
+        <result property ="topMerchantProfitFlag" column="DDP_TO_CUSTOMER_REAL_FEE"/><!--上级商户分润计算状态-->
+        <result property ="supplierName" column="SUPPLIER_NAME"/><!--供应商名称-->
+        <result property ="cityCode" column="CITY_CODE"/><!--城市代码-->
+        <result property ="cityName" column="CITY_NAME"/><!--城市名称-->
+        <result property ="payGateway" column="TOP_MERCHANT_PROFIT_FLAG"/><!--支付网关-->
+    </resultMap>
+</mapper>

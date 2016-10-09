@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.payment.business.dao.PaymentMapper">
+	<resultMap type="Payment" id="paymentMapperResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		
+		<result property="tranCode" column="TRAN_CODE" />
+		<result property="tradeNo" column="TRADE_NO" />
+		
+		<result property="payStatus" column="PAY_STATUS" />
+		<result property="payType" column="PAY_TYPE" />
+		<result property="payWayName" column="PAY_WAY_NAME" />
+		<result property="payWayKind" column="PAY_WAY_KIND" />
+		<result property="payWayId" column="PAY_WAY_ID" />
+		<result property="payServiceRate" column="PAY_SERVICE_RATE" />
+		<result property="payServiceFee" column="PAY_SERVICE_FEE" />
+		<result property="payMoney" column="PAY_MONEY" />
+		<result property="pageCallbackStatus" column="PAGE_CALLBACK_STATUS" />
+		<result property="pageCallbackDate" column="PAGE_CALLBACK_DATE" />
+		<result property="serviceNoticeStatus" column="SERVICE_NOTICE_STATUS" />
+		<result property="serviceNoticeDate" column="SERVICE_NOTICE_DATE" />
+		
+		<result property="sendCiphertext" column="SEND_CIPHERTEXT" />
+		<result property="acceptCiphertext" column="ACCEPT_CIPHERTEXT" />
+	</resultMap>
+</mapper>

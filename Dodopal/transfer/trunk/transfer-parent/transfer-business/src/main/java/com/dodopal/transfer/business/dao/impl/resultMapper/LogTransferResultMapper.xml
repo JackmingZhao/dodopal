@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.LogTransferMapper">
+	<resultMap type="LogTransfer" id="logTransferResultMap">
+		<result property="id" column="ID" />
+		<result property="batchId" column="BATCH_ID" />
+		<result property="oldMerchantId" column="OLD_MERCHANT_ID" />
+		<result property="oldMerchantType" column="OLD_MERCHANT_TYPE" />
+		<result property="newMerchantCode" column="NEW_MERCHANT_CODE" />
+		<result property="newMerchantType" column="NEW_MERCHANT_TYPE" />
+		<result property="state" column="STATE" />
+		<result property="memo" column="MEMO" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.LoadOrderMapper">
+	
+	
+	<!-- 更新圈存订单状态  -->
+	<update id="updateLoadOrderStatus" parameterType="java.lang.String">
+		update PRD_LOAD_ORDER
+		   set STATUS = #{loadOrderStatus,jdbcType=VARCHAR},
+		       UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+		       UPDATE_DATE = sysdate
+		 where ORDER_NUM = #{loadOrderNum}
+	</update>
+	
+	
+	
+</mapper>

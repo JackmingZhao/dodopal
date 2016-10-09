@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.TlposPointsMapper">
+
+	<select id="findTlpospointById" resultType="Tlpospoint">
+		select  
+			tlp.CLEARYEAR	as clearyear,
+			tlp.POINTVALUE	as pointvalue,
+			tlp.POSID	    as posid,
+			tlp.USERID  	as userid
+		from ICPAY.TLPOSPOINTS tlp
+			where tlp.POSID=#{posId}
+	</select>
+	
+	<insert id="addTlpospoints" parameterType="Tlpospoints">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select TLPOSPOINTS_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into TLPOSPOINTS 
+			(ID,
+			ACCOUNT_CODE,		
+			PONITS_ACCOUNT_CODE,	
+			TOTAL_POINTS,		
+			LAST_CHANGE_POINTS,	
+			BEFORE_CHANGE_POINTS,
+			CLEARYEAR		
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+			#{accountCode, jdbcType=VARCHAR},
+			#{ponitsAccountCode, jdbcType=VARCHAR},
+			#{totalPoints, jdbcType=DECIMAL},
+			#{lastChangePoints, jdbcType=DECIMAL}, 
+			#{beforeChangePoints,jdbcType=DECIMAL},
+			#{clearyear,jdbcType=DECIMAL}
+			)
+	</insert>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.common.dao.ExpTempletMapper">
+
+	<select id="findExpTempletsByTempletCode" resultType="ExpTemplet"
+		resultMap="expTempletResultMap" parameterType="java.lang.String">
+		SELECT PROPERTY_CODE, PROPERTY_NAME, IS_CHECKED FROM
+		EXP_TEMPLET WHERE TEMPLET_CODE = #{templetCode} ORDER BY SORT_LIST
+	</select>
+
+	<select id="findExpTempNameArrByIndex" resultType="ExpTemplet" resultMap="expTempletResultMap" parameterType="java.lang.String">
+		SELECT PROPERTY_CODE, PROPERTY_NAME FROM EXP_TEMPLET WHERE TEMPLET_CODE = #{typeSelStr} 
+		AND PROPERTY_CODE IN 
+		<foreach item="item" index="index" collection="indexArr" open="(" separator="," close=")">
+                        #{item}
+        </foreach>
+		ORDER BY SORT_LIST
+		
+	</select>
+	
+	<select id="findExpTempletsByTempletCodes" resultType="ExpTemplet" resultMap="expTempletResultMap" parameterType="java.lang.String">
+		SELECT PROPERTY_CODE, PROPERTY_NAME, IS_CHECKED FROM
+		EXP_TEMPLET WHERE TEMPLET_CODE IN 
+			<foreach item="item" index="index" collection="temCodes" open="(" separator="," close=")">
+                        #{item} 
+        	</foreach>
+		 ORDER BY SORT_LIST
+	</select>
+	
+	<select id="findExpTempNameArrByIndexs" resultType="ExpTemplet" resultMap="expTempletResultMap" parameterType="java.lang.String">
+		SELECT PROPERTY_CODE, PROPERTY_NAME FROM EXP_TEMPLET WHERE PROPERTY_CODE IN 
+			<foreach item="item" index="index" collection="temCodes" open="(" separator="," close=")">
+                        #{item} 
+        	</foreach>                                                   
+		AND TEMPLET_CODE IN 
+		<foreach item="item" index="index" collection="typeSelStr" open="(" separator="," close=")">
+                        #{item}
+        </foreach>
+		ORDER BY SORT_LIST
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.ProductIcdcMapper">
+    <select id="findProductIcdcNames" resultType="ProductIcdc" resultMap="productIcdcResultMap" parameterType="ProductIcdc">
+        select distinct PRO_CODE,PRO_NAME from PRODUCT_ICDC 
+    </select>
+    
+    <select id="findProductIcdcbByCode" resultType="ProductIcdc" resultMap="productIcdcResultMap" parameterType="java.lang.String">
+        select * from PRODUCT_ICDC where  PRO_CODE in
+          <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+          </foreach>
+    </select>
+</mapper>

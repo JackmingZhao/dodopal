@@ -1,0 +1,52 @@
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+    <!-- this file describes how to build the file distribution for this project
+         Developers should not change the structure, but may need edit the dependency sets at the bottom as necessary
+    -->
+    <id>webstatic</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <baseDirectory>/</baseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/webapp/com</directory>
+            <outputDirectory>/com</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/webapp/css</directory>
+            <outputDirectory>/css</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/webapp/img</directory>
+            <outputDirectory>/img</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/webapp/js</directory>
+            <outputDirectory>/js</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/webapp/template</directory>
+            <outputDirectory>/template</outputDirectory>
+        </fileSet>
+         <fileSet>
+            <directory>src/main/webapp/kfcab</directory>
+            <outputDirectory>/kfcab</outputDirectory>
+        </fileSet>
+         <fileSet>
+            <directory>src/main/webapp/cscab</directory>
+            <outputDirectory>/cscab</outputDirectory>
+        </fileSet>
+         <fileSet>
+            <directory>src/main/webapp/bjcab</directory>
+            <outputDirectory>/bjcab</outputDirectory>
+        </fileSet>
+            <fileSet>
+            <directory>src/main/webapp/sccab</directory>
+            <outputDirectory>/sccab</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

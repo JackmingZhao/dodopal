@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.ScoreuserCardMapper">
+
+	<select id="findScoreuserCardById" resultType="ScoreuserCard">
+		select  
+			sco.BOUNDTIME	as boundtime,
+			sco.CARDNO		as cardno,
+			sco.CARDNOINNER	as cardnoinner,
+			sco.STATUS		as status,
+			sco.UNBOUNDTIME	as unboundtime,
+			sco.USERID		as userid,
+			sco.YKTID		as yktid
+		from ICPAY.SCOREUSER_CARD sco
+			where sco.USERID=#{userId}
+					
+	</select>
+</mapper>

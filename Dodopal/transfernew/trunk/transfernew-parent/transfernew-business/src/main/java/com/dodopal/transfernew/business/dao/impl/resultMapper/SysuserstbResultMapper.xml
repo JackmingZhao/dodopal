@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.SysuserstbMapper">
+	<resultMap type="Sysuserstb" id="sysuserstbResultMap">
+		<result property="userid" column="USERID" />
+		<result property="username" column="USERNAME" />
+		<result property="loginid" column="LOGINID" />
+		<result property="password" column="PASSWORD" />
+		<result property="tel" column="TEL" />
+		<result property="mobiltel" column="MOBILTEL" />
+		<result property="provinceid" column="PROVINCEID" />
+		<result property="cityid" column="CITYID" />
+		<result property="address" column="ADDRESS" />
+		<result property="zipcode" column="ZIPCODE" />
+		<result property="sex" column="SEX" />
+		<result property="identityid" column="IDENTITYID" />
+		<result property="identitytype" column="IDENTITYTYPE" />
+		<result property="registtime" column="REGISTTIME" />
+		<result property="lastedittime" column="LASTEDITTIME" />
+		<result property="unitid" column="UNITID" />
+		<result property="usertype" column="USERTYPE" />
+		<result property="mchnitid" column="MCHNITID" />
+		<result property="point" column="POINT" />
+		<result property="posfalg" column="POSFALG" />
+		<result property="status" column="STATUS" />
+		<result property="question" column="QUESTION" />
+		<result property="answer" column="ANSWER" />
+		<result property="departid" column="DEPARTID" />
+		<result property="qb" column="QB" />
+		<result property="qianbaomoney" column="QIANBAOMONEY" />
+		<result property="unitid" column="UUID" />
+		<result property="mchnmark" column="MCHNMARK" />
+		<result property="lastmobiltel" column="LASTMOBILTEL" />
+		<result property="yktcityid" column="YKTCITYID" />
+		<result property="historyScore" column="HISTORY_SCORE" />
+		<result property="currentScore" column="CURRENT_SCORE" />
+		<result property="usertype1" column="USERTYPE1" />
+		<result property="activeid" column="ACTIVEID" />
+		<result property="wechatid" column="WECHATID" />
+		<result property="wechaticon" column="WECHATICON" />
+		<result property="proxyorderno" column="PROXYORDERNO" />
+		<result property="activerebate" column="ACTIVEREBATE" />
+		<result property="education" column="EDUCATION" />
+		<result property="occupation" column="OCCUPATION" />
+		<result property="birthday" column="BIRTHDAY" />
+		<result property="relname" column="RELNAME" />
+	</resultMap>
+</mapper>

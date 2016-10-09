@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.LogDLogMapper">
+	<sql id="logDLogSqlColumn">
+		ID,DLOG_STAGE,CREATE_DATE,DLOG_SYSTEMDATETIME,DLOG_CODE,DLOG_MESSAGE,DLOG_PRDORDERNUM,
+		DLOG_TRADECARD,DLOG_APDU,DLOG_APDUDATA,DLOG_STATECODE
+	</sql>
+	<select id="findLogDLogByPage" resultType="LogDLog" resultMap="logDLogResultMap" parameterType="LogDLogQuery">
+		select <include refid="logDLogSqlColumn" /> from  LOG_DLOG 
+		<where>
+			<if test="dlogTradeCard != null and dlogTradeCard !=''">
+				 DLOG_TRADECARD like '%'||#{dlogTradeCard}||'%'
+			</if>
+			<if test="dlogPrdorderNum != null and dlogPrdorderNum !=''">
+			AND DLOG_PRDORDERNUM like '%'||#{dlogPrdorderNum}||'%'
+			</if>
+			<if test="createDateStart != null and createDateStart !=''">
+			<![CDATA[
+	           	  AND CREATE_DATE >= #{createDateStart,jdbcType=DATE}
+	           	 ]]>
+	           	 </if>
+	     	<if test="createDateEnd != null and createDateEnd !=''">
+	    	<![CDATA[
+	    	AND CREATE_DATE  < #{createDateEnd,jdbcType=DATE}+1
+	    	]]>
+	    	</if>
+    	</where>
+		ORDER BY ID DESC
+	</select>
+</mapper>

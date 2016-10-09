@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.OperationalStatisticsMapper">
+
+	<resultMap type="CityCusReport" id="cityCusReportResultMap">
+		
+		<result property="cityCode" 		column="CITY_CODE" 				/>
+		<result property="cityName" 		column="CITY_NAME" 				/>
+		<result property="yearMonthStr" 	column="YEAR_MONTH_STR" 		/>
+		<result property="orderNum" 		column="ORDER_NUM" 				/>
+		<result property="orderAmount" 		column="ORDER_AMOUNT" 			/>
+		
+		<result property="activePosNum" 	column="ACTIVE_POS_NUM" 		/>
+		<result property="activeCardNum" 	column="ACTIVE_CARD_NUM" 		/>
+		<result property="avgCardNumPerPos" column="AVG_CARD_NUM_PER_POS" 	/>
+		<result property="amountPerPos" 	column="AMOUNT_PER_POS" 		/>
+		
+	</resultMap>
+</mapper>

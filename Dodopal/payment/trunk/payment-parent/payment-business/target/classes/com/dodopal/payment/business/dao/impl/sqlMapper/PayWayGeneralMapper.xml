@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayWayGeneralMapper">
+	<sql id="payWayGeneralColumn">
+		pw.ID,pw.CREATE_USER,pw.CREATE_DATE,pw.UPDATE_USER,pw.UPDATE_DATE,
+		pw.PAY_SERVICE_RATE,pw.SORT,pw.ACTIVATE,pw.PAY_CONFIG_ID,pw.COMMENTS,
+		pc.PAY_TYPE,pc.PAY_WAY_NAME,pc.BANK_GATEWAY_TYPE,pc.IMAGE_NAME	
+	</sql>
+	<sql id="payWayGeneralEdit">
+		pw.ID,pw.CREATE_USER,pw.CREATE_DATE,pw.UPDATE_USER,pw.UPDATE_DATE,
+		pw.PAY_SERVICE_RATE,pw.SORT,pw.ACTIVATE,pw.PAY_CONFIG_ID,pw.COMMENTS,
+		pg.PAY_TYPE,pg.BANK_GATEWAY_TYPE
+	</sql>
+	<sql id="payWayGeneral">
+		pw.ID,pw.CREATE_USER,pw.CREATE_DATE,pw.UPDATE_USER,pw.UPDATE_DATE,
+		pw.PAY_SERVICE_RATE,pw.SORT,pw.ACTIVATE,pw.PAY_CONFIG_ID,pw.COMMENTS
+	</sql>
+	
+	<insert id="savePayWayGeneral" parameterType="PayWayGeneral">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+	   		select PAY_WAY_GENERAL_ID_SEQ.NEXTVAL from dual
+	  	</selectKey>
+	  		INSERT INTO PAY_WAY_GENERAL (ID, PAY_CONFIG_ID, PAY_SERVICE_RATE, SORT, ACTIVATE, COMMENTS, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+			values (#{id, jdbcType=VARCHAR},#{payConfigId, jdbcType=VARCHAR} ,#{payServiceRate, jdbcType=VARCHAR} , #{sort, jdbcType=VARCHAR},  #{activate, jdbcType=VARCHAR}, #{comments, jdbcType=VARCHAR},#{createUser, jdbcType=VARCHAR} ,sysdate, #{updateUser, jdbcType=VARCHAR},#{updateDate, jdbcType=DATE})
+	 </insert>
+ 
+ 
+ 	<select id="findPayWayGeneralByPage" resultType="PayWayGeneral" resultMap="payWayGeneralResultMap" parameterType="PayWayGeneral">
+		select <include refid="payWayGeneralColumn"/>
+	    from PAY_WAY_GENERAL pw left join pay_config pc
+	    on pw.pay_config_id=pc.id
+    	<where>
+    		<if test="payType != null and payType !=''">
+			pc.PAY_TYPE = #{payType}
+			</if>
+			<if test="payWayName != null and payWayName !=''">
+				and pc.PAY_WAY_NAME like '%'||#{payWayName}||'%'
+			</if>
+			<if test="activate != null and activate !=''">
+				and pw.ACTIVATE = #{activate}
+			</if>
+    	</where>
+    	order by pw.id desc
+	</select>
+	
+	<delete id="deletePayWayGeneral">
+		delete from PAY_WAY_GENERAL where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{item}
+	 	</foreach>
+	</delete>
+	
+	<update id="updatePayWayGeneral" parameterType="PayWayGeneral" >
+		update PAY_WAY_GENERAL
+		<trim prefix="SET" suffixOverrides=",">
+				PAY_SERVICE_RATE=#{payServiceRate,jdbcType=VARCHAR},
+				SORT=#{sort,jdbcType=VARCHAR},
+				COMMENTS=#{comments,jdbcType=VARCHAR},
+				UPDATE_DATE=sysdate,
+				<if test="activate != null and activate !=''">
+					ACTIVATE=#{activate,jdbcType=VARCHAR},
+				</if>
+				<if test="updateUser != null and updateUser !=''">
+					UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+				</if>
+		</trim>
+		<where>
+			<if test="id != null and id !=''">
+				id=#{id}
+			</if>
+		</where>
+	</update>
+	
+	<update id="startOrStopUser">
+	update PAY_WAY_GENERAL pw set
+		pw.activate = #{activate, jdbcType=VARCHAR},
+		pw.UPDATE_DATE=sysdate,
+		pw.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where id in
+    	<foreach collection="ids" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+	<update id="disableByPayConfigId" parameterType="java.util.Map">
+		update PAY_WAY_GENERAL t set
+		t.activate = '1',t.UPDATE_DATE=sysdate,t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.PAY_CONFIG_ID in 
+		<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+	
+	<select id="findPayWayGeneralById" resultType="PayWayGeneral" resultMap="payWayGeneralResultMap" parameterType="java.lang.String">
+		select <include refid="payWayGeneral" /> from PAY_WAY_GENERAL pw where pw.id=#{id}
+  	</select>
+  	
+  	 <select id="countByPayConfigId" resultType="java.lang.Integer">
+		select count(*) from PAY_WAY_GENERAL t where t.PAY_CONFIG_ID = #{payConfigId}
+	</select>
+
+	<!--根据payWayId查询pay_config_id-->
+	<select id="queryPayConfigId" resultType="PayWayGeneral" resultMap="payWayGeneralResultMap" parameterType="java.lang.String">
+		select <include refid="payWayGeneralEdit" /> from PAY_WAY_GENERAL  pw, pay_config pg where pw.PAY_CONFIG_ID = pg.id and pw.ID=#{payWayId}
+	</select>
+	
+		<!--根据payWayId查询pay_config_id -->
+	<select id="queryPayConfigIdByPayWayId" resultType="PayWayGeneral" resultMap="payWayGeneralResultMap" parameterType="java.lang.String">
+		select <include refid="payWayGeneralColumn" /> from PAY_WAY_GENERAL  pw left join pay_config pc
+	    on pw.pay_config_id=pc.id where pw.ID=#{payWayId}
+	</select>
+</mapper>

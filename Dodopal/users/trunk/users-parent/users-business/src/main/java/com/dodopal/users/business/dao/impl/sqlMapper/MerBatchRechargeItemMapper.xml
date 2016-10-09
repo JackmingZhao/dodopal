@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerBatchRechargeItemMapper">
+	<sql id="allColumns">
+		t.ID,t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE,
+		t.BATCH_ORDER_ID,t.GROUP_USER_ID,t.PRD_ORDER_ID,t.RECHARGE_AMT,t.CARD_CODE,t.STATUS,t.REMARK
+	</sql>
+
+	<insert id="batchAddRcgItem" parameterType="java.util.List">
+		INSERT INTO MER_BATCH_RECHARGE_ITEM(
+			ID,CREATE_USER,CREATE_DATE,
+			BATCH_ORDER_ID,GROUP_USER_ID,RECHARGE_AMT,CARD_CODE,STATUS,REMARK
+		)
+		select MER_BATCH_RECHARGE_ITEM_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{item.batchOrderId},
+			#{item.groupUserId},
+			#{item.rechargeAmt},
+			#{item.cardCode},
+			#{item.status},
+			#{item.remark, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+		) a
+	</insert>
+
+</mapper>

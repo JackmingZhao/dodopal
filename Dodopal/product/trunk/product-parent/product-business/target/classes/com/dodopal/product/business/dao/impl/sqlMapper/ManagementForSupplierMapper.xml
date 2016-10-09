@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ManagementForSupplierMapper">
+	<sql id="prdOrderDetail">
+		P.PRO_ORDER_NUM as proOrderNum,
+		P.PRO_CODE as proCode,
+		P.PRO_NAME as proName,
+		P.TXN_AMT as txnAmt,
+		P.CITY_NAME as cityName,
+		P.PRD_ORDER_DATE as proOrderDate,
+		P.PRD_ORDER_DAY as proOrderDay,
+		P.ORDER_CARDNO as orderCardno,
+		P.CARD_FACENO as cardFaceno,
+		P.POS_CODE as posCode,
+		P.BEFBAL as befbal,
+		P.BLACK_AMT as blackAmt,
+		P.PRO_ORDER_STATES as proOrderState,
+		P.PRO_INNER_STATES as proInnerState,
+		P.PRO_BEFOREINNER_STATES as proBeforInnerState,
+		P.PRO_SUSPICIOUS_STATES as proSuspiciousState,
+		P.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		P.MER_CODE as merCode,
+		P.MER_NAME as merName,
+		P.MER_ORDER_NUM as merOrderNum,
+		P.LOAD_ORDER_NUM as loadOrderNum,
+		P.SOURCE as source,
+		P.USER_ID as userId,
+		P.USER_NAME as userName,
+		P.CREATE_DATE as createDate,
+		P.UPDATE_DATE as updateDate
+	</sql>
+
+	<select id="queryCardRechargeForSupplierByPage" resultType="RechargeStatisticsYktOrder"
+		resultMap="rechargeStatisticsYktOrderMap" parameterType="RechargeStatisticsYktOrder">
+
+		select t1.code as proCode, t1.mer_name, t1.status, t2.RECHARGE_COUNT,
+		t2.RECHARGE_AMT
+		from (
+		select c.code, c.status, d.mer_name, d.mer_code
+		from pos c
+		left join merchant d
+		on c.mer_code = d.mer_code
+		where exists (select 1
+		from (select distinct a.mer_code
+		from mer_bus_rate a
+		where a.provider_code = #{yktCode}) b
+		where b.mer_code = c.mer_code)) t1
+		left join
+
+		(select pr.pos_code as pos_code,
+		count(1) as RECHARGE_COUNT,
+		sum(TXN_AMT) as RECHARGE_AMT
+		from PRD_ORDER pr
+		where pr.PRO_ORDER_STATES in ('3', '4', '5')
+		and pr.ykt_code = #{yktCode}
+		group by POS_CODE) t2 on t1.code = t2.pos_code
+		<where>
+			<if test="bind != null and bind !=''">
+				AND t1.STATUS = #{bind}
+			</if>
+			<if test="proCode != null and proCode !=''">
+				AND t1.code like '%'||#{proCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				AND t1.mer_name like '%'||#{merName}||'%'
+			</if>
+			<if test="stratDate != null and stratDate !=''">
+				<![CDATA[ and pr.PRD_ORDER_DATE >=  to_date(#{stratDate},'yyyy/mm/dd hh24:mi:ss') ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and pr.PRD_ORDER_DATE <=  to_date(#{endDate},'yyyy/mm/dd hh24:mi:ss') ]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryCardRechargeDetailsByPage" resultType="ProductOrder"
+		parameterType="ProductOrderQuery">
+		select
+		<include refid="prdOrderDetail" />
+		from prd_order p
+		<where>
+			p.PRO_ORDER_STATES in ('3', '4', '5')
+			<if test="posCode != null and posCode !=''">
+				and p.POS_CODE = #{posCode}
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				AND p.YKT_CODE = #{yktCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				AND p.MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="cityName != null and cityName !=''">
+				AND p.CITY_NAME like '%'||#{cityName}||'%'
+			</if>
+			<if test="merCode != null and merCode !=''">
+				AND p.MER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+				AND p.PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(p.PRD_ORDER_DATE,'yyyy/mm/dd'),'yyyy/mm/dd') >=  TO_DATE(TO_CHAR(#{orderDateStart},'yyyy/mm/dd'),'yyyy/mm/dd')  ]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(p.PRD_ORDER_DATE,'yyyy/mm/dd'),'yyyy/mm/dd') <= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy/mm/dd'),'yyyy/mm/dd') ]]>
+			</if>
+			order by p.ID desc
+		</where>
+	</select>
+
+	<update id="startOrStopMerSupplier">
+		update POS set
+		BIND = #{bind, jdbcType=VARCHAR},
+		UPDATE_DATE=sysdate
+		where CODE in
+		<foreach collection="codes" item="code" index="index" open="("
+			close=")" separator=",">
+			#{code}
+		</foreach>
+	</update>
+
+	<!-- 一卡通消费统计查询 -->
+	<select id="queryCardConsumForSupplierByPage" resultType="YktCardConsumStatistics"
+		parameterType="YktCardConsumStatisticsQuery">
+		select t1.code as proCode, t1.mer_name as merName, t1.status as bind,
+		t2.consum_COUNT as consumeCount, t2.consum_AMT as consumeAmt
+		from (
+		select c.code, c.status, d.mer_name, d.mer_code
+		from pos c
+		left join merchant d
+		on c.mer_code = d.mer_code
+		where exists (select 1
+		from (select distinct a.mer_code
+		from mer_bus_rate a
+		where a.provider_code = #{yktCode}) b
+		where b.mer_code = c.mer_code)) t1
+		left join
+
+		(select r.pos_code as pos_code,
+		count(1) as consum_COUNT,
+		sum(p.received_price) as consum_AMT
+		from PRD_PURCHASE_ORDER P,PRD_PURCHASE_ORDER_RECORD R
+		where p.STATES in ('3', '2')
+		and p.pay_gateway = #{yktCode} and p.order_num = r.order_num
+		group by r.POS_CODE) t2 on t1.code = t2.pos_code
+		<!-- where t1.status = '0' -->
+		<where>
+			<if test="bind != null and bind !=''">
+				AND t1.STATUS = #{bind}
+			</if>
+			<if test="proCode != null and proCode !=''">
+				AND t1.code like '%'||#{proCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				AND t1.mer_name like '%'||#{merName}||'%'
+			</if>
+			<if test="stratDate != null and stratDate !=''"> 
+       			<![CDATA[ and TO_DATE(TO_CHAR(r.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(#{stratDate},'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(r.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="exportCardConsumForSupp" resultType="YktCardConsumStatistics"
+		parameterType="YktCardConsumStatisticsQuery">
+		select t1.code as proCode, t1.mer_name as merName, t1.status as bind,
+		t2.consum_COUNT as consumeCount, t2.consum_AMT as consumeAmt
+		from (
+		select c.code, c.status, d.mer_name, d.mer_code
+		from pos c
+		left join merchant d
+		on c.mer_code = d.mer_code
+		where exists (select 1
+		from (select distinct a.mer_code
+		from mer_bus_rate a
+		where a.provider_code = #{yktCode}) b
+		where b.mer_code = c.mer_code)) t1
+		left join
+
+		(select r.pos_code as pos_code,
+		count(1) as consum_COUNT,
+		sum(p.received_price) as consum_AMT
+		from PRD_PURCHASE_ORDER P,PRD_PURCHASE_ORDER_RECORD R
+		where p.STATES in ('3', '2')
+		and p.pay_gateway = #{yktCode} and p.order_num = r.order_num
+		group by r.POS_CODE) t2 on t1.code = t2.pos_code
+		<where>
+			<if test="bind != null and bind !=''">
+				AND t1.STATUS = #{bind}
+			</if>
+			<if test="proCode != null and proCode !=''">
+				AND t1.code like '%'||#{proCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				AND t1.mer_name like '%'||#{merName}||'%'
+			</if>
+			<if test="stratDate != null and stratDate !=''"> 
+       			<![CDATA[ and TO_DATE(TO_CHAR(r.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(#{stratDate},'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(r.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+			</if>
+		</where>
+	</select>
+	<!-- 一卡通消费交易详细查询 -->
+	<select id="queryCardConsumDetailsByPage" resultType="YktCardConsumTradeDetail"
+		parameterType="YktCardConsumTradeDetailQuery">
+		select
+		p.order_num as orderNo,
+		p.customer_name as merName,
+		p.ORIGINAL_PRICE as originalPrice,
+		p.received_price as consumeAmt,
+		s.befbal as befbal,
+		s.black_amt as blackAmt,
+		s.card_num as cardNo,
+		s.CITY_NAME as cityName,
+		s.POS_CODE as posCode,
+		p.states as orderStates,
+		p.order_date as proOrderDate
+		from PRD_PURCHASE_ORDER p,PRD_PURCHASE_ORDER_RECORD s
+		<where>
+			p.order_num = s.order_num and (p.states = '2' or p.states = '3')
+			<if test="proCode != null and proCode !=''">
+				AND s.POS_CODE = #{proCode}
+			</if>
+			<if test="merName != null and merName !=''">
+				AND p.customer_name like '%'||#{merName}||'%'
+			</if>
+			<if test="cityName != null and cityName !=''">
+				AND s.CITY_NAME = #{cityName}
+			</if>
+			<if test="orderNo != null and orderNo !=''">
+				AND p.order_num like '%'||#{orderNo}||'%'
+			</if>
+			<if test="merCode != null and merCode !=''">
+				AND p.customer_code like '%'||#{merCode}||'%'
+			</if>
+			<if test="yktCode != null and yktCode !=''">
+				AND p.pay_gateway = #{yktCode}
+			</if>
+			<if test="startDate != null and startDate !=''">
+       			<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+			</if>
+			order by p.ID desc
+		</where>
+	</select>
+
+	<!-- 一卡通消费业务订单汇总 -->
+	<select id="findCardConsumCollectByPage" resultType="YktCardConsumStatistics"
+		parameterType="YktCardConsumStatisticsQuery">
+		SELECT 
+		count(p.id) as consumeCount, sum(p.RECEIVED_PRICE) as consumeAmt,sum(p.ORIGINAL_PRICE) as consumeOriginalAmt, m.mer_name as merName
+		FROM prd_purchase_order p, prd_purchase_order_record r, merchant m, pos pi
+		where
+			p.order_num = r.order_num and m.mer_code = p.customer_code
+			and pi.code(+) = r.pos_code
+			<if test="parentCode != null and parentCode !=''">
+				AND m.MER_PARENT_CODE = #{parentCode}
+			</if>
+			<if test="states != null and states !=''">
+				AND p.STATES = #{states}
+			</if>
+			<if test="merName != null and merName !=''">
+				AND  m.mer_Name like '%'||#{merName}||'%'
+			</if>
+			<if test="stratDate != null and stratDate !=''">
+       			<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(#{stratDate},'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+			</if>
+		group by m.mer_name
+	</select>
+
+	<!-- 一卡通消费业务订单汇总详细查询 -->
+	<select id="queryCardConsumCollectDetailsByPage" resultType="YktCardConsumTradeDetail"
+		parameterType="YktCardConsumTradeDetailQuery">
+		select 
+		t.*
+		from (select
+		--case when s.POS_CODE is not null then 1 else 0 end recordMark,
+		p.order_num as orderNo,
+	    m.mer_name as merName,
+		p.ORIGINAL_PRICE as originalPrice,
+		p.received_price as consumeAmt,
+		s.befbal as befbal,
+		s.black_amt as blackAmt,
+		s.card_num as cardNo,
+		s.CITY_NAME as cityName,
+		s.POS_CODE as posCode,
+		p.states as orderStates,
+		p.order_date as proOrderDate,
+		o.comments as posComments
+		from PRD_PURCHASE_ORDER p,PRD_PURCHASE_ORDER_RECORD s,pos o, merchant m
+		where
+			p.order_num = s.order_num
+			and p.CUSTOMER_CODE = m.mer_code(+)
+			and s.POS_CODE = o.code(+)
+		<!--	<if test="orderDate != null and orderDate !=''">
+				AND TO_CHAR(p.order_date ,'yyyymmdd') = #{orderDate}
+			</if>
+			<if test="proCode != null and proCode !=''">
+				AND s.POS_CODE = #{proCode}
+			</if>
+		 	<choose>
+				<when test="proCode != null and proCode !=''">
+				and (case when s.POS_CODE is not null then 1 else 0 end) = 1
+				</when>
+				<otherwise>
+				and (case when s.POS_CODE is not null then 1 else 0 end) = 0
+				</otherwise>
+			</choose> -->
+			<if test="merName != null and merName !=''">
+				AND m.mer_name = #{merName}
+			</if>
+			<if test="states != null and states !=''">
+				AND p.STATES = #{states}
+			</if>
+		<!-- 	<if test="cityName != null and cityName !=''">
+				AND s.CITY_NAME = #{cityName}
+			</if>
+			<if test="orderNo != null and orderNo !=''">
+				AND p.order_num like '%'||#{orderNo}||'%'
+			</if>    -->
+			<if test="merCode != null and merCode !=''">
+				AND p.customer_code like '%'||#{merCode}||'%'
+			</if>
+		<!-- 	<if test="yktCode != null and yktCode !=''">
+				AND p.pay_gateway = #{yktCode}  
+			</if> -->
+			<if test="startDate != null and startDate !=''">
+       			<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(p.ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+			</if>
+			order by p.ID desc) t
+	</select>
+</mapper>

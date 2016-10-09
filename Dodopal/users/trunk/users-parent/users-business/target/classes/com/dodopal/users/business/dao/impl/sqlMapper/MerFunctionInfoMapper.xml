@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerFunctionInfoMapper">
+
+	<select id="findMerFunctionInfoByMerType" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap" parameterType="java.lang.String">
+		select distinct b.* from MER_TYPE_FUN a,MER_FUNCTION_INFO b
+		 where a.mer_fun_code=b.mer_fun_code
+		   and b.activate='0'
+		   and a.activate='0'
+		   and a.mer_type=#{merType}
+		   and not exists (select 1
+          		from ( SELECT mer_fun_code
+                  		 FROM mer_function_info
+                 	    START WITH mer_fun_code in
+                            (select mer_fun_code
+                               from MER_TYPE_DISABLE_FUN
+                              where mer_type = #{merType})
+                      CONNECT BY PRIOR mer_fun_code = parent_code) t
+         	   where t.mer_fun_code = b.mer_fun_code)
+		 order by b.position
+	</select>
+
+	<select id="findMerFunctionInfoByMerCode" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap" parameterType="java.lang.String">
+		select distinct b.* from MER_DEFINE_FUN a,MER_FUNCTION_INFO b
+		 where a.mer_fun_code=b.mer_fun_code
+		   and b.activate='0'
+		   and a.activate='0'
+		   and a.mer_code=#{merCode}
+		 order by b.position
+	</select>
+
+	<select id="findStandardOperatorFuns" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap">
+		select distinct c.* from MER_USER_ROLE a,MER_ROLE_FUN b,MER_FUNCTION_INFO c,MER_TYPE_FUN d
+		 where a.mer_role_code = b.mer_role_code
+		   and b.mer_fun_code = c.mer_fun_code
+		   and c.mer_fun_code = d.mer_fun_code
+		   and c.activate='0'
+		   and d.activate='0'
+		   and d.mer_type= #{merType}
+		   and a.user_code = #{userCode}
+		   and not exists (select 1
+          		from ( SELECT mer_fun_code
+                  		 FROM mer_function_info
+                 	    START WITH mer_fun_code in
+                            (select mer_fun_code
+                               from MER_TYPE_DISABLE_FUN
+                              where mer_type = #{merType})
+                      CONNECT BY PRIOR mer_fun_code = parent_code) t
+         	   where t.mer_fun_code = b.mer_fun_code)
+		 order by c.position
+	</select>
+
+	<select id="findCustomOperatorFuns" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap">
+		select distinct c.* from MER_USER_ROLE a,MER_ROLE_FUN b,MER_FUNCTION_INFO c,
+				(select t.mer_fun_code from MER_DEFINE_FUN t where t.mer_code = #{merCode} and t.activate='0') d
+ 		 where a.mer_role_code = b.mer_role_code
+   		   and b.mer_fun_code = c.mer_fun_code
+   		   and c.mer_fun_code = d.mer_fun_code
+   		   and c.activate = '0'
+   		   and a.user_code = #{userCode}
+   		 order by c.position
+	</select>
+
+	<select id="findMerFunctionInfo" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap" parameterType="MerFunctionInfo">
+		select * from MER_FUNCTION_INFO
+		<where>
+			<if test="activate != null and activate !=''">
+				activate = #{activate}
+			</if>
+			<if test="appName != null and appName !=''">
+				and app_name = #{appName}
+			</if>
+			<if test="visibility != null and visibility !=''">
+				and visibility = #{visibility}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAllFuncInfoForOSS" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap">
+		select a.* from MER_FUNCTION_INFO a where a.levels in('0','1') and a.activate='0'
+		<if test="merType != null and merType !=''">
+				and not exists (select 1
+              from ( SELECT mer_fun_code
+                       FROM mer_function_info
+                       START WITH mer_fun_code in
+                            (select mer_fun_code
+                               from MER_TYPE_DISABLE_FUN
+                              where mer_type = #{merType})
+                      CONNECT BY PRIOR mer_fun_code = parent_code) t
+              where t.mer_fun_code = a.mer_fun_code)
+		</if>
+		order by a.position
+	</select>
+
+	<select id="findMerFunInfoByMerRoleCode" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap" parameterType="java.lang.String">
+		select distinct c.* from MER_ROLE_FUN b,MER_FUNCTION_INFO c
+		 where b.mer_fun_code = c.mer_fun_code
+		   and c.activate='0'
+		   and b.mer_role_code = #{merRoleCode}
+		 order by c.position
+	</select>
+
+	<select id="batchFindMerFunInfoByFunCode" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap">
+		select * from mer_function_info
+		where mer_fun_code in
+		<foreach item="item" index="index" collection="merFunCodes" open="(" separator="," close=")">
+  			#{item}
+ 		</foreach>
+ 		and activate='0'
+	</select>
+
+	<select id="batchFindChildMerFunInfo" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap">
+		select * from mer_function_info START WITH mer_fun_code in
+		<foreach item="item" index="index" collection="merFunCodes" open="(" separator="," close=")">
+  			#{item}
+ 		</foreach>
+		CONNECT BY PRIOR mer_fun_code = parent_code
+	</select>
+
+	<select id="findDisableFunByMerType" resultType="MerFunctionInfo" resultMap="merFunctionInfoResultMap" parameterType="java.lang.String">
+		select * from mer_function_info START WITH mer_fun_code in(
+       		select b.mer_fun_code from MER_TYPE_DISABLE_FUN a, MER_FUNCTION_INFO b
+       		 where a.mer_type=#{merType} and a.mer_fun_code=b.mer_fun_code
+		)
+		CONNECT BY PRIOR mer_fun_code = parent_code
+	</select>
+
+</mapper>

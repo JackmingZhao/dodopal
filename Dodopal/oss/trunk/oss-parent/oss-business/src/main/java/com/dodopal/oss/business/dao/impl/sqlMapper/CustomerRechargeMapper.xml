@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.CustomerRechargeMapper">
+	<!-- 客户充值交易统计列表展示 -->
+	<select id="findCustomerRechargeByPage" resultType="com.dodopal.oss.business.model.CustomerRecharge" parameterType="com.dodopal.oss.business.model.dto.CustomerRechargeQuery">
+		select TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') as prdOrderDate,
+	       P.CITY_NAME as cityName,
+	       p.Mer_Code as merCode,
+	       P.MER_NAME as merName,
+	       P.MER_USER_TYPE as merUerType,
+	       P.SOURCE as source,
+	       count(TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd')) as rechargeCount,
+	       sum(P.RECEIVED_PRICE) as receivedPrice
+	   from PRD_ORDER p
+	  where 
+	  	p.PRO_ORDER_STATES ='4' 
+	  	<if test="startDate != null and startDate !=''">
+			<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')  >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+		</if>
+		<if test="endDate != null and endDate !=''">
+			<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+		</if>
+	  	<if test="merName != null and merName !=''">
+	  		and instr(p.MER_NAME ,#{merName}) > 0
+		</if>
+	  	<if test="cityCode != null and cityCode !='' and cityCode !='-1'">
+	  		and p.city_code =#{cityCode}
+		</if>
+	  	group by p.Mer_Code,
+	          TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd'),
+	          P.CITY_NAME,
+	          P.MER_NAME,
+	          P.MER_USER_TYPE,
+	          P.SOURCE 
+	 	ORDER BY TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') DESC,P.CITY_NAME,P.MER_NAME
+	</select>
+	
+	<!-- 获取客户充值交易统计总记录数 -->
+	<select id="findCustomerRechargeCount" resultType="java.lang.Integer" parameterType="com.dodopal.oss.business.model.dto.CustomerRechargeQuery">
+		select count(*) from (
+			select TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') as prdOrderDate,
+			       P.CITY_NAME as cityName,
+			       p.Mer_Code as merCode,
+			       P.MER_NAME as merName,
+			       P.MER_USER_TYPE as merUerType,
+			       P.SOURCE as source,
+			       count(TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd')) as rechargeCount,
+			       sum(P.RECEIVED_PRICE) as receivedPrice
+			   from PRD_ORDER p
+			   where 
+	  			p.PRO_ORDER_STATES ='4' 
+			  	<if test="startDate != null and startDate !=''">
+					<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')  >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+				</if>
+				<if test="endDate != null and endDate !=''">
+					<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+				</if>
+			  	<if test="merName != null and merName !=''">
+			  		and instr(p.MER_NAME ,#{merName}) > 0
+				</if>
+			  	<if test="cityCode != null and cityCode !='' and cityCode !='-1'">
+			  		and p.city_code =#{cityCode}
+				</if>
+		  	group by p.Mer_Code,
+		          TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd'),
+		          P.CITY_NAME,
+		          P.MER_NAME,
+		          P.MER_USER_TYPE,
+		          P.SOURCE 
+		 	ORDER BY TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') 
+		 )
+	</select>
+	
+	<!-- 获取客户充值交易导出List -->
+	<select id="findCardRechargeExcel" resultType="com.dodopal.oss.business.model.CustomerRecharge" parameterType="com.dodopal.oss.business.model.dto.CustomerRechargeQuery">
+		select TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') as prdOrderDate,
+	       P.CITY_NAME as cityName,
+	       p.Mer_Code as merCode,
+	       P.MER_NAME as merName,
+	       P.MER_USER_TYPE as merUerType,
+	       P.SOURCE as source,
+	       count(TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd')) as rechargeCount,
+	       sum(P.RECEIVED_PRICE) as receivedPrice
+	   from PRD_ORDER p
+	   where 
+	  	p.PRO_ORDER_STATES ='4' 
+	  	<if test="startDate != null and startDate !=''">
+			<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd')  >= TO_DATE(#{startDate},'yyyy-mm-dd')]]>
+		</if>
+		<if test="endDate != null and endDate !=''">
+			<![CDATA[and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE ,'yyyy-mm-dd'),'yyyy-mm-dd') <= TO_DATE(#{endDate},'yyyy-mm-dd')]]>
+		</if>
+	  	<if test="merName != null and merName !=''">
+	  		and instr(p.MER_NAME ,#{merName}) > 0
+		</if>
+	  	<if test="cityCode != null and cityCode !='' and cityCode !='-1'">
+	  		and p.city_code =#{cityCode}
+		</if>
+	 
+	  	group by p.Mer_Code,
+	          TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd'),
+	          P.CITY_NAME,
+	          P.MER_NAME,
+	          P.MER_USER_TYPE,
+	          P.SOURCE 
+	 	ORDER BY TO_DATE(TO_CHAR(p.PRD_ORDER_DATE, 'yyyy-mm-dd'), 'yyyy-mm-dd') DESC,P.CITY_NAME,P.MER_NAME
+	</select>
+	
+	
+
+</mapper>

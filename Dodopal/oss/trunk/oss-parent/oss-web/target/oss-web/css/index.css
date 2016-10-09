@@ -1,0 +1,47 @@
+html {
+	overflow: hidden;
+}
+
+img {
+	border: none;
+}
+
+.line{
+    height: 25;
+    width: 1px;
+    background: #000;
+}
+
+.footer {
+	height:30px;
+	background: url(images/index/nav_link.png) repeat-x;
+	line-height: 28px;
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+.footer spane {
+	position:absolute;
+  	bottom:0px;
+}
+
+/* .menuItem{
+border-left: 2px solid #178bc8;
+margin-left: 5px;
+padding-left: 4px;
+} */
+	
+	*{ margin:0px; padding:0px;}
+   	.header-wrap{ width:auto; height:60px; }
+	.header-left-bg{ background:url(images/header_left_bg.png) repeat-y; width:auto; height:60px;background-color:#167dba; }
+	.header-p{ line-height:30px; margin-top:30px; font-family:"微软雅黑","宋体"; font-size:14px; float:right}
+	.header-p a{color:#8aceff; text-decoration:none;}
+	.header-p a:hover{color:#FFF;}
+	.header-p a#current{ color:#FFF;}
+	.header-p span{ color:#015587;  font-weight:bold;}
+	.header-nav{ background:url(images/header_nav_bg.png) repeat-x; width:auto; height:30px; border-bottom:#0358a0 1px solid; font-size:16px; line-height:30px; padding-left:25px;}
+	.header-nav a{ color:#0164aa; text-decoration:none; display:inline-block; width:90px; height:30px; text-align:center;}
+	.header-nav a:hover{ color:#ffffff; background:url(images/nav_btn.png) no-repeat 0px 0px; }
+	.current-nav{ color:#ffffff; background:url(images/nav_btn.png) no-repeat 0px -30px;}
+	.current-nav strong{color:#ffffff;}

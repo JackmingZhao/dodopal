@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.account.business.dao.AccountChangeSumMapper">
+	<resultMap type="AccountChangeSum" id="accountChangeSumResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="fundAccountCode" column="FUND_ACCOUNT_CODE" />
+		<result property="accountChangeDate" column="ACCOUNT_CHANGE_DATE" />
+		<result property="dayConsumeSum" column="DAY_CONSUME_SUM" />
+		<result property="dayRechargeSum" column="DAY_RECHARGE_SUM" />
+		<result property="dayTranTimes" column="DAY_TRAN_TIMES" />
+		<result property="dayTranLimit" column="DAY_TRAN_LIMIT" />
+		<result property="changeDate" column="CHANGE_DATE" />
+	</resultMap>
+</mapper>

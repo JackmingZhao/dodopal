@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.CardConsumeClearingMapper">
+	<resultMap type="CardConsumeClearing" id="cardConsumeClearingResultMap">
+		<id property="id" column="ID" />  
+	    <result property="orderNo" column="ORDER_NO" />
+	    <result property="orderDate" column="ORDER_DATE" />
+	    <result property="customerNo" column="CUSTOMER_NO" />
+	    <result property="customerName" column="CUSTOMER_NAME" />
+	    <result property="orderAmount" column="ORDER_AMOUNT" />
+	    <result property="tranOutStatus" column="TRAN_OUT_STATUS" />
+	    <result property="tranInStatus" column="TRAN_IN_STATUS" />
+	    <result property="supplierName" column="SUPPLIER_NAME" />
+	    <result property="orderFrom" column="ORDER_FROM" />
+	    <result property="customerType" column="CUSTOMER_TYPE" />
+	   	<result property="dDPToCustomerRealFee" column="DDP_TO_CUSTOMER_REAL_FEE" />
+	   	<result property="dDPGetMerchantPayFee" column="DDP_GET_MERCHANT_PAY_FEE" />
+	   	<result property="serviceRateType" column="SERVICE_RATE_TYPE" />
+	   	 <result property="serviceFee" column="SERVICE_RATE" />
+	   	 <result property="payGateWay" column="PAY_GATEWAY" />
+	   	 <result property="payType" column="PAY_TYPE" />
+	    <result property="payWay" column="PAY_WAY" />
+	    <result property="payWayName" column="PAY_WAY_name" />
+	    <result property="dDPSupplierRate" column="DDP_SUPPLIER_RATE" />
+	    <result property="dDPFromBankShouldFee" column="DDP_FROM_BANK_SHOULD_FEE" />
+	   	 <result property="dDPFromBankRealFee" column="DDP_FROM_BANK_REAL_FEE" />
+   	 	 <result property="dDPToSupplierShouldAmount" column="DDP_TO_SUPPLIER_SHOULD_AMOUNT" />
+   	 	 <result property="dDPBankRate" column="DDP_BANK_RATE" />
+   	 	 <result property="dDPToBankFee" column="DDP_TO_BANK_FEE" />	 
+	</resultMap>
+</mapper>

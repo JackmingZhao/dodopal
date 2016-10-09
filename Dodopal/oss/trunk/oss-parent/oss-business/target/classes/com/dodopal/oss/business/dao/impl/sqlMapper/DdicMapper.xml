@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.DdicMapper">
+	<select id="findDdics" resultType="Ddic" resultMap="ddicResultMap" parameterType="Ddic">
+		select * from OSS_DDIC
+		<where>
+			<if test="code != null and code !=''">
+				code = #{code}
+			</if>
+			<if test="name != null and name !=''">
+				and name = #{name}
+			</if>
+			<if test="categoryCode != null and categoryCode !=''">
+				and category_code = #{categoryCode}
+			</if>
+			and del_flg='0'
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findAllDdics" resultType="Ddic" resultMap="ddicResultMap" parameterType="Ddic">
+		select * from OSS_DDIC
+		<where>
+			<if test="code != null and code !=''">
+				code = #{code}
+			</if>
+			<if test="name != null and name !=''">
+				and name = #{name}
+			</if>
+			<if test="categoryCode != null and categoryCode !=''">
+				and category_code = #{categoryCode}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findDdicsByPage" resultType="Ddic" resultMap="ddicResultMap" parameterType="DdicQuery">
+		select * from OSS_DDIC
+		<where>
+			<if test="code != null and code !=''">
+				code like '%'||#{code}||'%'
+			</if>
+			<if test="name != null and name !=''">
+				and name like '%'||#{name}||'%'
+			</if>
+			<if test="categoryCode != null and categoryCode !=''">
+				and category_code = #{categoryCode}
+			</if>
+			<if test="activate != null and activate !=''">
+				and activate = #{activate}
+			</if>
+			and del_flg='0'
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findDdicById" resultType="Ddic" resultMap="ddicResultMap" parameterType="java.lang.String">
+		select t.ID,t.ACTIVATE,a.nick_name as create_user,t.CREATE_DATE,b.nick_name as update_user,t.UPDATE_DATE,
+				t.CODE,t.PARENT_CODE,t.NAME,t.DESCRIPTION,t.ORDER_LIST,t.CATEGORY_CODE,t.CATEGORY_NAME 
+		  from (select * from OSS_DDIC where id = #{id} ) t
+		  left join v_user_info a on t.create_user=a.id
+		  left join v_user_info b on t.update_user=b.id
+	</select>
+
+	<select id="findDdicByCategoryCode" resultType="Ddic" resultMap="ddicResultMap" parameterType="java.lang.String">
+		select * from OSS_DDIC where category_code = #{categoryCode} and activate='0' and del_flg='0' order by order_list,code 
+	</select>
+
+	<insert id="insertDdic" parameterType="Ddic">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select OSS_DDIC_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO OSS_DDIC(ID, CODE, NAME, DESCRIPTION, ORDER_LIST, CATEGORY_CODE, CATEGORY_NAME, CREATE_DATE, UPDATE_DATE, CREATE_USER, UPDATE_USER, ACTIVATE, DEL_FLG)
+		VALUES (#{id}, #{code}, #{name}, #{description,jdbcType=VARCHAR}, #{orderList,jdbcType=VARCHAR}, #{categoryCode}, #{categoryName}, sysdate, null, #{createUser,jdbcType=VARCHAR}, null, #{activate,jdbcType=VARCHAR}, '0')
+	</insert>
+
+	<update id="updateDdic" parameterType="Ddic">
+		update OSS_DDIC
+		<trim prefix="SET" suffixOverrides=",">
+				name=#{name},
+				ORDER_LIST=#{orderList,jdbcType=VARCHAR},
+				description=#{description,jdbcType=VARCHAR},
+				update_date=sysdate,
+				update_user=#{updateUser,jdbcType=VARCHAR},
+				activate=#{activate,jdbcType=VARCHAR},
+				del_flg='0'
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteDdic" parameterType="java.lang.String">
+		delete from OSS_DDIC where id = #{id}
+	</delete>
+	
+	<select id="countDdic" resultType="java.lang.Integer">
+		select count(0) from OSS_DDIC where code = #{0} and category_code = #{1} and del_flg='0'
+	</select>
+
+	<select id="findDdicByCategoryAndCode" resultType="Ddic" resultMap="ddicResultMap">
+		select * from OSS_DDIC where code = #{0} and category_code = #{1}
+	</select>
+
+	<update id="batchActivateDdic">
+		update OSS_DDIC
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			activate=#{activate}
+		</trim>
+		where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</update>
+
+	<update id="batchDelDdic">
+		update OSS_DDIC
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			del_flg='1'
+		</trim>
+		where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.card.business.dao.BJAccountIntegralOrderMapper">
+	<resultMap type="BJAccountIntegralOrder" id="BJAccountIntegralOrderResultMap">
+		<result property="id" column="ID" />
+		<result property="crdAccIntOrderNum" column="CRD_ACC_INT_ORDER_NUM" /><!-- 账户与积分消费订单号 -->
+		<result property="proOrderNum" column="PRO_ORDER_NUM" /><!-- 产品库主订单号 -->
+		<result property="proCode" column="PRO_CODE" /><!-- 产品编号 -->
+		<result property="merCode" column="MER_CODE" /><!-- 商户编号 -->
+		<result property="businessType" column="BUSINESS_TYPE" /><!-- 业务类型 -->
+		<result property="crdOrderStates" column="CRD_ORDER_STATES" /><!-- 卡服务订单交易状态 -->
+		<result property="crdBeforeorderStates" column="CRD_BEFOREORDER_STATES" /><!-- 上次卡服务订单交易状态 -->
+		<result property="respCode" column="RESP_CODE" /><!-- 交易应答码 -->
+		<result property="tranDateTime" column="TRAN_DATE_TIME" /><!-- 交易时间 -->
+		<result property="cityCode" column="CITY_CODE" /><!-- 城市代码 -->
+		<result property="merType" column="MER_TYPE" /><!-- 商户类型 -->
+		<!--<result property="mchnitId" column="MCHNIT_ID" /> 商户号 -->
+		<result property="posType" column="POS_TYPE" /><!-- 设备类型 0：NFC手机 1：都都宝家用机  2：都都宝商用机 -->
+		<result property="posCode" column="POS_CODE" /><!-- 设备编号 -->
+		<result property="operId" column="OPER_ID" /><!-- 操作员号：前12位填写SAM号 -->
+		<result property="settDate" column="SETT_DATE" /><!-- 结算日期 -->
+		<result property="comSeq" column="COM_SEQ" /><!-- 通讯流水号 -->
+		<result property="icseq" column="IC_SEQ" /><!-- 终端IC交易流水号 -->
+		<result property="batchId" column="BATCH_ID" /><!-- 批次号 -->
+		<result property="dateTime" column="DATE_TIME" /><!-- 系统时间 -->
+		<result property="cardNo" column="CARD_NO" /><!-- 卡号 -->
+		<result property="accountNo" column="ACCOUNT_NO" /><!-- 账户号 -->
+		<result property="txnAmt" column="TXN_AMT" /><!-- 交易金额 -->
+		<result property="preautheAmt" column="PREAUTHE_AMT" /><!-- 积分金额 -->
+		<result property="priviMsg" column="PRIVI_MSG" /><!-- 个性化信息 -->
+		<result property="accNum" column="ACC_NUM" /><!-- 账户数目 -->
+		<result property="accInfo" column="ACC_INFO" /><!-- 账户信息 -->
+		<result property="accNum" column="ACC_NUM" /><!-- 账户信息 -->
+		<result property="accSeq" column="ACC_SEQ" /><!-- 终端账户交易流水号 -->
+		<result property="reserved" column="RESERVED" /><!-- 保留字段 -->
+		<result property="posSeq" column="POS_SEQ" /><!-- Pos通讯流水号 -->
+		<result property="txnType" column="TXN_TYPE" /><!-- 交易类型 -->
+		<result property="txnDate" column="TXN_DATE" /><!-- 交易日期 -->
+		<result property="txnTime" column="TXN_TIME" /><!-- 交易时间 -->
+		<result property="cardBal" column="CARD_BAL" /><!-- 卡内余额 -->
+		<result property="txnSeqNo" column="TXN_SEQ_NO" /><!-- 主机交易流水号 -->
+		<result property="specialConsome" column="SPECIAL_CONSOME" /><!-- 消费特殊域上传数据 -->
+		<result property="specialConsomeBack" column="SPECIAL_CONSOME_BACK" /><!-- 消费特殊域返回数据 -->
+		<result property="specialSend" column="SPECIAL_SEND" /><!-- 结果上送特殊域上传数据 -->
+		<result property="specialSendBack" column="SPECIAL_SEND_BACK" /><!-- 结果上送特殊域返回数据 -->
+		<result property="specialRevoke" column="SPECIAL_REVOKE" /><!-- 撤销特殊域上传数据 -->
+		<result property="specialRevokeBack" column="SPECIAL_REVOKE_BACK" /><!-- 撤销特殊域返回数据 -->
+		<result property="createUser" column="CREATE_USER" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+</mapper>

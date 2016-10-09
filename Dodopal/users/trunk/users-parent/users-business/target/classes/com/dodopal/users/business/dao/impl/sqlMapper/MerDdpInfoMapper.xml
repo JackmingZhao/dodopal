@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerDdpInfoMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,MER_DDP_LINK_IP,MER_DDP_LINK_USER,MER_DDP_LINK_USER_MOBILE,
+		SETTLEMENT_TYPE,SETTLEMENT_THRESHOLD,IS_AUTO_DISTRIBUTE,TRADE_AREA,LIMIT_SOURCE
+	</sql>
+
+	<select id="findMerDdpInfoById" resultType="MerDdpInfo" resultMap="merDdpInfoResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_DDP_INFO where id = #{id}
+	</select>
+
+	<select id="findMerDdpInfoByMerCode" resultType="MerDdpInfo" resultMap="merDdpInfoResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_DDP_INFO where mer_code = #{merCode}
+	</select>
+
+	<select id="findMerDdpInfoByMerCodes" resultType="MerDdpInfo" resultMap="merDdpInfoResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_DDP_INFO m,(
+	 		<foreach collection="merCodes" item="item" index="index" open="" close="" separator="union all">
+	        	select #{item} as mer_codes from dual
+	        </foreach>
+        ) n
+        where m.mer_code = n.mer_codes
+	</select>
+
+	<insert id="addMerDdpInfo" parameterType="MerDdpInfo">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_DDP_INFO_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MER_DDP_INFO(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,MER_DDP_LINK_IP,MER_DDP_LINK_USER,MER_DDP_LINK_USER_MOBILE,ACTIVATE,
+			SETTLEMENT_TYPE,SETTLEMENT_THRESHOLD,IS_AUTO_DISTRIBUTE,TRADE_AREA,LIMIT_SOURCE
+		)
+		VALUES (
+			#{id, jdbcType=VARCHAR},
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{merCode, jdbcType=VARCHAR},
+			#{merDdpLinkIp, jdbcType=VARCHAR},
+			#{merDdpLinkUser, jdbcType=VARCHAR},
+			#{merDdpLinkUserMobile, jdbcType=VARCHAR},
+			#{activate, jdbcType=VARCHAR},
+			#{settlementType, jdbcType=VARCHAR},
+			#{settlementThreshold, jdbcType=INTEGER},
+			#{isAutoDistribute, jdbcType=VARCHAR},
+			#{tradeArea, jdbcType=VARCHAR},
+			#{limitSource, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateMerDdpInfo" parameterType="MerDdpInfo">
+		update MER_DDP_INFO
+		<trim prefix="SET" suffixOverrides=",">
+			MER_DDP_LINK_IP=#{merDdpLinkIp, jdbcType=VARCHAR},
+			MER_DDP_LINK_USER=#{merDdpLinkUser, jdbcType=VARCHAR},
+			MER_DDP_LINK_USER_MOBILE=#{merDdpLinkUserMobile, jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			ACTIVATE=#{activate, jdbcType=VARCHAR},
+			SETTLEMENT_TYPE=#{settlementType, jdbcType=VARCHAR},
+			SETTLEMENT_THRESHOLD=#{settlementThreshold, jdbcType=INTEGER},
+			IS_AUTO_DISTRIBUTE=#{isAutoDistribute, jdbcType=VARCHAR},
+			TRADE_AREA=#{tradeArea, jdbcType=VARCHAR},
+			LIMIT_SOURCE=#{limitSource, jdbcType=VARCHAR},
+		</trim>
+		where mer_code=#{merCode}
+	</update>
+
+	<delete id="deleteMerDdpInfo" parameterType="java.lang.String">
+		delete from MER_DDP_INFO where mer_code = #{merCode}
+	</delete>
+
+	<delete id="batchDelMerDdpInfoByMerCodes">
+		delete from MER_DDP_INFO where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+</mapper>

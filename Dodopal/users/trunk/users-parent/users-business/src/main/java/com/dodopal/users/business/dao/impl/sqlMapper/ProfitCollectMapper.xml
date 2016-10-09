@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.ProfitCollectMapper">
+	<sql id="profitCollectColumn">
+	ID,
+	COLLECT_DATE,COLLECT_TIME,CUSTOMER_CODE,CUSTOMER_NAME,
+	BUSSINESS_TYPE,TRADE_COUNT,TRADE_AMOUNT,PROFIT
+	</sql>
+	<select id="findProfitCollectByPage" resultType="ProfitCollect" resultMap="profitCollectResultMap" parameterType="ProfitQuery">
+		select <include refid="profitCollectColumn" /> from PROFIT_COLLECT
+		<where>
+			<if test="merCode != null and merCode !=''">
+			CUSTOMER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+			 AND CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND COLLECT_TIME >= #{startDate,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	 AND COLLECT_TIME < #{endDate,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+		</where>
+		order by id desc
+	</select>
+	
+	<select id="findProfitCollect" resultType="ProfitCollect" resultMap="profitCollectResultMap" parameterType="ProfitQuery">
+		select <include refid="profitCollectColumn" /> from PROFIT_COLLECT
+		<where>
+			<if test="merCode != null and merCode !=''">
+				CUSTOMER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="merName != null and merName !=''">
+				CUSTOMER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND COLLECT_TIME >= #{startDate,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	 AND COLLECT_TIME < #{endDate,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+		</where>
+		order by id desc
+	</select>
+</mapper>

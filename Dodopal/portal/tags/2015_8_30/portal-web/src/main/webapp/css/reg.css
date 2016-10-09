@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* CSS Document */
+.tab-div{ width:80%; padding:70px 0 70px 20px; margin:0 auto; overflow:hidden;}
+.tab-contain{ width:100%; padding:70px 0px; margin:0 0 0 100px; overflow:hidden;}
+.tabs{ width:120px; padding:60px 0 0 0; position:relative; float:left; color:#808080;}
+.tabs ul{ vertical-align:middle; }
+.tabs li{ width:76px; margin:0 44px 63px 0; font-size:14px; position:relative; }
+.tabs li strong{ width:76px; position:absolute; top:76px; line-height:30px; text-align:center;}
+.tab-nav-action{background-position:-90px 0px; height:76px; color:#333;}
+.tab-nav{ background-position:-166px 0px; height:76px;}
+
+.tabs-body{float:left; font-size:14px; font-weight:normal; vertical-align:middle;}
+.tabs-body1{ width:80%; background-color:#FFF; margin:0 auto; border:1px solid #ccc; padding:30px 0px;}
+.tabs-body-bg{ background-position:0px 0px; width:13px; height:400px; float:left;}
+.tabs-body p{ line-height:68px;}
+.tab-body div{ margin:0 auto;}
+.tab-table th{ width:160px; font:14px; color:#444444; font-weight:normal; line-height:30px; vertical-align:middle;text-align:right;}
+.tab-table tr,
+.tab-table th,
+.tab-table td{ height:50px;}
+.tab-table td{ width:500px;}
+.tab-table tr .select-wid04 .tag_select,
+.tab-table tr .select-wid04 .tag_select_hover,
+.tab-table tr .select-wid04 .tag_select_open{ width:86px; background-color:#ffffff;}
+.tab-table tr .select-wid04 .tag_options{ width:106px;}
+
+.tips{height:32px;font-size:12px;line-height:14px;vertical-align:middle; margin-left:10px;}
+.tip-div{margin-left:230px;}
+.tips01{width:360px;line-height:14px;}
+.tip-error { height: 20px; line-height:1.3; clear:both; font-size:12px; vertical-align:middle;}
+.tip-red-error { height: 20px;color: #ff0000; line-height:1.3; clear:both; margin-left:10px; font-size:12px; vertical-align:middle;}
+
+
+.wd-input { border:1px solid #ddd; width: 208px;  height: 30px; line-height: 29px; padding-left: 10px; font-size:12px; vertical-align: middle;  color:#595959;}
+.wd-input-float{ float:left;}
+
+.reg-checkbox{ width:14px; height:14px; border: 1px solid #ddd; float:left; }
+#wd-fwtk{ font-size:12px; height:22px; line-height:14px; vertical-align:top; padding-left:5px; float:left; text-align:top;}
+
+/*main*/
+.wd-reg-title{ font-size:20px; line-height:36px;}
+.wd-reg-main{ text-align:center; padding:70px 0px;}
+.wd-reg-up{ height:100px;}
+.wd-reg-up h1{ width:280px; margin:0 auto;}
+.wd-reg-up h2{ width:380px; margin:0 auto;}
+.wd-reg-up p{line-height:30px;}
+.wd-reg-down{ width:80%; height:60px; background-color:#FFF; margin:0 auto; border:1px solid #ccc; padding:30px 0px;}
+.wd-reg-down span{ color:#e47f13 }

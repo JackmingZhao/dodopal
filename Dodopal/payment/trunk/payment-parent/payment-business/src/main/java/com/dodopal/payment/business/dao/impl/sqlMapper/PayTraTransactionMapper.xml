@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayTraTransactionMapper">
+    <!-- 交易流水号、商户|用户号、商户|用户名、业务、交易名称、应付金额、实际交易金额、状态、内部状态、创建时间 -->
+    <sql id="payTraTransactionPageColumn">
+	t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,
+	t.TRAN_CODE,t.TRAN_NAME,t.TRAN_OUT_STATUS,t.TRAN_IN_STATUS,t.COMMENTS,t.PAGE_CALLBACK_URL,
+	t.SERVICE_NOTICE_URL,t.AMOUNT_MONEY,t.TRAN_TYPE,t.USER_TYPE,t.MER_OR_USER_CODE,t.ORDER_NUMBER,
+	t.COMMODITY,t.SOURCE,t.ORDER_DATE,t.BUSINESS_TYPE,t.PAY_TYPE,t.PAY_WAY,t.PAY_SERVICE_RATE,
+	t.PAY_SERVICE_FEE,t.PAY_PROCE_RATE,t.PAY_PROCE_FEE,t.REAL_TRAN_MONEY,t.TURN_OUT_MER_CODE,
+	t.TURN_INTO_MER_CODE,t.OLD_TRAN_CODE,t.CLEAR_FLAG,t.FINISH_DATE,t.PAY_WAY_NAME,t.PAY_SERVICE_TYPE,
+	t.PAY_GATEWAY
+</sql>
+
+    <sql id="payTraTransactionAllColumn">
+	t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,t.PAY_WAY_NAME,t.PAY_SERVICE_TYPE,t.PAY_GATEWAY,
+	t.TRAN_CODE,t.TRAN_NAME,t.TRAN_OUT_STATUS,t.TRAN_IN_STATUS,t.COMMENTS,t.PAGE_CALLBACK_URL,
+	t.SERVICE_NOTICE_URL,t.AMOUNT_MONEY,t.TRAN_TYPE,t.USER_TYPE,t.MER_OR_USER_CODE,t.ORDER_NUMBER,
+	t.COMMODITY,t.SOURCE,t.ORDER_DATE,t.BUSINESS_TYPE,t.PAY_TYPE,t.PAY_WAY,t.PAY_SERVICE_RATE,
+	t.PAY_SERVICE_FEE,t.PAY_PROCE_RATE,t.PAY_PROCE_FEE,t.REAL_TRAN_MONEY,t.TURN_OUT_MER_CODE,
+	t.TURN_INTO_MER_CODE,t.OLD_TRAN_CODE,t.CLEAR_FLAG,t.ACCEPT_CIPHERTEXT,t.SEND_CIPHERTEXT,t.FINISH_DATE
+</sql>
+
+    <sql id="allColumns">
+	ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+	MER_CODE,MER_NAME,MER_ADDS,MER_TYPE,MER_LINK_USER,
+	MER_ZIP,MER_LINK_USER_MOBILE,MER_TELEPHONE,MER_EMAIL,MER_PARENT_CODE,
+	MER_STATE,MER_ACTIVATE_DATE,ACTIVATE,MER_DEACTIVATE_DATE,MER_FAX,
+	MER_REGISTER_DATE,MER_BANK_NAME,MER_BANK_ACCOUNT,MER_BANK_USER_NAME,MER_BUSINESS_SCOPE_ID,
+	MER_AREA,MER_PRO,MER_CITY,DEL_FLG,MER_CLASSIFY,
+	MER_PROPERTY,MER_STATE_USER,MER_STATE_DATE,SOURCE,MER_REJECT_REASON
+</sql>
+
+    <select id="findPayTraTransactionByPage" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName from Pay_TraTransaction t
+
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName
+        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName
+        from merchant tempmer
+        ))) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+
+            <if test="tranCode != null and tranCode !=''">
+                t.TRAN_CODE like '%'||#{tranCode}||'%'
+            </if>
+            <if test="createUser != null and createUser !=''">
+                and t.CREATE_USER = #{createUser}
+            </if>
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="merCode != null and merCode !=''">
+                and t.MER_OR_USER_CODE = #{merCode}
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="tranOutStatus != null and tranOutStatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranOutStatus}
+            </if>
+
+            <if test="tranInStatus != null and tranInStatus !=''">
+                and t.TRAN_IN_STATUS = #{tranInStatus}
+            </if>
+
+            <if test="businessType != null and businessType !=''">
+                and t.BUSINESS_TYPE = #{businessType}
+            </if>
+            <if test="tranName != null and tranName !=''">
+                and t.TRAN_NAME like '%'||#{tranName}||'%'
+            </if>
+            <if test="payWay != null and payWay !=''">
+                and t.PAY_WAY_NAME like '%'||#{payWay}||'%'
+            </if>
+            <if test="tranType != null and tranType !=''">
+                and t.TRAN_TYPE = #{tranType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+            <if test="realMinTranMoney != null and realMinTranMoney !=''">
+                <![CDATA[
+           	 	AND t.REAL_TRAN_MONEY  >=#{realMinTranMoney}    
+           	 ]]>
+            </if>
+            <if test="realMaxTranMoney != null and realMaxTranMoney !=''">
+                <![CDATA[
+           	   AND t.REAL_TRAN_MONEY <=#{realMaxTranMoney}
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+    <select id="findTraRecordByPage" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName,p.MER_CODE,p.MER_PARENT_CODE
+        from Pay_TraTransaction t
+        left join (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,MER_CODE,MER_PARENT_CODE
+        from merchant tempmer
+        ) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+            <if test="merParentCode != null and merParentCode !=''">
+                and p.MER_PARENT_CODE = #{merParentCode}
+            </if>
+            <if test="createUser != null and createUser !=''">
+                and t.CREATE_USER = #{createUser}
+            </if>
+            <if test="merCode != null and merCode !=''">
+                and p.MER_CODE = #{merCode}
+            </if>
+            <if test="tranCode != null and tranCode !=''">
+                and t.TRAN_CODE like '%'||#{tranCode}||'%'
+            </if>
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+            <if test="tranOutStatus != null and tranOutStatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranOutStatus}
+            </if>
+            <if test="businessType != null and businessType !=''">
+                and t.BUSINESS_TYPE = #{businessType}
+            </if>
+            <if test="tranName != null and tranName !=''">
+                and t.TRAN_NAME like '%'||#{tranName}||'%'
+            </if>
+            <if test="tranType != null and tranType !=''">
+                and t.TRAN_TYPE = #{tranType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+            <if test="realMinTranMoney != null and realMinTranMoney !=''">
+                <![CDATA[
+           	 	AND t.REAL_TRAN_MONEY  >=#{realMinTranMoney}    
+           	 ]]>
+            </if>
+            <if test="realMaxTranMoney != null and realMaxTranMoney !=''">
+                <![CDATA[
+           	   AND t.REAL_TRAN_MONEY <=#{realMaxTranMoney}
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+    <!-- 提取商户额度报表查询分页 -->
+	<select id="findMerCreditsByPage" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName MER_OR_USER_NAME,area.CITYNAME MER_CITY_NAME ,p.MER_PARENT_NAME,p.MER_PAY_MONEY_USER from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName,tempuser.MER_CODE,'' as MER_PARENT_CODE,'' as MER_PARENT_NAME,tempuser.CITY_CODE as CITYCODE,'' as MER_PAY_MONEY_USER        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,tempmer.MER_CODE,tempmer.MER_PARENT_CODE,pmer.mer_name as MER_PARENT_NAME,tempmer.MER_CITY as CITYCODE,tempmer.MER_PAY_MONEY_USER as MER_PAY_MONEY_USER
+        from merchant tempmer left join merchant pmer on tempmer.MER_PARENT_CODE = pmer.mer_code
+        ))) p 
+        on p.userMerCode = t.MER_OR_USER_CODE
+        left join oss_city_info area on p.CITYCODE = area.CITYCODE
+         left join merchant mer on mer.id=t.turn_out_mer_code
+        and t.user_type = p.USER_TYPE
+        <where>
+        	t.TRAN_TYPE = '1'  and t.TRAN_OUT_STATUS ='3'
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="userType != null and userType !=''">
+                and t.user_type = #{userType}
+            </if>
+            <if test="payType != null and payType !=''">
+                and t.PAY_TYPE = #{payType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+
+
+    <select id="findTraRecordByMerParentCode" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="java.lang.String">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName,p.MER_CODE,p.MER_PARENT_CODE
+        from Pay_TraTransaction t
+        left join (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,MER_CODE,MER_PARENT_CODE
+        from merchant tempmer
+        ) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+            <if test="merParentCode != null and merParentCode !=''">
+                and p.MER_PARENT_CODE = #{merParentCode}
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+    <select id="findTraRecordAll" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName from Pay_TraTransaction t
+
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName
+        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName
+        from merchant tempmer
+        ))) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+
+            <if test="tranCode != null and tranCode !=''">
+                t.TRAN_CODE like '%'||#{tranCode}||'%'
+            </if>
+            <if test="createUser != null and createUser !=''">
+                and t.CREATE_USER = #{createUser}
+            </if>
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="merCode != null and merCode !=''">
+                and t.MER_OR_USER_CODE = #{merCode}
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="tranOutStatus != null and tranOutStatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranOutStatus}
+            </if>
+
+            <if test="tranInStatus != null and tranInStatus !=''">
+                and t.TRAN_IN_STATUS = #{tranInStatus}
+            </if>
+
+            <if test="businessType != null and businessType !=''">
+                and t.BUSINESS_TYPE = #{businessType}
+            </if>
+            <if test="tranName != null and tranName !=''">
+                and t.TRAN_NAME like '%'||#{tranName}||'%'
+            </if>
+            <if test="payWay != null and payWay !=''">
+                and t.PAY_WAY like '%'||#{payWay}||'%'
+            </if>
+            <if test="tranType != null and tranType !=''">
+                and t.TRAN_TYPE = #{tranType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+            <if test="realMinTranMoney != null and realMinTranMoney !=''">
+                <![CDATA[
+           	 	AND t.REAL_TRAN_MONEY  >=#{realMinTranMoney}    
+           	 ]]>
+            </if>
+            <if test="realMaxTranMoney != null and realMaxTranMoney !=''">
+                <![CDATA[
+           	   AND t.REAL_TRAN_MONEY <=#{realMaxTranMoney}
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+    <select id="findChildMerchantByParentCodeType" resultType="Merchant" resultMap="merchantResultMap">
+        select
+        <include refid="allColumns"/>
+        from merchant where mer_parent_code = #{merParentCode}
+    </select>
+
+    <select id="findPayTraTransactionList" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransaction">
+        select
+        <include refid="payTraTransactionPageColumn"/>
+        from Pay_TraTransaction t
+        <where>
+            <if test="tranCode != null and tranCode !=''">
+                t.TRAN_CODE = #{tranCode}
+            </if>
+            <if test="userType != null and userType !=''">
+                and t.USER_TYPE = #{userType}
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER = #{orderNumber}
+            </if>
+            <if test="tranOutStatus != null and tranOutStatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranOutStatus}
+            </if>
+            <if test="businessType != null and businessType !=''">
+                and t.BUSINESS_TYPE = #{businessType}
+            </if>
+            <if test="tranType != null and tranType !=''">
+                and t.TRAN_TYPE = #{tranType}
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+    <select id="findPayTraTransactionById" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="java.lang.String">
+        select
+        <include refid="payTraTransactionAllColumn"/>
+        from Pay_TraTransaction t where t.id=#{id}
+    </select>
+
+    <select id="findPayTraTransactionByTranCode" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="java.lang.String">
+        select
+        <include refid="payTraTransactionAllColumn"/>
+        from Pay_TraTransaction t where t.TRAN_CODE = #{tranCode}
+    </select>
+    
+    <select id="findTranInfoByOldTranCode" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap" 
+    	parameterType="java.lang.String">
+        select
+        <include refid="payTraTransactionAllColumn"/>
+        from Pay_TraTransaction t 
+        where t.OLD_TRAN_CODE = #{oldTranCode}
+          and t.TRAN_TYPE = #{tranType}
+    </select>
+    
+    <!--
+     <insert id="insertPayTraTransaction" parameterType="PayTraTransaction">
+        <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+            select Pay_TRATRANSACTION_ID_SEQ.NEXTVAL from dual
+           </selectKey>
+            insert into PAY_TRATRANSACTION (
+        id,
+        TRAN_CODE,tran_name,Tran_Out_Status,Tran_In_Status,COMMENTS,PAGE_CALLBACK_URL,
+        SERVICE_NOTICE_URL,
+        AMOUNT_MONEY,TRAN_TYPE,USER_TYPE,MER_OR_USER_CODE,ORDER_NUMBER,COMMODITY,
+        BUSINESS_TYPE,SOURCE,ORDER_DATE,PAY_TYPE,PAY_WAY,PAY_SERVICE_RATE,PAY_SERVICE_FEE,
+        PAY_PROCE_RATE,PAY_PROCE_FEE,REAL_TRAN_MONEY,TURN_OUT_MER_CODE,TURN_INTO_MER_CODE,OLD_TRAN_CODE,CLEAR_FLAG,ACCEPT_CIPHERTEXT,SEND_CIPHERTEXT,FINISH_DATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+        values(
+        Pay_TRATRANSACTION_ID_SEQ.NEXTVAL,
+        '1231231',
+        '一卡通充值','0','1','123','url','serurl',
+        22,'1','0','usercode','ddh','商品名称','1','os',sysdate,'PAY_TYPE','PAY_WAY',2.22,32,
+        2.23,321,23,'TURN_OUT_MER_CODE','TURN_INTO_MER_CODE','OLD_TRAN_CODE','1','ACCEPT_CIPHERTEXT','SEND_CIPHERTEXT',sysdate,'lifeng',sysdate,'lifeng',sysdate);
+    </insert>
+     -->
+    <!-- 新增交易流水-->
+    <insert id="addPaymentTransaction" parameterType="PayTraTransaction">
+        <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+            SELECT PAY_TRATRANSACTION_ID_SEQ.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO PAY_TRATRANSACTION(ID,TRAN_CODE,TRAN_NAME,TRAN_OUT_STATUS,TRAN_IN_STATUS,PAGE_CALLBACK_URL,
+        SERVICE_NOTICE_URL,AMOUNT_MONEY,TRAN_TYPE,USER_TYPE,MER_OR_USER_CODE,ORDER_NUMBER,COMMODITY,BUSINESS_TYPE,SOURCE,
+        ORDER_DATE,PAY_TYPE,PAY_WAY,PAY_SERVICE_RATE,PAY_SERVICE_FEE,PAY_PROCE_RATE,PAY_PROCE_FEE,REAL_TRAN_MONEY,
+        TURN_OUT_MER_CODE,TURN_INTO_MER_CODE,OLD_TRAN_CODE,CLEAR_FLAG,ACCEPT_CIPHERTEXT,SEND_CIPHERTEXT,FINISH_DATE,
+        COMMENTS,PAY_GATEWAY,CREATE_USER,CREATE_DATE,PAY_SERVICE_TYPE,PAY_WAY_NAME,GENID,OPERATOR_ID)
+        VALUES(#{id},#{tranCode,jdbcType=VARCHAR},#{tranName,jdbcType=VARCHAR},#{tranOutStatus,jdbcType=VARCHAR},
+        #{tranInStatus,jdbcType=VARCHAR},#{pageCallbackUrl,jdbcType=VARCHAR},#{serviceNoticeUrl,jdbcType=VARCHAR},
+        #{amountMoney,jdbcType=DOUBLE},#{tranType,jdbcType=VARCHAR},#{userType,jdbcType=VARCHAR},
+        #{merOrUserCode,jdbcType=VARCHAR},#{orderNumber,jdbcType=VARCHAR},#{commodity,jdbcType=VARCHAR},
+        #{businessType,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR},#{orderDate,jdbcType=TIMESTAMP},#{payType,jdbcType=VARCHAR},
+        #{payWay,jdbcType=VARCHAR},#{payServiceRate,jdbcType=DOUBLE},#{payServiceFee,jdbcType=DOUBLE},
+        #{payProceRate,jdbcType=DOUBLE},#{payProceFee,jdbcType=DOUBLE},#{realTranMoney,jdbcType=DOUBLE},
+        #{turnOutMerCode,jdbcType=VARCHAR},#{turnIntoMerCode,jdbcType=VARCHAR},#{oldTranCode,jdbcType=VARCHAR},
+        #{clearFlag,jdbcType=VARCHAR},#{acceptCiphertext,jdbcType=VARCHAR},#{sendCiphertext,jdbcType=VARCHAR},#{finishDate,jdbcType=DATE},
+        #{comments,jdbcType=VARCHAR},#{payGateway,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate,#{payServiceType,jdbcType=VARCHAR},
+        #{payWayName,jdbcType=VARCHAR},#{genId,jdbcType=VARCHAR},#{operatorId,jdbcType=VARCHAR})
+    </insert>
+    <!-- 根据所传参数更改表记录-->
+    <update id="modifyPaymentTransaction" parameterType="PayTraTransaction">
+        UPDATE PAY_TRATRANSACTION SET
+        <if test="tranOutStatus != null and tranOutStatus !=''">
+            TRAN_OUT_STATUS=#{tranOutStatus,jdbcType=VARCHAR},
+        </if>
+        <if test="tranInStatus != null and tranInStatus !=''">
+            TRAN_IN_STATUS=#{tranInStatus,jdbcType=VARCHAR},
+        </if>
+        <if test="sendCiphertext != null and sendCiphertext !=''">
+            SEND_CIPHERTEXT=#{sendCiphertext,jdbcType=VARCHAR},
+        </if>
+        <if test="acceptCiphertext != null and acceptCiphertext !=''">
+            ACCEPT_CIPHERTEXT=#{acceptCiphertext,jdbcType=VARCHAR},
+        </if>
+        <if test="updateUser != null and updateUser !=''">
+            UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+        </if>
+        UPDATE_DATE=sysdate
+        WHERE TRAN_CODE=#{tranCode}
+    </update>
+    <update id="updateTranStatus" parameterType="PayTraTransaction">
+		UPDATE PAY_TRATRANSACTION set TRAN_OUT_STATUS=#{tranOutStatus},TRAN_IN_STATUS=#{tranInStatus}
+		where ID=#{id}
+	</update>
+
+    <select id="findPayTraTransactionByCode" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap">
+        select * from (select
+        <include refid="payTraTransactionPageColumn"/>
+        ,ROWNUM r from (select P.* from Pay_TraTransaction P
+        where P.USER_TYPE = #{ext}
+        and P.MER_OR_USER_CODE = #{merOrUserCode}
+        <if test="createUser != null and createUser !=''">
+            and p.CREATE_USER = #{createUser}
+        </if>
+        order by p.id desc
+        ) t )s
+        <![CDATA[
+			 where  s.r <=10 
+		  ]]>
+    </select>
+
+
+    <!--根据交易流水号 修改交易内、外部交易状态  -->
+    <update id="UpdateStatesByTransfer" parameterType="PayTraTransaction">
+	 UPDATE PAY_TRATRANSACTION set TRAN_OUT_STATUS=#{tranOutStatus},TRAN_IN_STATUS=#{tranInStatus}
+		where TRAN_CODE=#{tranCode}
+	</update>
+
+    <!--根据交易流水号 修改交易外部交易状态  -->
+    <update id="UpdateOutStatesByTransfer" parameterType="PayTraTransaction">
+	 UPDATE PAY_TRATRANSACTION set TRAN_OUT_STATUS=#{tranOutStatus}
+		where TRAN_CODE=#{tranCode}
+	</update>
+	
+    <!--根据交易流水号 修改交易内部交易状态  -->
+    <update id="UpdateInStatesByTransfer" parameterType="PayTraTransaction">
+        update pay_tratransaction pt
+            set pt.TRAN_IN_STATUS=(
+            case
+            when pt.TRAN_IN_STATUS ='10' then '10'
+            when pt.TRAN_IN_STATUS ='11' then '11'
+            else #{tranInStatus}
+            end
+            ) where pt.TRAN_CODE=#{tranCode}
+	</update>
+
+    <!--oss系统交易流水导出 -->
+    <select id="findTrasactionExport" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName
+        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName
+        from merchant tempmer
+        ))) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+            <if test="tranCode != null and tranCode !=''">
+                t.TRAN_CODE like '%'||#{tranCode}||'%'
+            </if>
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+            <if test="tranOutStatus != null and tranOutStatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranOutStatus}
+            </if>
+            <if test="tranInStatus != null and tranInStatus !=''">
+                and t.TRAN_IN_STATUS = #{tranInStatus}
+            </if>
+            <if test="businessType != null and businessType !=''">
+                and t.BUSINESS_TYPE = #{businessType}
+            </if>
+            <if test="tranType != null and tranType !=''">
+                and t.TRAN_TYPE = #{tranType}
+            </if>
+          	<if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+            <if test="realMinTranMoney != null and realMinTranMoney !=''">
+                <![CDATA[
+           	 	AND t.REAL_TRAN_MONEY  >=#{realMinTranMoney}    
+           	 ]]>
+            </if>
+            <if test="realMaxTranMoney != null and realMaxTranMoney !=''">
+                <![CDATA[
+           	   AND t.REAL_TRAN_MONEY <=#{realMaxTranMoney}
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+
+
+    <!--查询交易记录 手机端和VC端接入 区分管理员和操作员 -->
+    <select id="queryPayTranscation" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="TranscationRequest">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName merOrUserName from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName
+        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName
+        from merchant tempmer
+        ))) p
+        on p.userMerCode = t.MER_OR_USER_CODE
+        and t.user_type = p.USER_TYPE
+        <where>
+            <if test="custcode != null and custcode !=''">
+                t.MER_OR_USER_CODE = #{custcode}
+            </if>
+            <if test="userid != null and userid !=''">
+                and t.CREATE_USER = #{userid}
+            </if>
+
+            <if test="trantype != null and trantype !=''">
+                and t.TRAN_TYPE = #{trantype}
+            </if>
+
+            <if test="tranoutstatus != null and tranoutstatus !=''">
+                and t.TRAN_OUT_STATUS = #{tranoutstatus}
+            </if>
+
+
+            <if test="startdate != null and startdate !=''">
+                <![CDATA[
+           	 AND t.CREATE_DATE  >= TO_DATE(#{startdate},'yyyy-mm-dd')    
+           	 ]]>
+            </if>
+            <if test="enddate != null and enddate !=''">
+                <![CDATA[
+           	   AND t.CREATE_DATE  < TO_DATE(#{enddate},'yyyy-mm-dd')+1    
+           	  
+           	 ]]>
+            </if>
+            <if test="startamt != null and startamt !=''">
+                <![CDATA[
+           	 	AND t.REAL_TRAN_MONEY  >=#{startamt}    
+           	 ]]>
+            </if>
+            <if test="endamt != null and endamt !=''">
+                <![CDATA[
+           	   AND t.REAL_TRAN_MONEY <=#{endamt}
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+    <select id="getGenId" parameterType="java.lang.String" resultType="java.lang.String">
+    select t.GENID
+    from Pay_TraTransaction t where t.GENID=#{genId}
+    </select>
+    
+    
+      <!-- 提取商户额度报表查询导出 -->
+	<select id="findMerCreditsExport" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName MER_OR_USER_NAME,area.CITYNAME MER_CITY_NAME ,p.MER_PARENT_NAME,p.MER_PAY_MONEY_USER from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName,tempuser.MER_CODE,'' as MER_PARENT_CODE,'' as MER_PARENT_NAME,tempuser.CITY_CODE as CITYCODE ,'' as MER_PAY_MONEY_USER    from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,tempmer.MER_CODE,tempmer.MER_PARENT_CODE,pmer.mer_name as MER_PARENT_NAME,tempmer.MER_CITY as CITYCODE,tempmer.MER_PAY_MONEY_USER as MER_PAY_MONEY_USER
+        from merchant tempmer left join merchant pmer on tempmer.MER_PARENT_CODE = pmer.mer_code
+        ))) p 
+        on p.userMerCode = t.MER_OR_USER_CODE
+        left join oss_city_info area on p.CITYCODE = area.CITYCODE
+         left join merchant mer on mer.id=t.turn_out_mer_code
+        and t.user_type = p.USER_TYPE
+        <where>
+        	t.TRAN_TYPE = '1'  and t.TRAN_OUT_STATUS ='3'
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="userType != null and userType !=''">
+                and t.user_type = #{userType}
+            </if>
+            <if test="payType != null and payType !=''">
+                and t.PAY_TYPE = #{payType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerUserCardBDMapper">
+	<resultMap type="UserCardRecord" id="UserCardRecordResultMap">
+		
+		<result property="orderDate" 	column="ORDER_DATE" jdbcType="TIMESTAMP"/>
+		<result property="txnAmt" 		column="TXN_AMT" />
+		<result property="merName" 		column="MER_NAME" />
+		<result property="befBal" 		column="BEFBAL" />
+		<result property="blackAmt" 	column="BLACK_AMT" />
+		<result property="cardFaceNo" 	column="CARD_FACENO" />
+		
+		<result property="userId" 		column="USER_ID" />
+		<result property="type" 		column="TYPE" />
+		<result property="orderNum" 	column="ORDER_NUM" />
+		<result property="status" 		column="STATUS" />
+		
+		
+	</resultMap>
+</mapper>

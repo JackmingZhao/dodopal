@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.transfer.business.dao.AccountControllerDefaultMapper">
+	<resultMap type="AccountControllerDefault" id="accountControllerDefaultResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="customerType" column="CUSTOMER_TYPE" />
+		<result property="dayConsumeSingleLimit" column="DAY_CONSUME_SINGLE_LIMIT" />
+		<result property="dayConsumeSumLimit" column="DAY_CONSUME_SUM_LIMIT" />
+		<result property="dayRechargeSingleLimit" column="DAY_RECHARGE_SINGLE_LIMIT" />
+		<result property="dayRechargeSumLimit" column="DAY_RECHARGE_SUM_LIMIT" />
+		<result property="dayTransferMax" column="DAY_TRANSFER_MAX" />
+		<result property="dayTransferSingleLimit" column="DAY_TRANSFER_SINGLE_LIMIT" />
+		<result property="dayTransferSumLimit" column="DAY_TRANSFER_SUM_LIMIT" />
+	</resultMap>
+</mapper>

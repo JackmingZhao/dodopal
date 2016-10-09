@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.AccountChangeMapper">
+
+	
+	<insert id="addAccountChange" parameterType="AccountChange">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ACCOUNT_CHANGE_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO ACCOUNT_CHANGE(ID,FUND_ACCOUNT_CODE,FUND_TYPE,ACCOUNT_CHANGE_TIME,TRAN_CODE,CHANGE_TYPE,
+								   CHANGE_AMOUNT,BEFORE_CHANGE_AMOUNT,BEFORE_CHANGE_AVAILABLE_AMOUNT,BEFORE_CHANGE_FROZEN_AMOUNT,CHANGE_DATE,
+		                           CREATE_USER,CREATE_DATE,COMMENTS)
+		                    VALUES (#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},
+		                            sysdate,#{tranCode,jdbcType=VARCHAR},#{changeType,jdbcType=VARCHAR},
+		                            #{changeAmount,jdbcType=NUMERIC},#{beforeChangeAmount,jdbcType=NUMERIC},#{beforeChangeAvailableAmount,jdbcType=NUMERIC},
+		                            #{beforeChangeFrozenAmount,jdbcType=NUMERIC},to_char(sysdate,'yyyyMMdd'),
+		                            #{createUser,jdbcType=VARCHAR},sysdate,#{comments,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="getAccountChangeRecordList" resultType="AccountChange" parameterType="java.lang.String">
+		select FUND_ACCOUNT_CODE                      as fundAccountCode,
+		       FUND_TYPE                              as fundType,
+		       ACCOUNT_CHANGE_TIME                    as accountChangeTime,
+		       TRAN_CODE                              as tranCode,
+		       CHANGE_TYPE                            as changeType,
+		       nvl(CHANGE_AMOUNT, 0)                  as changeAmount,
+		       nvl(BEFORE_CHANGE_AMOUNT, 0)           as beforeChangeAmount,
+		       nvl(BEFORE_CHANGE_AVAILABLE_AMOUNT, 0) as beforeChangeAvailableAmount,
+		       nvl(BEFORE_CHANGE_FROZEN_AMOUNT, 0)    as beforeChangeFrozenAmount
+		  from ACCOUNT_CHANGE
+		 where TRAN_CODE = #{tranNum} 
+		   and CHANGE_TYPE =#{changeType}
+	</select>
+	
+
+	<select id="checkAccountChangeRecordExsit" resultType="boolean" parameterType="java.lang.String">
+		select count(1)
+		  FROM ACCOUNT_CHANGE
+		 WHERE TRAN_CODE = #{tranNum}
+		   AND CHANGE_TYPE = #{changeType}
+		   AND FUND_TYPE = #{fundType}
+	</select>
+	
+</mapper>

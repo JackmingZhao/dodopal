@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountFundMapper">
+	<sql id="accountColumn">
+		t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,
+		t.FUND_ACCOUNT_CODE,t.TOTAL_BALANCE,t.AVAILABLE_BALANCE,t.FROZEN_AMOUNT,t.CREDIT_AMT
+	</sql>
+	<sql id = "accountFundColumn">
+		af.FUND_ACCOUNT_CODE,af.FUND_TYPE,af.ACCOUNT_CODE,af.SUM_TOTAL_AMOUNT,af.TOTAL_BALANCE,af.AVAILABLE_BALANCE,
+		af.FROZEN_AMOUNT,af.LAST_CHANGE_AMOUNT,af.BEFORE_CHANGE_TOTAL_AMOUNT,af.BEFORE_CHANGE_AVAILABLE_AMOUNT,
+		af.BEFORE_CHANGE_FROZEN_AMOUNT,af.STATE,af.CIPHERTEXT,af.CREDIT_AMT
+	</sql>
+	<select id="findAccountBalance" resultType="com.dodopal.account.business.model.AccountFund"
+		resultMap="accountFundResultMap">
+		select <include refid="accountColumn" /> ,a.ID ,a.ACCOUNT_CODE,a.FUND_TYPE,a.CUSTOMER_TYPE,a.CUSTOMER_NO,t.FUND_TYPE as FUND_TYPE_FUND from ACCOUNT_FUND t
+		left join ACCOUNT a
+		on t.ACCOUNT_CODE = a.ACCOUNT_CODE
+		where a.CUSTOMER_TYPE = #{aType}
+		and a.CUSTOMER_NO = #{custNum}
+	</select>
+	<!--新增资金授信账户信息-->
+	<insert id="addFundAccount" parameterType="AccountFund">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+	    		select ACCOUNT_FUND_ID_SEQ.NEXTVAL from dual
+	   	</selectKey>
+         INSERT INTO ACCOUNT_FUND(ID,FUND_ACCOUNT_CODE,FUND_TYPE,ACCOUNT_CODE,SUM_TOTAL_AMOUNT,TOTAL_BALANCE,
+         AVAILABLE_BALANCE,FROZEN_AMOUNT,LAST_CHANGE_AMOUNT,BEFORE_CHANGE_TOTAL_AMOUNT,BEFORE_CHANGE_AVAILABLE_AMOUNT,
+         BEFORE_CHANGE_FROZEN_AMOUNT,STATE,PAY_PASSWORD,USEABLE,CIPHERTEXT,CREATE_USER,CREATE_DATE, CREDIT_AMT)
+         VALUES (#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},
+         #{accountCode,jdbcType=VARCHAR},#{sumTotalAmount,jdbcType=VARCHAR},#{totalBalance,jdbcType=BIGINT},
+         #{availableBalance,jdbcType=BIGINT},#{frozenAmount,jdbcType=BIGINT},#{lastChangeAmount,jdbcType=BIGINT},
+         #{beforeChangeTotalAmount,jdbcType=BIGINT},#{beforeChangeAvailableAmount,jdbcType=BIGINT},
+         #{beforeChangeFrozenAmount,jdbcType=BIGINT},#{state,jdbcType=VARCHAR},#{payPassword,jdbcType=VARCHAR},
+         #{useable,jdbcType=VARCHAR},#{ciphertext,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate, #{creditAmt, jdbcType=BIGINT})
+    </insert>
+	<!--根据主账户编号查询资金授信账户信息-->
+	<select id="queryFundAccount" resultType="AccountFund" resultMap="accountFundResultMap" parameterType="java.lang.String">
+		select <include refid="accountFundColumn" /> FROM ACCOUNT_FUND af WHERE af.ACCOUNT_CODE=#{accountCode} AND FUND_TYPE = #{fundType} FOR UPDATE wait 3
+	</select>
+	<!--根据主账户编号查询资金授信账户信息-->
+	<select id="queryFundAccountList" resultType="AccountFund" resultMap="accountFundResultMap" parameterType="java.lang.String">
+		select <include refid="accountFundColumn" /> FROM ACCOUNT_FUND af WHERE af.ACCOUNT_CODE=#{accountCode} FOR UPDATE wait 3
+	</select>
+	<!--更改资金授信账户信息-->
+	<update id="updateFundAccount" parameterType="AccountFund">
+		update ACCOUNT_FUND t set
+			t.SUM_TOTAL_AMOUNT =#{sumTotalAmount,jdbcType=BIGINT},
+			t.TOTAL_BALANCE	 =#{totalBalance,jdbcType=BIGINT},
+			t.AVAILABLE_BALANCE	 =#{availableBalance,jdbcType=BIGINT},
+			t.FROZEN_AMOUNT	 =#{frozenAmount,jdbcType=BIGINT},
+			t.LAST_CHANGE_AMOUNT=#{lastChangeAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_TOTAL_AMOUNT=#{beforeChangeTotalAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_AVAILABLE_AMOUNT=#{beforeChangeAvailableAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_FROZEN_AMOUNT=#{beforeChangeFrozenAmount,jdbcType=BIGINT},
+			t.UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			t.CIPHERTEXT=#{ciphertext,jdbcType=VARCHAR},
+			t.UPDATE_DATE=sysdate
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+	</update>
+	
+	
+  <!--更改资金授信账户信息的    授信额度字段-->
+	<update id="updateFundAccountCreditAmt" parameterType="AccountFund">
+		update ACCOUNT_FUND t set  t.CREDIT_AMT = #{creditAmt,jdbcType=NUMERIC}
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+	</update>
+	
+	<select id="findAccountFundByActCode" resultType="AccountFund" resultMap="accountFundResultMap" parameterType="java.lang.String">
+		 SELECT AF.FUND_ACCOUNT_CODE,
+		        AF.FUND_TYPE,
+		        AF.ACCOUNT_CODE,
+		        AF.SUM_TOTAL_AMOUNT,
+		        AF.TOTAL_BALANCE,
+		        AF.AVAILABLE_BALANCE,
+		        AF.FROZEN_AMOUNT,
+		        AF.LAST_CHANGE_AMOUNT,
+		        AF.BEFORE_CHANGE_TOTAL_AMOUNT,
+		        AF.BEFORE_CHANGE_AVAILABLE_AMOUNT,
+		        AF.BEFORE_CHANGE_FROZEN_AMOUNT,
+		        AF.STATE,
+		        A.NICK_NAME AS CREATE_USER,
+		        AF.CREATE_DATE,
+		        B.NICK_NAME AS UPDATE_USER,
+		        AF.UPDATE_DATE,
+		        AF.CREDIT_AMT
+		   FROM ACCOUNT_FUND AF
+		   LEFT JOIN V_USER_INFO A
+		     ON AF.CREATE_USER = A.ID
+		   LEFT JOIN V_USER_INFO B
+		     ON AF.UPDATE_USER = B.ID
+		  WHERE af.ACCOUNT_CODE = #{actCode}
+	</select>
+
+	<!-- 资金授信查询 add by shenxiang -->
+	<select id="findAccountFundInfo" resultType="map" parameterType="java.lang.String">
+		select t2.account_code      as ACCOUTCODE,
+		       t2.fund_type         as ACCOUTTYPE,
+		       t1.fund_account_code as FUNDACCOUTCODE,
+		       t1.fund_type         as FUNDTYPE,
+		       case when t1.AVAILABLE_BALANCE is null then '0' else t1.AVAILABLE_BALANCE||'' end as AVAILABLEBALANCE,
+		       case when t1.CREDIT_AMT        is null then '0' else t1.CREDIT_AMT||''        end as CREDITAMT
+		  from ACCOUNT_FUND t1
+		  left join ACCOUNT t2
+		    on t1.ACCOUNT_CODE = t2.ACCOUNT_CODE
+		 where t2.customer_type = #{custType}
+		   and t2.customer_no = #{custNum}
+	</select>
+	
+	<!--账户调帐——资金账户信息修改 add by shenxiang-->
+	<update id="updateFundAccountForAccountAdjustment" parameterType="AccountFund">
+		update ACCOUNT_FUND t set
+			t.BEFORE_CHANGE_AVAILABLE_AMOUNT=#{beforeChangeAvailableAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_FROZEN_AMOUNT=#{beforeChangeFrozenAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_TOTAL_AMOUNT=#{beforeChangeTotalAmount,jdbcType=BIGINT},
+			t.FROZEN_AMOUNT	 =#{frozenAmount,jdbcType=BIGINT},
+			t.AVAILABLE_BALANCE	 =#{availableBalance,jdbcType=BIGINT},
+			t.TOTAL_BALANCE	 =#{totalBalance,jdbcType=BIGINT},
+			t.SUM_TOTAL_AMOUNT =#{sumTotalAmount,jdbcType=BIGINT},
+			t.LAST_CHANGE_AMOUNT=#{lastChangeAmount,jdbcType=BIGINT},
+			t.UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			t.UPDATE_DATE=sysdate
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+	</update>
+	
+	<select id="queryAccountFundInfoByCustTypeAndCustNumForUpdate" parameterType="java.lang.String" resultType="AccountFund" resultMap="accountFundResultMap">
+	    SELECT 
+	    	T1.FUND_ACCOUNT_CODE, T1.FUND_TYPE, T1.ACCOUNT_CODE, T1.SUM_TOTAL_AMOUNT, T1.TOTAL_BALANCE, T1.AVAILABLE_BALANCE, T1.FROZEN_AMOUNT, 
+	    	T1.LAST_CHANGE_AMOUNT, T1.BEFORE_CHANGE_TOTAL_AMOUNT, T1.BEFORE_CHANGE_AVAILABLE_AMOUNT, T1.BEFORE_CHANGE_FROZEN_AMOUNT, 
+	    	T1.STATE, T1.PAY_PASSWORD, T1.USEABLE, T1.CIPHERTEXT, T1.CREATE_USER, T1.CREATE_DATE, T1.UPDATE_USER, T1.UPDATE_DATE,T1.CREDIT_AMT
+	    FROM 
+	    	ACCOUNT_FUND T1,
+	    	ACCOUNT T2
+	    WHERE 
+		    T1.ACCOUNT_CODE = T2.ACCOUNT_CODE
+		    	AND 
+		    T2.CUSTOMER_TYPE=#{custType} 
+		    	AND 
+		    T2.CUSTOMER_NO=#{custNum}
+		    	AND 
+		    T1.FUND_TYPE=#{fundType} for update wait 3
+	</select>
+	<select id="queryAccountFundInfoByCustTypeAndCustNum" parameterType="java.lang.String" resultType="AccountFund" resultMap="accountFundResultMap">
+	    SELECT 
+	    	T1.FUND_ACCOUNT_CODE, T1.FUND_TYPE, T1.ACCOUNT_CODE, T1.SUM_TOTAL_AMOUNT, T1.TOTAL_BALANCE, T1.AVAILABLE_BALANCE, T1.FROZEN_AMOUNT, 
+	    	T1.LAST_CHANGE_AMOUNT, T1.BEFORE_CHANGE_TOTAL_AMOUNT, T1.BEFORE_CHANGE_AVAILABLE_AMOUNT, T1.BEFORE_CHANGE_FROZEN_AMOUNT, 
+	    	T1.STATE, T1.PAY_PASSWORD, T1.USEABLE, T1.CIPHERTEXT, T1.CREATE_USER, T1.CREATE_DATE, T1.UPDATE_USER, T1.UPDATE_DATE,T1.CREDIT_AMT
+	    FROM 
+	    	ACCOUNT_FUND T1,
+	    	ACCOUNT T2
+	    WHERE 
+		    T1.ACCOUNT_CODE = T2.ACCOUNT_CODE
+		    	AND 
+		    T2.CUSTOMER_TYPE=#{custType} 
+		    	AND 
+		    T2.CUSTOMER_NO=#{custNum}
+		    	AND 
+		    T1.FUND_TYPE=#{fundType}
+	</select>
+	
+	<!--禁用/启用账户 -->
+	<update id="operateFundAccountsById" parameterType="java.lang.String">
+		UPDATE ACCOUNT_FUND T
+		<set>
+			T.STATE = #{oper},
+			UPDATE_USER = #{userId, jdbcType=VARCHAR},
+			UPDATE_DATE = sysdate
+		</set>
+		where t.id = #{fundAccountId, jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerDdpInfoMapper">
+	<resultMap type="MerDdpInfo" id="merDdpInfoResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="merDdpLinkIp" column="MER_DDP_LINK_IP" />
+		<result property="merDdpLinkUser" column="MER_DDP_LINK_USER" />
+		<result property="merDdpLinkUserMobile" column="MER_DDP_LINK_USER_MOBILE" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="settlementType" column="SETTLEMENT_TYPE" />
+		<result property="settlementThreshold" column="SETTLEMENT_THRESHOLD" />
+		<result property="isAutoDistribute" column="IS_AUTO_DISTRIBUTE" />
+		<result property="tradeArea" column="TRADE_AREA" />
+		<result property="limitSource" column="LIMIT_SOURCE" />
+	</resultMap>
+</mapper>

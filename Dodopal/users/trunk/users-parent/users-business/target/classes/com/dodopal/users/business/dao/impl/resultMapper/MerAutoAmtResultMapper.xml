@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerAutoAmtMapper">
+	<resultMap type="MerAutoAmt" id="merAutoAmtResultMap">
+		<result property="id" column="ID" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="limitThreshold" column="LIMIT_THRESHOLD" />
+		<result property="autoLimitThreshold" column="AUTO_LIMIT_THRESHOLD" />
+	</resultMap>
+</mapper>

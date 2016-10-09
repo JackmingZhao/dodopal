@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.CrdSysSupplementMapper">
+	<select id="findCrdSysSupplementByCode" resultType="CrdSysSupplement" resultMap="crdSysSupplementMap" parameterType="java.lang.String">
+  select ID,
+         CRD_ORDER_NUM,
+         TXN_TYPE,
+         CHECK_YKTMW,
+         CHECK_YKTKEY,
+         CHARGE_YKTMW,
+         CHARGE_KEY,
+         RESULT_YKTMW,
+         TXN_DATE,
+         TXN_TIME,
+         LAST_READ_KEY_TIME,
+         LAST_CHARGE_KEY_TIME,
+         LAST_RESULT_TIME,
+         REQUEST_READ_KEY_COUNT,
+         REQUEST_CHARGE_KEY_COUNT,
+         SEND_RESULT_COUNT,
+         CREATE_USER,
+         CREATE_DATE,
+         UPDATE_USER,
+         UPDATE_DATE
+    from CRD_SYS_SUPPLEMENT where CRD_ORDER_NUM = #{crdOrderNum,jdbcType=VARCHAR}
+	</select>
+</mapper>

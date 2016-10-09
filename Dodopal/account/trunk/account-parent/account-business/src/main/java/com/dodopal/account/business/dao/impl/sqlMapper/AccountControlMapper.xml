@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountControlMapper">
+	<sql id="allColumns">
+		ID,
+		FUND_ACCOUNT_CODE,
+		DAY_CONSUME_SINGLE_LIMIT,
+		DAY_CONSUME_SUM_LIMIT,
+		DAY_RECHARGE_SINGLE_LIMIT,
+		DAY_RECHARGE_SUM_LIMIT,
+		DAY_TRANSFER_MAX,
+		DAY_TRANSFER_SINGLE_LIMIT,
+		DAY_TRANSFER_SUM_LIMIT,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE
+	</sql>
+	<sql id="controlDefaultColumn">
+		ID,
+		CUSTOMER_TYPE,
+		DAY_CONSUME_SINGLE_LIMIT,
+		DAY_CONSUME_SUM_LIMIT,
+		DAY_RECHARGE_SINGLE_LIMIT,
+		DAY_RECHARGE_SUM_LIMIT,
+		DAY_TRANSFER_MAX,
+		DAY_TRANSFER_SINGLE_LIMIT,
+		DAY_TRANSFER_SUM_LIMIT,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE,
+		CREDIT_AMT
+	</sql>
+        <insert id="addAccountControl" parameterType="AccountControl">
+                <selectKey resultType="String" keyProperty="id" order="BEFORE">
+                        select ACCOUNT_CONTROL_ID_SEQ.NEXTVAL from dual
+                </selectKey>
+                INSERT INTO ACCOUNT_CONTROL(ID,FUND_ACCOUNT_CODE,DAY_CONSUME_SINGLE_LIMIT,DAY_CONSUME_SUM_LIMIT,
+                DAY_RECHARGE_SINGLE_LIMIT,DAY_RECHARGE_SUM_LIMIT,DAY_TRANSFER_MAX,DAY_TRANSFER_SINGLE_LIMIT,
+                DAY_TRANSFER_SUM_LIMIT	,CREATE_USER,CREATE_DATE)
+                VALUES (#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{dayConsumeSingleLimit,jdbcType=BIGINT},
+                #{dayConsumeSumLimit,jdbcType=BIGINT},#{dayRechargeSingleLimit,jdbcType=BIGINT},
+                #{dayRechargeSumLimit,jdbcType=BIGINT},#{dayTransferMax,jdbcType=BIGINT},
+                #{dayTransferSingleLimit,jdbcType=BIGINT},#{dayTransferSumLimit,jdbcType=BIGINT},
+                #{createUser,jdbcType=VARCHAR},sysdate)
+        </insert>
+
+	<select id="findfindAccountControlByActCode" resultType="AccountControl"
+		resultMap="accountControlResultMap" parameterType="java.lang.String">
+		  SELECT T.ID,
+		         T.FUND_ACCOUNT_CODE,
+		         T.DAY_CONSUME_SINGLE_LIMIT,
+		         T.DAY_CONSUME_SUM_LIMIT,
+		         T.DAY_RECHARGE_SINGLE_LIMIT,
+		         T.DAY_RECHARGE_SUM_LIMIT,
+		         T.DAY_TRANSFER_MAX,
+		         T.DAY_TRANSFER_SINGLE_LIMIT,
+		         T.DAY_TRANSFER_SUM_LIMIT,
+		         A.NICK_NAME AS CREATE_USER,
+		         T.CREATE_DATE,
+		         B.NICK_NAME AS UPDATE_USER,
+		         T.UPDATE_DATE
+		    FROM ACCOUNT_CONTROL T
+		    LEFT JOIN V_USER_INFO A
+		      ON T.CREATE_USER = A.ID
+		    LEFT JOIN V_USER_INFO B
+		      ON T.UPDATE_USER = B.ID
+		   WHERE T.FUND_ACCOUNT_CODE IN
+		<foreach collection="list" item= "fundActCodes" index ="index"  open= "(" close =")" separator=",">
+			#{fundActCodes}
+	    </foreach>
+	</select>
+	
+     <!--根据资金账户编号查询到资金累计信息-->
+    <select id="queryAccountControl" resultType="AccountControl" resultMap="accountControlResultMap" parameterType="java.lang.String">
+            select <include refid="allColumns" /> FROM ACCOUNT_CONTROL  WHERE FUND_ACCOUNT_CODE= #{fundAccountCode}
+    </select>
+	<!--根据客户类型merType查询默认的风控设置信息-->
+	<select id="queryControlDefault" resultType="AccountControllerDefault" resultMap="accountControllerDefaultResultMap" parameterType="java.lang.String">
+		select <include refid="controlDefaultColumn" /> FROM ACCOUNT_CONTROLLER_DEFAULT  WHERE CUSTOMER_TYPE= #{merType}
+	</select>
+	
+	<select id="findAccountRiskControllerItemListByPage" resultType="com.dodopal.api.account.dto.AccountControllerCustomerDTO">
+            select acctController.* from (
+	            select  m.mer_code as customerNo, m.mer_name as customerName, a.customer_type as customerType, 
+	  					af.fund_type as fundType, a.account_code as accountCode, 
+	  					ac.id as accountControllerId,
+	  					ac.id as id,
+	  					ac.FUND_ACCOUNT_CODE as fundAccountCode,
+						ac.DAY_CONSUME_SINGLE_LIMIT as dayConsumeSingleLimit,
+						ac.DAY_CONSUME_SUM_LIMIT as dayConsumeSumLimit,
+						ac.DAY_RECHARGE_SINGLE_LIMIT dayRechargeSingleLimit,
+						ac.DAY_RECHARGE_SUM_LIMIT dayRechargeSumLimit,
+						ac.DAY_TRANSFER_MAX as dayTransferMax,
+						ac.DAY_TRANSFER_SINGLE_LIMIT as dayTransferSingleLimit,
+						ac.DAY_TRANSFER_SUM_LIMIT as dayTransferSumLimit,
+						ac.CREATE_USER as createUser,
+						ac.CREATE_DATE as createDate,
+						ac.UPDATE_USER as UpdateUser,
+						ac.UPDATE_DATE as updateDate,
+						af.CREDIT_AMT as creditAmt
+	   			FROM    ACCOUNT_CONTROL ac, account_fund af, account a, merchant  m
+	            <where> ac.fund_account_code = af.fund_account_code and af.account_code = a.account_code and a.customer_type = '1' 
+	            		and a.customer_no = m.mer_code
+	           			<if test="custNum != null and custNum !=''">
+							and m.mer_code like '%'||#{custNum}||'%'
+					    </if>
+					    <if test="custName != null and custName !=''">
+							and m.mer_name like '%'||#{custName}||'%'
+					    </if>
+					    <if test="customerType != null and customerType != ''">
+					    	and a.customer_type = #{customerType}
+					    </if>
+				</where>   
+				union
+				select  a.customer_no as customerNo, m.mer_user_name as customerName, a.customer_type as customerType, 
+					    af.fund_type as fundType, a.account_code  as accountCode, 
+					    ac.id as accountControllerId,
+					    ac.id as id,
+	  					ac.FUND_ACCOUNT_CODE as fundAccountCode,
+						ac.DAY_CONSUME_SINGLE_LIMIT as dayConsumeSingleLimit,
+						ac.DAY_CONSUME_SUM_LIMIT as dayConsumeSumLimit,
+						ac.DAY_RECHARGE_SINGLE_LIMIT dayRechargeSingleLimit,
+						ac.DAY_RECHARGE_SUM_LIMIT dayRechargeSumLimit,
+						ac.DAY_TRANSFER_MAX as dayTransferMax,
+						ac.DAY_TRANSFER_SINGLE_LIMIT as dayTransferSingleLimit,
+						ac.DAY_TRANSFER_SUM_LIMIT as dayTransferSumLimit,
+						ac.CREATE_USER as createUser,
+						ac.CREATE_DATE as createDate,
+						ac.UPDATE_USER as UpdateUser,
+						ac.UPDATE_DATE as updateDate,
+						af.CREDIT_AMT as creditAmt
+				from ACCOUNT_CONTROL ac, account_fund af, account a, merchant_user  m
+				<where> ac.fund_account_code = af.fund_account_code and af.account_code = a.account_code and a.customer_type = '0' 
+				       and a.customer_no = m.user_code 
+				       <if test="custNum != null and custNum !=''">
+							and m.user_code like '%'||#{custNum}||'%'
+					   </if>
+					   <if test="custName != null and custName !=''">
+							and m.mer_user_name like '%'||#{custName}||'%'
+					   </if>
+					   <if test="customerType != null and customerType != ''">
+					    	and a.customer_type = #{customerType}
+					   </if>
+				</where>  
+			)  acctController
+			order by acctController.createDate desc
+    </select>
+    
+    <update id="updateAccountRiskControllerItem" parameterType="com.dodopal.api.account.dto.AccountControllerCustomerDTO">
+		update ACCOUNT_CONTROL
+		<trim prefix="SET" suffixOverrides=",">
+				DAY_CONSUME_SINGLE_LIMIT = #{dayConsumeSingleLimit,jdbcType=NUMERIC},
+				DAY_CONSUME_SUM_LIMIT = #{dayConsumeSumLimit,jdbcType=NUMERIC},
+				DAY_RECHARGE_SINGLE_LIMIT = #{dayRechargeSingleLimit,jdbcType=NUMERIC},
+				DAY_RECHARGE_SUM_LIMIT = #{dayRechargeSumLimit,jdbcType=NUMERIC},
+				DAY_TRANSFER_MAX = #{dayTransferMax,jdbcType=NUMERIC},
+				DAY_TRANSFER_SINGLE_LIMIT = #{dayTransferSingleLimit,jdbcType=NUMERIC},
+				DAY_TRANSFER_SUM_LIMIT = #{dayTransferSumLimit,jdbcType=NUMERIC}, 
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{accountControllerId}
+	</update>
+	
+	<select id="findAccountRiskControllerItemListforExcel" resultType="com.dodopal.api.account.dto.AccountControllerCustomerDTO">
+            SELECT 	c.accountcontrollerid, c.customerno, c.customername, c.customertype, c.customertypestr, c.fundtype,
+       				c.fundtypestr, c.accountcode, c.fundaccountcode, 
+       				c.dayconsumesinglelimit, c.dayconsumesumlimit, c.dayrechargesinglelimit, c.dayrechargesumlimit, 
+       				c.daytransfermax, c.daytransfersinglelimit, c.daytransfersumlimit,
+       				v1.nick_name AS createUser, c.createdate, v2.nick_name AS UpdateUser, c.updatedate
+            FROM (
+	            SELECT ac.id AS accountControllerId, a.customer_no AS customerNo, m.mer_name AS customerName, 
+				       a.customer_type AS customerType, a.customer_type AS customerTypeStr, af.fund_type AS fundType, af.fund_type AS fundTypeStr, a.account_code AS accountCode,
+				       ac.FUND_ACCOUNT_CODE AS fundAccountCode, 
+				       ac.DAY_CONSUME_SINGLE_LIMIT AS dayConsumeSingleLimit, ac.DAY_CONSUME_SUM_LIMIT AS dayConsumeSumLimit, 
+				       ac.DAY_RECHARGE_SINGLE_LIMIT dayRechargeSingleLimit,   ac.DAY_RECHARGE_SUM_LIMIT dayRechargeSumLimit,
+				       ac.DAY_TRANSFER_MAX AS dayTransferMax, ac.DAY_TRANSFER_SINGLE_LIMIT AS dayTransferSingleLimit, ac.DAY_TRANSFER_SUM_LIMIT AS dayTransferSumLimit,
+				       ac.CREATE_USER AS createUser, ac.CREATE_DATE AS createDate, ac.UPDATE_USER AS UpdateUser,  ac.UPDATE_DATE AS updateDate
+				FROM ACCOUNT_CONTROL ac, account_fund af, account a, merchant  m
+	            <where> ac.fund_account_code = af.fund_account_code and af.account_code = a.account_code and a.customer_type = '1' 
+	            		and a.customer_no = m.mer_code
+	           			<if test="custNum != null and custNum !=''">
+							and m.mer_code like '%'||#{custNum}||'%'
+					    </if>
+					    <if test="custName != null and custName !=''">
+							and m.mer_name like '%'||#{custName}||'%'
+					    </if>
+					    <if test="customerType != null and customerType != ''">
+					    	and a.customer_type = #{customerType}
+					    </if>
+				</where>
+			  UNION
+				SELECT ac.id AS accountControllerId, a.customer_no AS customerNo, m.mer_user_name AS customerName,
+				       a.customer_type AS customerType, a.customer_type AS customerTypeStr, af.fund_type AS fundType, af.fund_type AS fundTypeStr, a.account_code AS accountCode,
+				       ac.FUND_ACCOUNT_CODE AS fundAccountCode, 
+				       ac.DAY_CONSUME_SINGLE_LIMIT AS dayConsumeSingleLimit, ac.DAY_CONSUME_SUM_LIMIT AS dayConsumeSumLimit, 
+				       ac.DAY_RECHARGE_SINGLE_LIMIT dayRechargeSingleLimit,   ac.DAY_RECHARGE_SUM_LIMIT dayRechargeSumLimit,
+				       ac.DAY_TRANSFER_MAX AS dayTransferMax, ac.DAY_TRANSFER_SINGLE_LIMIT AS dayTransferSingleLimit, ac.DAY_TRANSFER_SUM_LIMIT AS dayTransferSumLimit,
+				       ac.CREATE_USER AS createUser, ac.CREATE_DATE AS createDate, ac.UPDATE_USER AS UpdateUser,  ac.UPDATE_DATE AS updateDate
+				FROM ACCOUNT_CONTROL ac, account_fund af, account a, merchant_user  m
+				<where> ac.fund_account_code = af.fund_account_code and af.account_code = a.account_code and a.customer_type = '0' 
+				       and a.customer_no = m.user_code 
+				       <if test="custNum != null and custNum !=''">
+							and m.user_code like '%'||#{custNum}||'%'
+					   </if>
+					   <if test="custName != null and custName !=''">
+							and m.mer_user_name like '%'||#{custName}||'%'
+					   </if>
+					   <if test="customerType != null and customerType != ''">
+					    	and a.customer_type = #{customerType}
+					   </if>
+				</where>  
+			)  c
+			LEFT JOIN V_USER_INFO v1 ON c.createUser=v1.ID
+      		LEFT JOIN V_USER_INFO v2 ON c.UpdateUser=v2.ID
+			ORDER BY c.createDate desc
+    </select>
+</mapper>

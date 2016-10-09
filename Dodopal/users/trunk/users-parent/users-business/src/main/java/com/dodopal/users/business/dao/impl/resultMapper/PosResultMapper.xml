@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.PosMapper">
+	<resultMap type="Pos" id="posResultMap">
+		<result property="id" column="ID" />
+		<result property="code" column="CODE" />
+		<result property="status" column="STATUS" />
+		<result property="merchantCode" column="MER_CODE" />
+		<result property="merchantName" column="MER_NAME" />
+		<result property="cityCode" column="CITY_CODE" />
+		<result property="cityName" column="CITY_NAME" />
+		<result property="bind" column="BIND" />
+		<result property="comments" column="COMMENTS" />
+		<result property="bundlingDate" column="BUNDLING_DATE" />
+	</resultMap>
+</mapper>

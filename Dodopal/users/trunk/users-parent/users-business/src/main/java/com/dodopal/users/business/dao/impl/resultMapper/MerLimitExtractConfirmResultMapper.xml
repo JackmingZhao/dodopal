@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerLimitExtractConfirmMapper">
+	<resultMap type="MerLimitExtractConfirm" id="merLimitExtractConfirmResultMap">
+		<result property="id" column="ID" />
+		<result property="parentMerCode" column="PARENT_MER_CODE" />
+		<result property="parentMerName" column="PARENT_MER_NAME" />
+		<result property="extractUser" column="EXTRACT_USER" />
+		<result property="extractDate" column="EXTRACT_DATE" />
+		<result property="extractAmt" column="EXTRACT_AMT" />
+		<result property="childMerCode" column="CHILD_MER_CODE" />
+		<result property="childMerName" column="CHILD_MER_NAME" />
+		<result property="confirmUser" column="CONFIRM_USER" />
+		<result property="confirmDate" column="CONFIRM_DATE" />
+		<result property="state" column="STATE" />
+		<result property="concelUser" column="CONCEL_USER" />
+		<result property="concelDate" column="CONCEL_DATE" />
+	</resultMap>
+</mapper>

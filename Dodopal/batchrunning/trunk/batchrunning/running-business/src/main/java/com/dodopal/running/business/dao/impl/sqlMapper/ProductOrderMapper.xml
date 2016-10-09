@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.ProductOrderMapper">
+	
+	<!-- 查询产品库订单详情by订单号 -->
+	<select id="getProductOrderByProOrderNum" resultType="ProductOrder" parameterType="java.lang.String">
+		select ID                     as id,
+		       PRO_ORDER_NUM          as proOrderNum,
+		       PRO_CODE               as proCode,
+		       PRO_NAME               as proName,
+		       TXN_AMT                as txnAmt,
+		       CITY_CODE              as cityCode,
+		       YKT_CODE               as yktCode,
+		       CITY_NAME              as cityName,
+		       YKT_NAME               as yktName,
+		       RECEIVED_PRICE         as receivedPrice,
+		       MER_RATE               as merRate,
+		       MER_PURCHAASE_PRICE    as merPurchaasePrice,
+		       PRD_ORDER_DATE         as proOrderDate,
+		       PRD_ORDER_DAY          as proOrderDay,
+		       ORDER_CARDNO           as orderCardno,
+		       POS_CODE               as posCode,
+		       MER_GAIN               as merGain,
+		       BEFBAL                 as befbal,
+		       BLACK_AMT              as blackAmt,
+		       PAY_TYPE               as payType,
+		       PAY_WAY                as payWay,
+		       PRO_ORDER_STATES       as proOrderState,
+		       PRO_INNER_STATES       as proInnerState,
+		       PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       MER_CODE               as merCode,
+		       MER_NAME               as merName,
+		       MER_USER_TYPE          as merUserType,
+		       LOAD_FLAG              as loadFlag,
+		       MER_ORDER_NUM          as merOrderNum,
+		       LOAD_ORDER_NUM         as loadOrderNum,
+		       SOURCE                 as source,
+		       CLEARING_MARK          as clearingMark,
+		       USER_ID                as userId,
+		       USER_NAME              as userName,
+		       COMMENTS               as comments,
+		       PAGE_CALLBACK_URL      as pageCallBackURL,
+		       SERVICE_NOTICE_URL     as serviceNoticeURL,
+		       FUND_PROCESS_RESULT    as fundProcessResult,
+		       USER_CODE              as userCode,
+		       DEP_ID                 as depId,
+		       EXT_USER_CODE          as extUserCode,
+		       CREATE_USER            as createUser,
+		       UPDATE_USER            as updateUser,
+		       CREATE_DATE            as createDate,
+		       UPDATE_DATE            as updateDate,
+		       MER_RATE_TYPE          as merRateType,
+		       PAY_SERVICE_TYPE       as payServiceType,
+		       PAY_SERVICE_RATE       as payServiceRate,
+		       YKT_RECHARGE_RATE      as yktRechargeRate
+		  from PRD_ORDER
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</select>
+	
+	<!-- 异常充值订单，处理完异常，更改订单状态 -->
+	<update id="updateOrderStatusAfterHandleException" parameterType="ProductOrder">
+		update PRD_ORDER
+		   set PRO_ORDER_STATES       = #{proOrderState,jdbcType=VARCHAR},
+		       PRO_INNER_STATES       = #{proInnerState,jdbcType=VARCHAR},
+		       PRO_BEFOREINNER_STATES = #{proBeforInnerState,jdbcType=VARCHAR},
+		       BLACK_AMT              = #{blackAmt,jdbcType=VARCHAR},
+		       PRO_SUSPICIOUS_STATES  = #{proSuspiciousState,jdbcType=VARCHAR},
+		    <if test="proSuspiciousState==2">
+			   PRO_SUSPICIOUS_EXPLAIN=#{proSuspiciousExplain,jdbcType=VARCHAR},
+			</if>
+		       COMMENTS               = #{comments,jdbcType=VARCHAR},
+		       UPDATE_USER            = #{updateUser,jdbcType=VARCHAR},
+		       UPDATE_DATE            = sysdate
+		 where PRO_ORDER_NUM = #{proOrderNum}
+	</update>
+	
+	
+</mapper>

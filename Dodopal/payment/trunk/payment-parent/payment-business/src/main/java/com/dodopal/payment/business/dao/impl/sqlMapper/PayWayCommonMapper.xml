@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayWayCommonMapper">
+	<sql id="payWayCommonColumn">
+		pc.ID,pc.CREATE_DATE,pc.UPDATE_DATE,pc.CREATE_USER,pc.UPDATE_USER,pc.USER_CODE,mu.MER_USER_NICKNAME,mc.MER_CODE,
+		mc.MER_NAME,PAY_WAY_NAME,PAY_TYPE,PAY_SERVICE_RATE,ACTIVATE,USER_TIME
+	</sql>
+	<sql id="commonColumn">
+		ID,USER_TYPE,USER_CODE,PAY_WAY_KIND,PAY_WAY_ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,USER_TIME
+	</sql>
+
+	<select id="findPayWayCommonByPage" parameterType="PayWayCommon"
+		resultType="PayWayCommon" resultMap="payWayCommonResultMap">
+		SELECT ID,
+		USER_CODE,
+		USER_NAME,
+		ACTIVATE,
+		PAY_SERVICE_RATE,
+		PAY_TYPE,
+		PAY_WAY_NAME,
+		IMAGE_NAME
+		FROM (
+		SELECT DISTINCT PC.ID AS ID,
+		MC.MER_USER_NAME AS USER_CODE,
+		MC.MER_USER_NICKNAME AS USER_NAME,
+		PG.ACTIVATE AS ACTIVATE,
+		PG.PAY_SERVICE_RATE AS PAY_SERVICE_RATE,
+		PP.PAY_TYPE AS PAY_TYPE,
+		PP.PAY_WAY_NAME AS PAY_WAY_NAME,
+		PP.IMAGE_NAME AS IMAGE_NAME
+		FROM PAY_WAY_COMMON PC,
+		PAY_WAY_GENERAL PG,
+		MERCHANT_USER MC,
+		(SELECT PCG.PAY_TYPE, PCG.PAY_WAY_NAME, PCG.ID, PCG.IMAGE_NAME
+		FROM PAY_CONFIG PCG, PAY_WAY_GENERAL PG
+		WHERE PCG.ID = PG.PAY_CONFIG_ID) PP
+		WHERE PC.PAY_WAY_KIND = 'GW_ALL'
+		AND PC.PAY_WAY_ID = PG.ID
+		AND PC.USER_CODE = MC.USER_CODE
+		AND PP.ID = PG.PAY_CONFIG_ID
+		UNION ALL
+		SELECT DISTINCT PC.ID AS ID,
+		MC.MER_USER_NAME AS USER_CODE,
+		MC.MER_USER_NICKNAME AS USER_NAME,
+		PE.ACTIVATE AS ACTIVATE,
+		PE.PAY_SERVICE_RATE AS PAY_SERVICE_RATE,
+		PP.PAY_TYPE AS PAY_TYPE,
+		PP.PAY_WAY_NAME AS PAY_WAY_NAME,
+		PP.IMAGE_NAME AS IMAGE_NAME
+		FROM PAY_WAY_COMMON PC,
+		PAY_WAY_EXTERNAL PE,
+		MERCHANT_USER MC,
+		(SELECT PCG.PAY_TYPE, PCG.PAY_WAY_NAME, PCG.ID, PCG.IMAGE_NAME
+		FROM PAY_CONFIG PCG, PAY_WAY_EXTERNAL PE
+		WHERE PCG.ID = PE.PAY_CONFIG_ID) PP
+		WHERE PC.PAY_WAY_ID = PE.ID
+		AND PC.USER_CODE = MC.USER_CODE
+		AND PC.PAY_WAY_KIND = 'GW_OUT'
+		AND PP.ID = PE.PAY_CONFIG_ID)
+
+		<where>
+			<if test="userName != null and userName !=''">
+				and user_code like '%'||#{userName}||'%'
+			</if>
+			<if test="payWayName != null and payWayName !=''">
+				and pay_way_name like '%'||#{payWayName}||'%'
+			</if>
+			<if test="activate != null and activate !=''">
+				and activate = #{activate}
+			</if>
+			<if test="payType != null and payType !=''">
+				and pay_type = #{payType}
+			</if>
+		</where>
+	</select>
+
+	<delete id="deletePayWayCommon">
+		delete from PAY_WAY_COMMON where id in
+		<foreach item="item" index="index" collection="ids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+
+	<delete id="deletePaywayCommon">
+		delete from PAY_WAY_COMMON where USER_CODE =
+		#{userCode}
+	</delete>
+
+	<insert id="insertPayWayCommon" parameterType="PayWayCommon">
+		INSERT INTO
+		PAY_WAY_COMMON(ID,USER_TYPE,USER_CODE,
+		PAY_WAY_KIND,PAY_WAY_ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+		VALUES
+		(PAY_WAY_COMMON_ID_SEQ.NEXTVAL,
+		#{userType, jdbcType=VARCHAR},
+		#{userCode, jdbcType=VARCHAR},
+		#{payWayKind, jdbcType=VARCHAR},
+		#{payWayId, jdbcType=VARCHAR},
+		#{createUser, jdbcType=VARCHAR},
+		sysdate,
+		#{updateUser,jdbcType=VARCHAR},
+		#{updateDate,jdbcType=DATE})
+	</insert>
+	<select id="queryPayCommonList" parameterType="java.lang.String"
+		resultType="PayWayCommon" resultMap="payWayCommonResultMap">
+		select
+		<include refid="commonColumn" />
+		from PAY_WAY_COMMON WHERE USER_CODE = #{userId} ORDER BY USER_TIME
+		DESC
+	</select>
+	<update id="updateCommonInfo" parameterType="java.lang.String">
+		UPDATE
+		PAY_WAY_COMMON SET USER_TIME=USER_TIME+1 WHERE ID = #{payCommonId}
+	</update>
+
+	<select id="findPaywayCommonByPayWayId" parameterType="java.lang.String" resultType="java.lang.String">
+		select id from PAY_WAY_COMMON where PAY_WAY_ID =#{payWayId}
+		AND PAY_WAY_KIND = 'GW_OUT'
+	</select>
+
+</mapper>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.YktRepairMapper">
+	<select id="queryPayExp" resultType="ProductOrder" parameterType="java.lang.Integer">
+		    	 select t.ID             as id,
+                t.PRO_ORDER_NUM          as proOrderNum,
+                t.PRO_CODE               as proCode,
+                t.PRO_NAME               as proName,
+                t.TXN_AMT                as txnAmt,
+                t.CITY_CODE              as cityCode,
+                t.YKT_CODE               as yktCode,
+                t.CITY_NAME              as cityName,
+                t.YKT_NAME               as yktName,
+                t.RECEIVED_PRICE         as receivedPrice,
+                t.MER_RATE               as merRate,
+                t.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+                t.PRD_ORDER_DATE         as proOrderDate,
+                t.PRD_ORDER_DAY          as proOrderDay,
+                t.ORDER_CARDNO           as orderCardno,
+                t.POS_CODE               as posCode,
+                t.MER_GAIN               as merGain,
+                t.BEFBAL                 as befbal,
+                t.BLACK_AMT              as blackAmt,
+                t.PAY_TYPE               as payType,
+                t.PAY_WAY                as payWay,
+                t.PRO_ORDER_STATES       as proOrderState,
+                t.PRO_INNER_STATES       as proInnerState,
+                t.PRO_BEFOREINNER_STATES as proBeforInnerState,
+                t.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+                t.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+                t.MER_CODE               as merCode,
+                t.MER_NAME               as merName,
+                t.MER_USER_TYPE          as merUserType,
+                t.LOAD_FLAG              as loadFlag,
+                t.MER_ORDER_NUM          as merOrderNum,
+                t.LOAD_ORDER_NUM         as loadOrderNum,
+                t.SOURCE                 as source,
+                t.CLEARING_MARK          as clearingMark,
+                t.USER_ID                as userId,
+                t.USER_NAME              as userName,
+                t.COMMENTS               as comments,
+                t.PAGE_CALLBACK_URL      as pageCallBackURL,
+                t.SERVICE_NOTICE_URL     as serviceNoticeURL,
+                t.FUND_PROCESS_RESULT    as fundProcessResult,
+                t.USER_CODE              as userCode,
+                t.DEP_ID                 as depId,
+                t.EXT_USER_CODE          as extUserCode,
+                CREATE_USER            as createUser,
+                UPDATE_USER            as updateUser,
+                CREATE_DATE            as createDate,
+                UPDATE_DATE            as updateDate,
+                t.CREATE_DATE           as createDate,
+                t.MER_RATE_TYPE          as merRateType,
+                t.PAY_SERVICE_TYPE       as payServiceType,
+                t.PAY_SERVICE_RATE       as payServiceRate,
+                t.YKT_RECHARGE_RATE      as yktRechargeRate
+                from PRD_ORDER t
+		 <where>
+		 		((SYSDATE - T.UPDATE_DATE) * 24 * 60 * 60) > #{thresholdTime}
+					AND (T.PRO_ORDER_STATES = '1' AND T.PRO_INNER_STATES = '11')
+		</where>
+		ORDER BY T.ID DESC
+	</select>
+	<select id="queryDeblockFund" resultType="ProductOrder" parameterType="java.lang.Integer">
+		    	 select t.ID                     as id,
+			       t.PRO_ORDER_NUM          as proOrderNum,
+			       t.PRO_CODE               as proCode,
+			       t.PRO_NAME               as proName,
+			       t.TXN_AMT                as txnAmt,
+			       t.CITY_CODE              as cityCode,
+			       t.YKT_CODE               as yktCode,
+			       t.CITY_NAME              as cityName,
+			       t.YKT_NAME               as yktName,
+			       t.RECEIVED_PRICE         as receivedPrice,
+			       t.MER_RATE               as merRate,
+			       t.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+			       t.PRD_ORDER_DATE         as proOrderDate,
+			       t.PRD_ORDER_DAY          as proOrderDay,
+			       t.ORDER_CARDNO           as orderCardno,
+			       t.POS_CODE               as posCode,
+			       t.MER_GAIN               as merGain,
+			       t.BEFBAL                 as befbal,
+			       t.BLACK_AMT              as blackAmt,
+			       t.PAY_TYPE               as payType,
+			       t.PAY_WAY                as payWay,
+			       t.PRO_ORDER_STATES       as proOrderState,
+			       t.PRO_INNER_STATES       as proInnerState,
+			       t.PRO_BEFOREINNER_STATES as proBeforInnerState,
+			       t.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+			       t.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+			       t.MER_CODE               as merCode,
+			       t.MER_NAME               as merName,
+			       t.MER_USER_TYPE          as merUserType,
+			       t.LOAD_FLAG              as loadFlag,
+			       t.MER_ORDER_NUM          as merOrderNum,
+			       t.LOAD_ORDER_NUM         as loadOrderNum,
+			       t.SOURCE                 as source,
+			       t.CLEARING_MARK          as clearingMark,
+			       t.USER_ID                as userId,
+			       t.USER_NAME              as userName,
+			       t.COMMENTS               as comments,
+			       t.PAGE_CALLBACK_URL      as pageCallBackURL,
+			       t.SERVICE_NOTICE_URL     as serviceNoticeURL,
+			       t.FUND_PROCESS_RESULT    as fundProcessResult,
+			       t.USER_CODE              as userCode,
+			       t.DEP_ID                 as depId,
+			       t.EXT_USER_CODE          as extUserCode,
+			       CREATE_USER              as createUser,
+			       UPDATE_USER              as updateUser,
+			       CREATE_DATE              as createDate,
+			       UPDATE_DATE              as updateDate,
+			       t.CREATE_DATE            as createDate,
+			       t.MER_RATE_TYPE          as merRateType,
+			       t.PAY_SERVICE_TYPE       as payServiceType,
+			       t.PAY_SERVICE_RATE       as payServiceRate,
+			       t.YKT_RECHARGE_RATE      as yktRechargeRate
+			  from PRD_ORDER t
+		 <where>
+		 		((SYSDATE - T.UPDATE_DATE) * 24 * 60 * 60) > #{thresholdTime}
+			   AND ((T.PRO_ORDER_STATES = '2' and T.PRO_INNER_STATES = '21')
+			    or (T.PRO_ORDER_STATES = '2' and T.PRO_INNER_STATES = '22')
+			    or (T.PRO_ORDER_STATES = '2' and T.PRO_INNER_STATES = '24')
+			    or (T.PRO_ORDER_STATES = '3' and T.PRO_INNER_STATES = '30'))
+		</where>
+		ORDER BY T.ID DESC
+	</select>
+	<select id="queryDeduct" resultType="ProductOrder" parameterType="java.lang.Integer">
+		    	 select t.ID                     as id,
+				       t.PRO_ORDER_NUM          as proOrderNum,
+				       t.PRO_CODE               as proCode,
+				       t.PRO_NAME               as proName,
+				       t.TXN_AMT                as txnAmt,
+				       t.CITY_CODE              as cityCode,
+				       t.YKT_CODE               as yktCode,
+				       t.CITY_NAME              as cityName,
+				       t.YKT_NAME               as yktName,
+				       t.RECEIVED_PRICE         as receivedPrice,
+				       t.MER_RATE               as merRate,
+				       t.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+				       t.PRD_ORDER_DATE         as proOrderDate,
+				       t.PRD_ORDER_DAY          as proOrderDay,
+				       t.ORDER_CARDNO           as orderCardno,
+				       t.POS_CODE               as posCode,
+				       t.MER_GAIN               as merGain,
+				       t.BEFBAL                 as befbal,
+				       t.BLACK_AMT              as blackAmt,
+				       t.PAY_TYPE               as payType,
+				       t.PAY_WAY                as payWay,
+				       t.PRO_ORDER_STATES       as proOrderState,
+				       t.PRO_INNER_STATES       as proInnerState,
+				       t.PRO_BEFOREINNER_STATES as proBeforInnerState,
+				       t.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+				       t.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+				       t.MER_CODE               as merCode,
+				       t.MER_NAME               as merName,
+				       t.MER_USER_TYPE          as merUserType,
+				       t.LOAD_FLAG              as loadFlag,
+				       t.MER_ORDER_NUM          as merOrderNum,
+				       t.LOAD_ORDER_NUM         as loadOrderNum,
+				       t.SOURCE                 as source,
+				       t.CLEARING_MARK          as clearingMark,
+				       t.USER_ID                as userId,
+				       t.USER_NAME              as userName,
+				       t.COMMENTS               as comments,
+				       t.PAGE_CALLBACK_URL      as pageCallBackURL,
+				       t.SERVICE_NOTICE_URL     as serviceNoticeURL,
+				       t.FUND_PROCESS_RESULT    as fundProcessResult,
+				       t.USER_CODE              as userCode,
+				       t.DEP_ID                 as depId,
+				       t.EXT_USER_CODE          as extUserCode,
+				       CREATE_USER              as createUser,
+				       UPDATE_USER              as updateUser,
+				       CREATE_DATE              as createDate,
+				       UPDATE_DATE              as updateDate,
+				       t.CREATE_DATE            as createDate,
+				       t.MER_RATE_TYPE          as merRateType,
+				       t.PAY_SERVICE_TYPE       as payServiceType,
+				       t.PAY_SERVICE_RATE       as payServiceRate,
+				       t.YKT_RECHARGE_RATE      as yktRechargeRate
+  			from PRD_ORDER t
+		 <where>
+			((SYSDATE - T.UPDATE_DATE) * 24 * 60 * 60) > #{thresholdTime}
+   			AND ((T.PRO_ORDER_STATES = '4' and T.PRO_INNER_STATES = '40') or
+       		(T.PRO_ORDER_STATES = '4' and T.PRO_INNER_STATES = '42'))
+		</where>
+		ORDER BY T.ID DESC
+	</select>
+</mapper>

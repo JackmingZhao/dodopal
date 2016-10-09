@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.LogInfoMapper">
+    <resultMap type="LogInfo" id="logInfoResultMap">
+        <result property ="id" column="ID"/><!--自增id-->
+        <result property ="serverName" column="SERVER_NAME"/><!--服务名称：子系统名称-->
+       	<result property ="logDate" column="LOG_DATE"/><!--日期-->
+       	<result property ="threadName" column="THREAD_NAME"/><!--线程名-->
+        <result property ="logLevel" column="LOG_LEVEL"/><!--优先级-->
+     	<result property ="className" column="CLASS_NAME"/><!--类名-->
+        <result property ="stackTrace" column="STACK_TRACE"/><!--异常堆栈-->
+       	<result property ="message" column="MESSAGE"/><!--消息体 -->
+       	<result property ="repCode" column="REP_CODE"/><!--响应码-->
+      	<result property ="repMessage" column="REP_MESSAGE"/><!--响应码描述-->
+      	<result property ="uniqueCode" column="UNIQUE_CODE"/><!--唯一标识(UUID):串联各个系统-->
+      	<result property ="inParas" column="IN_PARAS"/><!--入参-->
+      	<result property ="outParas" column="OUT_PARAS"/><!--出参-->
+      	<result property ="orderNum" column="ORDER_NUM"/><!--订单号-->
+      	<result property ="tranNum" column="TRAN_NUM"/><!--交易流水号-->
+      	<result property ="methodName" column="METHOD_NAME"/><!--方法-->
+      	<result property ="methodDes" column="METHOD_DES"/><!--方法描述-->
+      	<result property ="ipAddr" column="IP_ADDR"/><!--ip地址-->
+      	<result property ="tradeType" column="TRADE_TYPE"/><!--交易状态-->
+      	<result property ="tradeStart" column="TRADE_START"/><!--开始时间-->
+      	<result property ="tradeEnd" column="TRADE_END"/><!--结束时间-->
+      	<result property ="tradeTrack" column="TRADE_TRACK"/><!--操作时长-->
+      	<result property ="source" column="SOURCE"/><!--来源-->
+      	
+      	
+    </resultMap>
+</mapper>

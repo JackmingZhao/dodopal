@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.BimchnitfeetbMapper">
+<sql id="allColumns">
+  MCHNITID,
+  YKTID,
+  TXNCODE,
+  FEETYPE,
+  AMTFEE,
+  MCHRETNFEE,
+  SETPARA,
+  SETCYCLE,
+  CYCLETYPE,
+  LASTSETDATE,
+  MODIFYFLAG,
+  SETFLAG,
+  RESV,
+  EACHBILL
+</sql>
+
+<!-- 查询Bimchntinfotb表城市是北京的连锁商户信息 -->
+<select id="findBimchnitfeetbByMchId" resultType="Bimchnitfeetb" resultMap="bimchnitfeetbResultMap">
+select <include refid="allColumns" /> from icpay.bimchnitfeetb  where mchnitid = #{mchnitid} and yktid='100000'  and txncode='3005' 
+</select>
+
+</mapper>

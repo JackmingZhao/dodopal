@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductPurchaseOrderMapper">
+
+	<!-- 产品库公交卡消费主订单编号后五位:五位数据库cycle sequence（循环使用） -->
+	<select id="getPrdPurchaseOrderNumSeq" resultType="java.lang.String">
+		<![CDATA[select PRD_PURCHASE_ORDER_NUM_SEQ.NEXTVAL from dual ]]>
+	</select>
+	
+	<!-- 创建公交卡消费主订单 -->
+	<insert id="addProductPurchaseOrder" parameterType="ProductPurchaseOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select PRD_PURCHASE_ORDER_ID_SEQ.nextval from dual
+   		</selectKey>
+		insert into PRD_PURCHASE_ORDER(ID,ORDER_NUM,ORIGINAL_PRICE,RECEIVED_PRICE,CUSTOMER_TYPE,CUSTOMER_CODE,CUSTOMER_NAME,
+									   BUSINESS_TYPE,MER_RATE_TYPE,MER_RATE,SERVICE_RATE_TYPE,SERVICE_RATE,MER_GAIN,ORDER_DATE,
+									   ORDER_DAY,PAY_GATEWAY,PAY_TYPE,PAY_WAY,STATES,SOURCE,CLEARING_MARK,USER_ID,COMMENTS,FUND_PROCESS_RESULT,
+									   CREATE_USER,CREATE_DATE)
+							    values(#{id,jdbcType=VARCHAR},#{orderNum,jdbcType=VARCHAR},#{originalPrice,jdbcType=NUMERIC},#{receivedPrice,jdbcType=NUMERIC},
+									   #{customerType,jdbcType=VARCHAR},#{customerCode,jdbcType=VARCHAR},#{customerName,jdbcType=VARCHAR},#{businessType,jdbcType=VARCHAR},
+								   	   #{merRateType,jdbcType=VARCHAR},#{merRate,jdbcType=NUMERIC},#{serviceRateType,jdbcType=VARCHAR},#{serviceRate,jdbcType=NUMERIC},
+								       #{merGain,jdbcType=NUMERIC},sysdate,TO_CHAR(sysdate,'yyyymmdd'),#{payGateway,jdbcType=VARCHAR},#{payType,jdbcType=VARCHAR},#{payWay,jdbcType=VARCHAR},
+								       #{states,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR},#{clearingMark,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},#{comments,jdbcType=VARCHAR},
+								       #{fundProcessResult,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<!-- 查询消费主订单信息 -->
+	<select id="getPurchaseOrderByOrderNum" resultType="ProductPurchaseOrder" parameterType="java.lang.String">
+		select ID                  as id,
+		       ORDER_NUM           as orderNum,
+		       ORIGINAL_PRICE      as originalPrice,
+		       RECEIVED_PRICE      as receivedPrice,
+		       CUSTOMER_TYPE       as customerType,
+		       CUSTOMER_CODE       as customerCode,
+		       CUSTOMER_NAME       as customerName,
+		       BUSINESS_TYPE       as businessType,
+		       MER_RATE_TYPE       as merRateType,
+		       MER_RATE            as merRate,
+		       SERVICE_RATE_TYPE   as serviceRateType,
+		       SERVICE_RATE        as serviceRate,
+		       MER_GAIN            as merGain,
+		       ORDER_DATE          as orderDate,
+		       ORDER_DAY           as orderDay,
+		       PAY_GATEWAY         as payGateway,
+		       PAY_TYPE            as payType,
+		       PAY_WAY             as payWay,
+		       STATES              as states,
+		       SOURCE              as source,
+		       CLEARING_MARK       as clearingMark,
+		       USER_ID             as userId,
+		       COMMENTS            as comments,
+		       FUND_PROCESS_RESULT as fundProcessResult,
+		       CREATE_USER         as createUser,
+		       UPDATE_USER         as updateUser,
+		       CREATE_DATE         as createDate,
+		       UPDATE_DATE         as updateDate
+		  from PRD_PURCHASE_ORDER
+		 where ORDER_NUM=#{purchaseOrderNum}
+	</select>
+	
+    <!-- 更新消费主订单状态 -->
+	<update id="updatePurchaseOrder" parameterType="ProductPurchaseOrder">
+		update PRD_PURCHASE_ORDER
+		   set STATES=#{states,jdbcType=VARCHAR},
+			   UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE=sysdate
+		 where ORDER_NUM=#{orderNum}
+	</update>
+	
+	
+    <!-- 北京V71更新产品库收单状态 -->
+	<update id="updatePurchaseOrderForV71" parameterType="ProductPurchaseOrder">
+		update PRD_PURCHASE_ORDER
+		   set STATES=#{states,jdbcType=VARCHAR},
+		       ORIGINAL_PRICE=#{originalPrice,jdbcType=VARCHAR},
+		       MER_RATE=#{merRate,jdbcType=VARCHAR},
+		       SERVICE_RATE=#{serviceRate,jdbcType=VARCHAR},
+		       MER_GAIN=#{merGain,jdbcType=VARCHAR},
+			   UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE=sysdate
+		 where ORDER_NUM=#{orderNum}
+	</update>
+	<!-- 交易标识查询 -->
+	<select id="queryOrderFlag" resultType = "java.lang.Integer" parameterType="java.lang.String">
+	select count(*) from PRD_PURCHASE_ORDER_RECORD where CARD_NUM = #{cardno,jdbcType=VARCHAR}
+		<if test="queryDate != null and queryDate !=''">
+	      <![CDATA[ and TO_DATE(TO_CHAR(ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')= TO_DATE(#{queryDate},'yyyy-mm-dd')]]>
+	    </if>
+	</select>
+</mapper>

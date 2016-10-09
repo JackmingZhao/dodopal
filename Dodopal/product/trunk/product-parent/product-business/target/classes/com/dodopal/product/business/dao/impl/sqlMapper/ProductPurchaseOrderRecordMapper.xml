@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductPurchaseOrderRecordMapper">
+
+	<!-- 创建公交卡收单记录 -->
+	<insert id="addProductPurchaseOrderRecord" parameterType="ProductPurchaseOrderRecord">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select PRD_PURCHASE_RECORD_ID_SEQ.nextval from dual
+   		</selectKey>								
+	insert into PRD_PURCHASE_ORDER_RECORD(ID,ORDER_NUM,CITY_CODE,YKT_CODE,CITY_NAME,YKT_NAME,YKT_PAY_RATE,MER_DISCOUNT,ORDER_DATE,ORDER_DAY,CARD_NUM,POS_CODE,BEFBAL,
+ 												  BLACK_AMT,INNER_STATES,BEFOREINNER_STATES,SUSPICIOUS_STATES,SUSPICIOUS_EXPLAIN,CREATE_USER,CREATE_DATE)
+								   values(#{id,jdbcType=VARCHAR},#{orderNum,jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{ytkCode,jdbcType=VARCHAR},
+								          #{cityName,jdbcType=VARCHAR},#{ytkName,jdbcType=VARCHAR},#{yktPayRate,jdbcType=NUMERIC},#{merDiscount,jdbcType=NUMERIC},
+								          sysdate,TO_CHAR(sysdate,'yyyymmdd'),#{cardNum,jdbcType=VARCHAR},#{posCode,jdbcType=VARCHAR},#{befbal,jdbcType=NUMERIC},
+                                          #{blackAmt,jdbcType=NUMERIC},#{innerStates,jdbcType=VARCHAR},#{beforInnerStates,jdbcType=VARCHAR},
+                                          #{suspiciousStates,jdbcType=VARCHAR},#{suspiciousExplain,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<!-- 查询收单记录信息 -->
+	<select id="getPurchaseOrderRecordByOrderNum" resultType="ProductPurchaseOrderRecord" parameterType="java.lang.String">
+		select ID                 as id,
+		       ORDER_NUM          as orderNum,
+		       CITY_CODE          as cityCode,
+		       YKT_CODE           as ytkCode,
+		       CITY_NAME          as cityName,
+		       YKT_NAME           as ytkName,
+		       YKT_PAY_RATE       as yktPayRate,
+		       MER_DISCOUNT       as merDiscount,
+		       ORDER_DATE         as orderDate,
+		       ORDER_DAY          as orderDay,
+		       CARD_NUM           as cardNum,
+		       CARD_FACENO        as cardFaceno,  
+		       POS_CODE           as posCode,
+		       BEFBAL             as befbal,
+		       BLACK_AMT          as blackAmt,
+		       INNER_STATES       as innerStates,
+		       BEFOREINNER_STATES as beforInnerStates,
+		       SUSPICIOUS_STATES  as suspiciousStates,
+		       SUSPICIOUS_EXPLAIN as suspiciousExplain,
+		       CREATE_USER        as createUser,
+		       UPDATE_USER        as updateUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_DATE        as updateDate,
+		       RESEND_SIGN        as resendSign
+		  from PRD_PURCHASE_ORDER_RECORD
+		 where ORDER_NUM=#{purchaseOrderNum}
+	</select>
+	
+	<!-- 第一次进入申请扣款指令环节将“重发标志位”：置为1（产品库接收到DLL请求时，以此判断是否为重发请求） add by shenXiang 2015-11-10 -->
+	<update id="updateResendSignByOrderNum" parameterType="java.lang.String">
+		update PRD_PURCHASE_ORDER_RECORD
+		   set RESEND_SIGN ='1'
+		 where ORDER_NUM=#{purchaseOrderNum}
+	</update>
+	
+	<!-- 申请扣款初始化指令过程更新产品库收单数据 -->
+	<update id="updatePurchaseOrderRecordWhenCheckCard" parameterType="ProductPurchaseOrderRecord">
+		update PRD_PURCHASE_ORDER_RECORD
+		   set CARD_NUM          =#{cardNum,jdbcType=VARCHAR},
+		       CARD_FACENO       =#{cardFaceno,jdbcType=VARCHAR},
+			   POS_CODE          =#{posCode,jdbcType=VARCHAR},
+			   BEFBAL            =#{befbal,jdbcType=NUMERIC},
+			   <if test="blackAmt != null and blackAmt !=''">
+			   BLACK_AMT =  #{blackAmt,jdbcType=NUMERIC},
+			   </if>
+			   INNER_STATES      =#{innerStates,jdbcType=VARCHAR},
+			   BEFOREINNER_STATES=#{beforInnerStates,jdbcType=VARCHAR},
+			   UPDATE_USER       =#{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE       =sysdate
+		 where ORDER_NUM=#{orderNum}
+	</update>
+	
+	<!-- 申请扣款指令过程更新产品库收单数据 -->
+	<update id="updatePurchaseOrderRecordWhenDeductCard" parameterType="ProductPurchaseOrderRecord">
+		update PRD_PURCHASE_ORDER_RECORD
+		   set INNER_STATES      =#{innerStates,jdbcType=VARCHAR},
+			   BEFOREINNER_STATES=#{beforInnerStates,jdbcType=VARCHAR},
+			   <if test="blackAmt != null and blackAmt !=''">
+			   BLACK_AMT =  #{blackAmt,jdbcType=NUMERIC},
+			   </if>
+			   UPDATE_USER       =#{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE       =sysdate
+		 where ORDER_NUM=#{orderNum}
+	</update>
+	
+	<!-- 上传收单结果过程更新产品库收单数据 -->
+	<update id="updatePurchaseOrderRecordWhenUploadResult" parameterType="ProductPurchaseOrderRecord">
+		update PRD_PURCHASE_ORDER_RECORD
+		   set INNER_STATES      =#{innerStates,jdbcType=VARCHAR},
+			   BEFOREINNER_STATES=#{beforInnerStates,jdbcType=VARCHAR},
+			   BLACK_AMT         =#{blackAmt,jdbcType=VARCHAR},
+			   SUSPICIOUS_STATES =#{suspiciousStates,jdbcType=VARCHAR},
+			   UPDATE_USER       =#{updateUser,jdbcType=VARCHAR},
+			   UPDATE_DATE       =sysdate
+		 where ORDER_NUM=#{orderNum}
+	</update>
+</mapper>

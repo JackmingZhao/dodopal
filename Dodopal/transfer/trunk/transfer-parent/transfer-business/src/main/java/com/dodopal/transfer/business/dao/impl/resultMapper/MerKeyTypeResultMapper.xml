@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MerKeyTypeMapper">
+	<resultMap type="MerKeyType" id="merKeyTypeResultMap">
+		<result property="id" column="ID" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="merKeyType" column="MER_KEY_TYPE" />
+		<result property="merMd5Paypwd" column="MER_MD5_PAYPWD" />
+		<result property="merMd5Backpaypwd" column="MER_MD5_BACKPAYPWD" />
+		<result property="innerPaypwd" column="INNER_PAYPWD" />
+		<result property="innerBackpaypwd" column="INNER_BACKPAYPWD" />
+		<result property="merRsaPri" column="MER_RSA_PRI" />
+		<result property="merRsaPub" column="MER_RSA_PUB" />
+		<result property="merDsaPri" column="MER_DSA_PRI" />
+		<result property="merDsaPub" column="MER_DSA_PUB" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_USER" />
+		<result property="updateUser" column="UPDATE_DATE" />
+	</resultMap>
+</mapper>

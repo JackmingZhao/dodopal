@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MchnitlimitinfotbMapper">
+<sql id="allColumns">
+	MCHNITID,
+  CURRENCY,
+  AMTLIMIT,
+  EXTRALIMITAMT,
+  USEDLIMIT,
+  SURPLUSLIMIT,
+  WARNLIMT,
+  LASTTIME,
+  REMARKS,
+  LASTDATE
+</sql>
+
+<select id="findMchlimitByMchId" resultType="Mchnitlimitinfotb" resultMap="mchnitlimitResultMap" >
+select  <include refid="allColumns" /> from  icpay.mchnitlimitinfotb where mchnitid=#{mchnitid}
+</select>
+
+
+
+</mapper>

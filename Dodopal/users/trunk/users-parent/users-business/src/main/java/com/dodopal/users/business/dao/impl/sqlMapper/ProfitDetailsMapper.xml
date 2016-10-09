@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.ProfitDetailsMapper">
+	<sql id="profitDetailsColumn">
+	ID,
+	ORDER_NO,ORDER_TIME,CUSTOMER_CODE,CUSTOMER_NAME,BUSSINESS_TYPE,CUSTOMER_TYPE,
+	SOURCE,ISCIRCLE,CUSTOMER_RATE_TYPE,CUSTOMER_RATE,ORDER_AMOUNT,CUSTOMER_SHOULD_PROFIT,
+	CUSTOMER_REAL_PROFIT,SUB_CUSTOMER_CODE,SUB_CUSTOMER_NAME,SUB_CUSTOMER_SHOULD_PROFIT,CUSTOMER_SETTLEMENT_TIME,
+	PROFIT_DATE
+	
+	</sql>
+	<select id="findProfitDetailsByPage" resultType="ProfitDetails" resultMap="profitDetailsResultMap" parameterType="ProfitQuery">
+		select <include refid="profitDetailsColumn" /> from PROFIT_DETAILS
+		<where>
+			<if test="merCode != null and merCode !=''">
+				CUSTOMER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="collectDate != null and collectDate !=''">   
+           	  <![CDATA[
+           	 AND PROFIT_DATE = #{collectDate}
+           	 ]]>
+       		</if>
+		</where>
+		order by id
+	</select>
+	<select id="findProfitDetails" resultType="ProfitDetails" resultMap="profitDetailsResultMap" parameterType="ProfitQuery">
+		select <include refid="profitDetailsColumn" /> from PROFIT_DETAILS
+		<where>
+			<if test="merCode != null and merCode !=''">
+				CUSTOMER_CODE like '%'||#{merCode}||'%'
+			</if>
+		</where>
+		order by id
+	</select>
+</mapper>

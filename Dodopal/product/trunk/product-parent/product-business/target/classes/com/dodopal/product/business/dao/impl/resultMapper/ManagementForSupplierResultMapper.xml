@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.product.business.dao.ManagementForSupplierMapper">
+	<resultMap type="RechargeStatisticsYktOrder" id="rechargeStatisticsYktOrderMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="proCode" column="POS_CODE" />
+		<result property="bind" column="STATUS" />
+		<result property="merName" column="MER_NAME" />
+		<result property="rechargeCount" column="RECHARGE_COUNT" />
+		<result property="rechargeAmt" column="RECHARGE_AMT" />
+	</resultMap>
+	
+	<!-- <resultMap type="YktCardConsumStatistics" id="cardConsumeStatisticsYktMap">
+		<result property="id" column="ID" />
+		<result property="posNo" column="posNo" />
+		<result property="bind" column="BIND" />
+		<result property="merName" column="merName" />
+		<result property="consumeCount" column="CONSUME_COUNT" />
+		<result property="consumeAmt" column="tradeAmt" />
+	</resultMap> -->
+</mapper>

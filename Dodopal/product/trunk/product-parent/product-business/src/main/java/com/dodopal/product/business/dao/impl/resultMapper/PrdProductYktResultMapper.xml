@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.product.business.dao.PrdProductYktMapper">
+	<resultMap type="PrdProductYkt" id="prdProductYktResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="proCode" column="PRO_CODE" />
+		<result property="proName" column="PRO_NAME" />
+		<result property="yktCode" column="YKT_CODE" />
+		<result property="yktName" column="YKT_NAME" />
+		<result property="cityId" column="CITYID" />
+		<result property="cityName" column="CITYNAME" />
+		<result property="proPrice" column="PRO_PRICE" />
+		<result property="proStatus" column="PRO_STATUS" />
+		<result property="remark" column="REMARK" />
+		<result property="proRate" column="proRate" />
+		<result property="proPayPrice" column="proPayPrice" />
+	</resultMap>
+</mapper>

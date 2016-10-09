@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.CrdConsumeOrderExptionMapper">
+	<!-- 更新产品库消费主订单表  状态  ,如果选择消费成功::状态:2(2：支付成功);如果失败::状态:1(1：支付失败)-->
+	<update id="updatePrdPurchaseOrderAfterHandleException" parameterType="CrdConsumeOrderExption">
+		update PRD_PURCHASE_ORDER p
+		   set p.STATES      = #{states,jdbcType=VARCHAR},
+		       p.UPDATE_USER = #{userName,jdbcType=VARCHAR},
+		       p.UPDATE_DATE = sysdate
+		 where p.ORDER_NUM = #{orderNo}
+	</update>
+	
+	<!-- 更新产品库公交卡收单记录表 状态, 如果选择消费成功::内部状态:(20:扣款成功;);如果失败::内部状态(12:扣款失败)-->
+	<update id="updatePrdPurchaseOrderRecordAfterHandleException" parameterType="CrdConsumeOrderExption">
+		update PRD_PURCHASE_ORDER_RECORD p
+		   set p.INNER_STATES       = #{innerStates,jdbcType=VARCHAR},
+		       p.SUSPICIOUS_STATES  = '2',
+		       p.SUSPICIOUS_EXPLAIN = #{comments,jdbcType=VARCHAR},
+		       p.UPDATE_USER        = #{userName,jdbcType=VARCHAR},
+		       p.UPDATE_DATE        = sysdate
+		 where p.ORDER_NUM = #{orderNo}
+	</update>
+	
+	<select id="findPrdPurchaseOrderByOrderNum" resultType="CrdConsumeOrderExption" parameterType="java.lang.String">
+		 select p.states as states ,p.update_user as userName from PRD_PURCHASE_ORDER p where p.order_num =#{orderNum,jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="findPurchaseOrderRecordByOrdeerNum" resultType="CrdConsumeOrderExption" parameterType="java.lang.String">
+		 select p.INNER_STATES as innerStates ,p.update_user as userName from PRD_PURCHASE_ORDER_RECORD p where p.order_num =#{orderNum,jdbcType=VARCHAR} 
+	</select>
+</mapper>

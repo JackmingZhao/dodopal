@@ -1,0 +1,69 @@
+/*头部样式开始*/
+body{background-color: #fff;}
+.wd-header-check .phone{width:247px;line-height:80px;font-family: "microsoft YaHei"; float:left;margin-left:50px;}
+.wd-header-check{background:#fff url(images/header_bg01.png) bottom repeat-x;}
+.wd-header-check strong{font-size:24px;color:#A0C9E9;padding-right:28px;}
+.wd-header-check i{width:28px;height:21px;display:inline-block;background: url(icons/phone_icon02.png) no-repeat;vertical-align: middle;margin-top:-10px;}
+.wd-header-check span{font-size:14px;color:#6E6E6E;}
+.wd-header-check .help {float:right;padding-top:56px;}
+.wd-header-check .help a{font-family: "microsoft YaHei";}
+.wd-header-check .help em{font-style:normal; color:#1672B1;}
+/*头部样式结束*/
+/*订单详情开始*/
+
+.check-main{font-family: "微软雅黑";color:#515151;font-size:16px;}
+.check-main .content{height:70px;width:990px;background-color: #EFF0F2;padding:30px 0 0 40px;margin-bottom:20px;}
+.check-main .content p{float:left;font-size:18px;font-weight:bold;}
+.check-main .content span.order{float:left;padding-left:30px;color:#0E7DB9;position:relative;z-index:100;}
+.check-main .content .order-t{cursor:pointer;}
+.check-main .content .up{width:9px;height:8px;position:absolute;left:57px;top:23px;background: url(icons/up.png) no-repeat;}
+.check-main .content .info{position:absolute;left:20px;top:30px;font-size:12px;background-color:#EFF0F2; color:#888888;border: 1px solid #A7CDEB;padding:10px 0 0 10px;width:347px;height:86px;}
+.check-main .content .info li{text-align: left;line-height:21px;}
+.check-main .content .info .close{cursor:pointer;width:10px;height:10px;float:right;background: url(icons/close.png) no-repeat;margin-right:9px;}
+.check-main .content span.sum{float:right; padding-right:48px;font-size:14px;color:#000;}
+.check-main .content .sum i{color:#E47F12;font-size:16px;font-weight:bold;}
+.check-main .content .current{display:block;}
+.check-main .wrap{display:none;}
+/*订单详情结束*/
+/*支付方式开始*/
+.check-main .pay{border:2px solid #EFF0F2; border-top:4px solid #BDBEBF; margin-bottom:30px;}
+.check-main .balance{position:relative;line-height:56px;width:982px;height:56px;margin:13px auto 3px;}
+.check-main .balance .one{float:left;position:absolute;left:20px;top:50%;margin-top:-6px;}
+.check-main .balance label{float:left;padding-left:45px;}
+.check-main .balance .p1{float:left;padding-left:58px;}
+.check-main .balance .p2{float:right;padding-right:18px;}
+.check-main .balance .p2 i{color:#E47F12;}
+.check-main .other-way{width:982px;height:60px;line-height:60px;margin:0 auto;border-top:dashed 1px #cccccc;}
+.check-main .other-way span{color:#37B4E9;float:left;}
+.check-main .other-way p{float:right;}
+.check-main .other-way p i{color:#E47F12;}
+.check-main .pay-nav-ul-left{float:left;}
+.check-main .pay-way-list li{width:160px;}
+.check-main .com-ttl-box{background-color: #fff;}
+.check-main .com-gray-box02{border:none;background-color: #EFF0F2}
+.check-main .pay-navi-ul li a, .pay-navi-ul02 li a {border-color: #EFF0F2;}
+.check-main .pay-way-box{border-top:2px solid  #EFF0F2;}
+.check-main .pay-way-box,.pay-way-box2,.pay-navi-ul{ display:block;}
+.pay .balance:hover{border:2px solid #a2d3e8;height:52px;line-height:52px;}
+.pay .current{border:2px solid #37b4e9;height:52px;line-height:52px;}
+.pay .balance em{background: url(images/com_ico.png) no-repeat -366px -499px;width: 14px; height: 14px;display: block;position: absolute;right: 0;bottom: 0;}
+/*支付方式结束*/
+/*等待界面gif*/
+.pay .wait{width:50px;height:54px;background:url(icons/loading-555.gif) no-repeat;position:fixed;z-index:101;left:50%;top:45%;margin:-27px 0 0 -25px;}
+/*充值成功*/
+.box{width:100%;font-size:14px;}
+.box .inBox{width:1030px;padding:45px 0; background-color: #EFF0F2;margin:0 auto 40px;font-family:"微软雅黑";}
+.box .p1{position:relative;width:400px;border-bottom:dashed 1px #ccc;margin:0 auto;text-align: center;padding-bottom:24px;}
+.box .p2{width:315px; margin:0 auto;padding:5px 0 0 85px;}
+.box .p1 h2{margin-bottom: 20px;padding-left:50px;}
+.box .p1 a{color:#E47F11;}
+.box .p1 i{width:36px;height:36px;position:absolute;left:130px;top:-5px;background:url(icons/reg-icons.png) no-repeat -358px 0;}
+/*充值失败*/
+.box .ps1 i{background-position: -320px 0;}
+.box .ps2 a{color:#E47F11;}
+.box .ps2 a.first{color:#37B4E9;}
+/*充值失败修改*/
+.box .ps3 i {position:static;display:block;float:left;}
+.box .ps3 h2{float:left;padding:5px 0 0 10px;}
+.box .ps3{width:400px;padding:0 0 45px 85px;margin:0 auto;}
+.box .ps4{width:400px;padding:0;margin:20px auto;word-wrap:break-word;}

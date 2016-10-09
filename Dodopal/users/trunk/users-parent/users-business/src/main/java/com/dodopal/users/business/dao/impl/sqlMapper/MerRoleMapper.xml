@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerRoleMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,MER_ROLE_CODE,MER_ROLE_NAME,DESCRIPTION
+	</sql>
+
+	<select id="findMerRole" resultType="MerRole" resultMap="merRoleResultMap" parameterType="MerRole">
+		select <include refid="allColumns" /> from MER_ROLE
+		<where>
+			mer_code = #{merCode}
+			<if test="merRoleCode != null and merRoleCode !=''">
+				and mer_role_code = #{merRoleCode}
+			</if>
+			<if test="merRoleName != null and merRoleName !=''">
+				and mer_role_name = #{merRoleName}
+			</if>
+			<if test="id != null and id !=''">
+				and id = #{id}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findMerRoleByPage" resultType="MerRole" resultMap="merRoleResultMap" parameterType="MerRoleQuery">
+		select <include refid="allColumns" /> from MER_ROLE
+		<where>
+			mer_code = #{merCode}
+			<if test="merRoleName != null and merRoleName !=''">
+				and mer_role_name like '%'||#{merRoleName}||'%'
+			</if>
+			<if test="loginUserId != null and loginUserId !=''">
+				and create_user = #{loginUserId}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findMerRoleById" resultType="MerRole" resultMap="merRoleResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_ROLE where id = #{id}
+	</select>
+
+	<select id="findMerRoleByMerRoleCode" resultType="MerRole" resultMap="merRoleResultMap">
+		select <include refid="allColumns" /> from MER_ROLE where mer_code = #{merCode} and mer_role_code = #{merRoleCode}
+	</select>
+
+	<select id="findMerRoleByUserCode" resultType="MerRole" resultMap="merRoleResultMap" parameterType="java.lang.String">
+		select b.* from MER_USER_ROLE a,MER_ROLE b where a.mer_role_code = b.mer_role_code and user_code = #{userCode}
+	</select>
+
+	<select id="getMerRoleCodeSeq" resultType="java.lang.String">
+		select MER_ROLE_CODE_SEQ.NEXTVAL from dual
+	</select>
+
+	<insert id="addMerRole" parameterType="MerRole">
+	    <selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_ROLE_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MER_ROLE(
+			ID,
+			CREATE_USER,
+			CREATE_DATE,
+			ACTIVATE,
+			MER_CODE,
+			MER_ROLE_CODE,
+			MER_ROLE_NAME,
+			DESCRIPTION
+		)
+		VALUES (
+			#{id},
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{activate},
+			#{merCode},
+			#{merRoleCode},
+			#{merRoleName},
+			#{description, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateMerRoleByMerRoleCode" parameterType="MerRole">
+		update MER_ROLE
+		<trim prefix="set" suffixOverrides=",">
+			<if test="merRoleName != null and merRoleName !=''">
+				mer_role_name=#{merRoleName},
+			</if>
+			description=#{description, jdbcType=VARCHAR},
+			update_user=#{updateUser, jdbcType=VARCHAR},
+			update_date=sysdate,
+		</trim>
+		where mer_role_code = #{merRoleCode}
+	</update>
+
+	<delete id="delMerRoleByMerRoleCode">
+		delete from mer_role where mer_code = #{merCode} and mer_role_code = #{merRoleCode}
+	</delete>
+
+	<delete id="batchDelMerRoleByCodes">
+		delete from mer_role where mer_code = #{merCode} and mer_role_code in
+		<foreach item="item" index="index" collection="merRoleCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+
+</mapper>

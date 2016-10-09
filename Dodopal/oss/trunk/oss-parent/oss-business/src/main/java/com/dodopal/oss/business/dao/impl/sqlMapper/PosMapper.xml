@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.PosMapper">
+	<sql id="sqlColumn">
+		        P.ID, 
+		        P.CODE, 
+		        P.POS_COMPANY_CODE, 
+		        P.POS_TYPE_CODE, 
+		        P.STATUS, BIND, 
+		        P.MER_CODE, 
+		        P.MER_NAME,
+				P.CITY_CODE, 
+				CASE WHEN P.CITY_NAME='--请选择--' THEN '' ELSE P.CITY_NAME END AS CITY_NAME, 
+				P.PROVINCE_CODE, 
+				CASE WHEN P.PROVINCE_NAME='--请选择--' THEN '' ELSE P.PROVINCE_NAME END AS PROVINCE_NAME,
+				P.VERSION, 
+				P.SERIAL_NO, 
+				P.UNIT_COST, 
+				P.MAX_TIMES, 
+				P.COMMENTS,
+		
+				V.nick_name as CREATE_USER,				
+				P.CREATE_DATE,			
+				V2.nick_name as UPDATE_USER,			
+				P.UPDATE_DATE
+	</sql>
+	
+	<select id="selectMultipleKeys" resultType = "java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select POS_ID_SEQ.NEXTVAL as id from dual  connect by level <= #{numberOfKeysRequired} ]]>
+	</select>
+	
+	<select id="findPosByPage" resultType="PosInfo" parameterType="PosQuery">
+		select 
+			   P.ID            as id,
+			   P.ID            as posId,
+       		   P.CODE          as code,
+               PT.NAME         as posTypeName,
+               PC.NAME         as posCompanyName,
+       		   M.MER_NAME      as merchantName,
+               M.MER_TYPE      as merchantType,
+               P.CITY_CODE     as cityCode,
+               CASE WHEN P.CITY_NAME='--请选择--' THEN '' ELSE P.CITY_NAME END as cityName,
+               P.PROVINCE_CODE as ProvinceCode,
+               CASE WHEN P.PROVINCE_NAME='--请选择--' THEN '' ELSE P.PROVINCE_NAME END as provinceName,
+               P.VERSION       as version,
+               P.MAX_TIMES     as maxTimes,
+               P.STATUS        as status,
+               P.BIND          as bind,
+               P.Serial_No     as serialNo,
+               P.COMMENTS      as comments,
+               P.UNIT_COST     as unitCost,
+               P.BUNDLING_DATE as bundlingDate
+          from POS P
+               left outer join POS_TYPE PT
+                    on P.POS_TYPE_CODE = PT.CODE
+               left outer join POS_COMPANY PC
+                    on P.POS_COMPANY_CODE = PC.CODE
+               left outer join MERCHANT M
+                    on P.MER_CODE = M.MER_CODE
+		<where>
+			<if test="code != null and code !=''">
+				P.code like '%'||#{code}||'%'
+			</if>
+	        <if test="posTypeName != null and posTypeName !=''">
+				and PT.CODE =#{posTypeName}
+			</if>
+	        <if test="posCompanyName != null and posCompanyName !=''">
+				and PC.NAME like '%'||#{posCompanyName}||'%'
+			</if>
+			<if test="version != null and version !=''">  
+	            and P.version like '%'||#{version}||'%'
+	        </if>
+	        <if test="bind != null and bind !=''">  
+	            and P.bind = #{bind}  
+	        </if> 
+	        <if test="status != null and status !=''">  
+	            and P.status = #{status}  
+	        </if> 
+	         <if test="merCode != null and merCode !=''">  
+	            and P.mer_Code = #{merCode}  
+	        </if> 
+	        <if test="merName != null and merName !=''">  
+	            and P.mer_name = #{merName}  
+	        </if> 
+	        <if test="provinceCode != null and provinceCode !=''">  
+	            and P.province_Code = #{provinceCode}  
+	        </if> 
+	        <if test="cityCode != null and cityCode !=''">  
+	            and P.city_Code = #{cityCode}  
+	        </if>  
+		</where>
+		order by P.ID desc
+	</select>
+	
+	
+	<select id="findPosByList" resultType="PosInfo" parameterType="PosQuery">
+		select 
+			   P.ID            as id,
+			   P.ID            as posId,
+       		   P.CODE          as code,
+               PT.NAME         as posTypeName,
+               PC.NAME         as posCompanyName,
+       		   M.MER_NAME      as merchantName,
+               M.MER_TYPE      as merchantType,
+               P.CITY_CODE     as cityCode,
+               CASE WHEN P.CITY_NAME='--请选择--' THEN '' ELSE P.CITY_NAME END as cityName,
+               P.PROVINCE_CODE as ProvinceCode,
+               CASE WHEN P.PROVINCE_NAME='--请选择--' THEN '' ELSE P.PROVINCE_NAME END as provinceName,
+               P.VERSION       as version,
+               P.MAX_TIMES     as maxTimes,
+               P.STATUS        as status,
+               P.BIND          as bind,
+               P.Serial_No     as serialNo,
+               P.COMMENTS      as comments,
+               P.UNIT_COST     as unitCost,
+               P.BUNDLING_DATE as bundlingDate,
+               V.nick_name     as createUser,				
+			   P.CREATE_DATE   as createDate ,			
+			   V2.nick_name    as updateUser,			
+			   P.UPDATE_DATE   as updateDate
+          from POS P
+               left outer join POS_TYPE PT
+                    on P.POS_TYPE_CODE = PT.CODE
+               left outer join POS_COMPANY PC
+                    on P.POS_COMPANY_CODE = PC.CODE
+               left outer join MERCHANT M
+                    on P.MER_CODE = M.MER_CODE
+               left outer join V_USER_INFO V
+                    on P.CREATE_USER = V.ID
+               left outer join V_USER_INFO V2
+                    on P.UPDATE_USER = V2.ID
+		<where>
+			<if test="code != null and code !=''">
+				P.code like '%'||#{code}||'%'
+			</if>
+	        <if test="posTypeName != null and posTypeName !=''">
+				and PT.CODE =#{posTypeName}
+			</if>
+	        <if test="posCompanyName != null and posCompanyName !=''">
+				and PC.NAME like '%'||#{posCompanyName}||'%'
+			</if>
+			<if test="version != null and version !=''">  
+	            and P.version like '%'||#{version}||'%'
+	        </if>
+	        <if test="bind != null and bind !=''">  
+	            and P.bind = #{bind}  
+	        </if> 
+	        <if test="status != null and status !=''">  
+	            and P.status = #{status}  
+	        </if> 
+	        <if test="provinceCode != null and provinceCode !=''">  
+	            and P.province_Code = #{provinceCode}  
+	        </if> 
+	        <if test="cityCode != null and cityCode !=''">  
+	            and P.city_Code = #{cityCode}  
+	        </if>  
+		</where>
+		order by P.ID desc
+	</select>
+	
+	
+	
+	<select id="findPosById" resultType="PosInfo" parameterType="java.lang.String">
+		select 
+			   P.ID            as id,
+			   P.ID            as posId,
+       		   P.CODE          as code,
+       		   PT.CODE         as posTypeCode,
+               PT.NAME         as posTypeName,
+               PC.CODE         as posCompanyCode,
+               PC.NAME         as posCompanyName,
+       		   M.MER_NAME      as merchantName,
+               M.MER_TYPE      as merchantType,
+               P.CITY_CODE     as cityCode,
+               case when P.CITY_NAME='--请选择--' then '' else P.CITY_NAME end as cityName,
+               P.PROVINCE_Code as provinceCode,
+               case when P.PROVINCE_NAME='--请选择--' then '' else P.PROVINCE_NAME end as provinceName,
+               P.VERSION       as version,
+               P.MAX_TIMES     as maxTimes,
+               P.STATUS        as status,
+               P.BIND          as bind,
+               P.Serial_No     as serialNo,
+               P.COMMENTS      as comments,
+               P.UNIT_COST     as unitCost,
+               P.BUNDLING_DATE as bundlingDate,
+               V.nick_name    as createUser,				
+			   P.CREATE_DATE   as createDate ,			
+			   V2.nick_name   as updateUser,			
+			   P.UPDATE_DATE   as updateDate
+          from POS P
+               left outer join POS_TYPE PT
+                    on P.POS_TYPE_CODE = PT.CODE
+               left outer join POS_COMPANY PC
+                    on P.POS_COMPANY_CODE = PC.CODE
+               left outer join MERCHANT M
+                    on P.MER_CODE = M.MER_CODE
+               left outer join V_USER_INFO V
+                    on P.CREATE_USER = V.ID
+               left outer join V_USER_INFO V2
+                    on P.UPDATE_USER = V2.ID
+		 where P.id = #{id} 
+	</select>
+
+	<select id="findPoss" resultType="Pos" resultMap="posResultMap" parameterType="Pos">
+		select * from POS
+		<where>
+			<if test="code != null and code !=''">
+				code like '%'||#{code}||'%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="findPosByIds"  resultType="Pos" resultMap="posResultMap" parameterType="java.lang.String">
+		select * from POS where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</select>
+
+	<select id="findPosByCode"  resultType="Pos" resultMap="posResultMap" parameterType="java.lang.String">
+		select * from POS where code in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</select>
+	
+	<select id="findPosByPosTypeCode"  resultType="Pos" resultMap="posResultMap" parameterType="java.lang.String">
+		select * from POS where POS_TYPE_CODE in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</select>
+	
+	<insert id="insertPos" parameterType="Pos">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select POS_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO POS(ID, CODE, POS_COMPANY_CODE, POS_TYPE_CODE, STATUS, BIND, MER_CODE, MER_NAME,
+		CITY_CODE, CITY_NAME, PROVINCE_CODE, PROVINCE_NAME, VERSION, SERIAL_NO, UNIT_COST, MAX_TIMES, COMMENTS, CREATE_DATE, CREATE_USER)
+		VALUES (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
+		#{posCompanyCode,jdbcType=VARCHAR}, #{posTypeCode,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR}, #{bind},
+		#{merchantCode,jdbcType=VARCHAR}, #{merchantName,jdbcType=VARCHAR},
+		#{cityCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, 
+		#{provinceCode,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, 
+		#{version,jdbcType=VARCHAR},
+		#{serialNo,jdbcType=VARCHAR},#{unitCost,jdbcType=NUMERIC},
+		#{maxTimes,jdbcType=NUMERIC}, #{comments,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertPosBatch" parameterType="java.util.List">  
+			INSERT INTO POS(ID, CODE, POS_COMPANY_CODE, POS_TYPE_CODE, STATUS, BIND, MER_CODE, MER_NAME,
+			CITY_CODE, CITY_NAME, PROVINCE_CODE, PROVINCE_NAME, VERSION, SERIAL_NO, UNIT_COST, MAX_TIMES, COMMENTS, CREATE_DATE, CREATE_USER)
+		<foreach collection="list" item="item" index="index" separator=" union all " > 
+		      (select  
+				#{item.id,jdbcType=VARCHAR}, #{item.code,jdbcType=VARCHAR},
+				#{item.posCompanyCode,jdbcType=VARCHAR}, #{item.posTypeCode,jdbcType=VARCHAR},
+				#{item.status,jdbcType=VARCHAR}, #{item.bind},
+				#{item.merchantCode,jdbcType=VARCHAR}, #{item.merchantName,jdbcType=VARCHAR},
+				#{item.cityCode,jdbcType=VARCHAR}, #{item.cityName,jdbcType=VARCHAR}, 
+				#{item.provinceCode,jdbcType=VARCHAR}, #{item.provinceName,jdbcType=VARCHAR},
+				#{item.version,jdbcType=VARCHAR},
+				#{item.serialNo,jdbcType=VARCHAR},#{item.unitCost,jdbcType=NUMERIC},
+				#{item.maxTimes,jdbcType=NUMERIC}, #{item.comments,jdbcType=VARCHAR},
+				sysdate,
+				#{item.createUser,jdbcType=VARCHAR}
+		       from dual)
+		    </foreach>
+	</insert>  
+
+	<update id="updatePos" parameterType="Pos">
+		update POS
+		<trim prefix="SET" suffixOverrides=",">
+				POS_COMPANY_CODE=#{posCompanyCode,jdbcType=VARCHAR},
+				POS_TYPE_CODE=#{posTypeCode,jdbcType=VARCHAR},
+				STATUS=#{status,jdbcType=VARCHAR},				
+				CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+				CITY_NAME = #{cityName,jdbcType=VARCHAR},
+				PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+				PROVINCE_NAME = #{provinceName,jdbcType=VARCHAR},
+				VERSION = #{version,jdbcType=VARCHAR},
+				SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+				UNIT_COST = #{unitCost,jdbcType=NUMERIC},
+				MAX_TIMES = #{maxTimes,jdbcType=NUMERIC},
+				COMMENTS = #{comments,jdbcType=VARCHAR},
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deletePos" parameterType="java.lang.String">
+		delete from POS where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	<select id="countPos" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from POS where code = #{code}
+	</select>
+
+	<update id="modifyCity" parameterType="java.lang.String">
+		update POS 
+		set CITY_CODE= #{cityCode, jdbcType=VARCHAR},
+			CITY_NAME= #{cityName, jdbcType=VARCHAR},
+			PROVINCE_CODE= #{provinceCode, jdbcType=VARCHAR},
+			PROVINCE_NAME= #{provinceName, jdbcType=VARCHAR}, 
+			UPDATE_USER = #{updateUser, jdbcType=VARCHAR},
+			UPDATE_DATE = sysdate
+		where code in
+         <foreach item="item" index="index" collection="list" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</update>
+	
+	<update id="modifyVersion" parameterType="java.util.Map">
+		update POS 
+		set version= #{version,jdbcType=VARCHAR},
+		UPDATE_USER = #{updateUser, jdbcType=VARCHAR},
+		UPDATE_DATE = sysdate
+		where code in
+         <foreach item="item" index="index" collection="list" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	 </update>
+	
+	<update id="modifyLimitation" parameterType="java.util.Map">
+		update POS 
+		set MAX_TIMES= #{maxTimes,jdbcType=NUMERIC},
+		UPDATE_USER = #{updateUser, jdbcType=VARCHAR},
+		UPDATE_DATE = sysdate
+		where code in
+         <foreach item="item" index="index" collection="list" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	 </update>
+	 
+	 <select id="countPosByCompanyCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from POS where pos_Company_Code = #{companyCode}
+	</select>
+</mapper>

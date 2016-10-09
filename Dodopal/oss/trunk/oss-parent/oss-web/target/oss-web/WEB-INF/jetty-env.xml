@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure id="wac" class="org.mortbay.jetty.webapp.WebAppContext">
+	<New id="ds_ossDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<Set name="driverClass">oracle.jdbc.OracleDriver</Set>
+		<!--开发192.168.1.230:1521-->
+		<!--外网开发sh.dodopal.com:1522-->
+		<!--测试 192.168.1.210:1521-->
+		<Set name="jdbcUrl">jdbc:oracle:thin:@192.168.1.210:1521:icdcpay</Set>
+		<Set name="user">icdcpay</Set>
+		<Set name="password">icdcpay</Set>
+		<Set name="initialPoolSize">2</Set>
+		<Set name="minPoolSize">2</Set>
+		<Set name="maxPoolSize">5</Set>
+	</New>
+	
+	<New id="ossDataSource" class="org.mortbay.jetty.plus.naming.EnvEntry">
+		<Arg>ossDataSource</Arg>
+		<Arg>
+			<Ref id="ds_ossDataSource"></Ref>
+		</Arg>
+	</New>
+	
+	<New id="mailSession" class="org.mortbay.jetty.plus.naming.Resource">
+	     <Arg>mail/Session</Arg>
+	     <Arg>
+	       <New class="org.mortbay.naming.factories.MailSessionReference">
+	         <Set name="user">yunwei@dodopal.com</Set>
+	         <Set name="password">s12345</Set>
+	         <Set name="properties">
+	           <New class="java.util.Properties">
+	             <Put name="mail.smtp.host">smtp.qiye.163.com</Put>
+	             <Put name="mail.from">yunwei@dodopal.com</Put>
+	             <Put name="mail.debug">true</Put>
+	             <Put name="mail.smtp.auth">true</Put>
+	           </New>
+	          </Set>
+	       </New>
+	     </Arg>
+	</New>
+
+</Configure>

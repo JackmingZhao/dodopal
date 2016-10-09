@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerGroupDepartmentMapper">
+	<sql id="allColumns">
+		t.ID,t.MER_CODE,t.DEP_NAME,t.REMARK,t.ACTIVATE,
+		t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE
+	</sql>
+
+	<select id="findMerGroupDepartmentList" resultType="MerGroupDepartment" resultMap="merGroupDepartmentResultMap" 
+	parameterType="MerGroupDepartment">
+	select <include refid="allColumns" />　from MER_GROUP_DEPARTMENT t
+		<where>
+			<!-- 商户号 -->   
+        	<if test="merCode !=null and merCode !=''">   
+            	 t.MER_CODE = #{merCode}
+        	</if>
+        	<if test="depName !=null and depName !=''">   
+            	and t.DEP_NAME LIKE CONCAT(CONCAT('%',#{depName}),'%')
+        	</if>   
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+	
+	<select id="findMerGroupDepartmentListByPage" resultType="MerGroupDepartment" resultMap="merGroupDepartmentResultMap" 
+	parameterType="MerGroupDepartmentQuery">
+	select <include refid="allColumns" />　from MER_GROUP_DEPARTMENT t
+		<where>
+			<!-- 商户号 -->   
+        	<if test="merCode !=null and merCode !=''">   
+            	 t.MER_CODE = #{merCode}
+        	</if>
+        	<if test="depName !=null and depName !=''">   
+            	and t.DEP_NAME  LIKE '%'||#{depName}||'%'      
+        	</if>   
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+	<!-- 根据商户号和部门名称查找 -->
+	<select id="findMerGpDepByMerCodeAndDeptName" resultType="MerGroupDepartment" resultMap="merGroupDepartmentResultMap" 
+	parameterType="MerGroupDepartment">
+	select 
+		<include refid="allColumns" />
+	　from MER_GROUP_DEPARTMENT t
+		<where>
+			<!-- 商户号 -->   
+        	<if test="merCode !=null and merCode !=''">   
+            	 t.MER_CODE = #{merCode}
+        	</if>
+        	<if test="id !=null and id !=''">
+            	and t.id != #{id}
+        	</if>
+        	<if test="depName !=null and depName !=''">   
+            	and t.DEP_NAME = #{depName}
+        	</if>   
+    	</where>  
+    	ORDER by t.id DESC 
+	</select>
+	<!-- 根据部门id进行查找 -->
+	<select id="findMerGpDepById" resultType="MerGroupDepartment" resultMap="merGroupDepartmentResultMap" 
+	parameterType="java.lang.String">
+		select  w.ID,a.nick_name as create_user,w.create_date,b.nick_name as update_user,w.update_date,w.activate,w.mer_code,w.dep_name,w.remark
+		  from (
+				select <include refid="allColumns" />
+				  from MER_GROUP_DEPARTMENT t
+				 where t.id=#{id}
+	    ) w
+		left join v_user_info a on w.create_user=a.id
+		left join v_user_info b on w.update_user=b.id
+	</select>
+
+	<insert id="saveMerGroupDepartment" parameterType="MerGroupDepartment">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_GP_DEP_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MER_GROUP_DEPARTMENT 
+			(
+			DEP_NAME,
+			MER_CODE,
+			REMARK,
+			ACTIVATE, 
+			CREATE_USER,
+			CREATE_DATE,
+			ID
+		)
+		values (
+			#{depName, jdbcType=VARCHAR}, 	
+			#{merCode, jdbcType=VARCHAR},
+			#{remark, jdbcType=VARCHAR},
+			'0', 
+			#{createUser,jdbcType=VARCHAR},
+			sysdate,
+			#{id, jdbcType=VARCHAR}
+			)
+	</insert>
+	<update id="updateMerGroupDepartment" parameterType="MerGroupDepartment" >
+		update MER_GROUP_DEPARTMENT
+		<trim prefix="SET" suffixOverrides=",">
+			REMARK=#{remark, jdbcType=VARCHAR},
+			UPDATE_DATE=sysdate,
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate},
+			</if>
+			<if test="merCode != null and merCode !=''">
+				MER_CODE=#{merCode},
+			</if>
+			<if test="depName != null and depName !=''">
+				DEP_NAME=#{depName},
+			</if>
+			
+		</trim>
+		<where>
+			<if test="id != null and id !=''">
+			id=#{id}
+			</if>
+		</where>
+	</update>
+	
+	<update id="startOrStopMerGroupDepartment" parameterType="java.util.Map">	
+		update MER_GROUP_DEPARTMENT t set
+		t.activate = #{activate, jdbcType=VARCHAR},t.UPDATE_DATE=sysdate,UPDATE_USER=#{updateUser,jdbcType=VARCHAR}
+		where t.id in
+    	<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+	
+	<delete id="deleteMerGroupDepartment" parameterType="java.util.List">
+		delete from MER_GROUP_DEPARTMENT where id in
+    	<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</delete>
+	
+</mapper>

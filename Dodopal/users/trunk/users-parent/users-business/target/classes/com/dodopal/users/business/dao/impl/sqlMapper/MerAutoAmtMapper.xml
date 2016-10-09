@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerAutoAmtMapper">
+
+	<sql id="allColumns">
+		t.ID,t.MER_CODE,t.LIMIT_THRESHOLD,t.AUTO_LIMIT_THRESHOLD
+	</sql>
+
+	<!-- 获取连锁直营网点 自动分配额度 -->
+	<select id="findMerAutoAmtByMerCode" parameterType="java.lang.String"  resultType="MerAutoAmt" resultMap="merAutoAmtResultMap">
+		select <include refid="allColumns" /> from MER_AUTO_AMT t		  
+		 where t.MER_CODE = #{merCode}
+	</select>
+
+	<!-- 连锁直营网点增加自动转账的额度和阀值-->
+	<insert id="addMerAutoAmt" parameterType="MerAutoAmt">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_AUTO_AMT_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MER_AUTO_AMT(
+			ID,MER_CODE,LIMIT_THRESHOLD,AUTO_LIMIT_THRESHOLD
+		)
+		VALUES (
+			#{id},
+			#{merCode, jdbcType=VARCHAR},
+			#{limitThreshold, jdbcType=VARCHAR},
+			#{autoLimitThreshold, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 连锁直营网点更新知道转账的额度和阀值 -->
+	<update id="updateMerAutoAmt">
+		update MER_AUTO_AMT
+		<trim prefix="SET" suffixOverrides=",">
+			LIMIT_THRESHOLD=#{limitThreshold,jdbcType=VARCHAR},
+			AUTO_LIMIT_THRESHOLD=#{autoLimitThreshold,jdbcType=VARCHAR}
+		</trim>
+		where MER_CODE=#{merCode}
+	</update>
+
+	<delete id="deleteMerAutoAmtByMerCode">
+		delete from MER_AUTO_AMT
+			where MER_CODE=#{merCode}
+	</delete>
+
+	<delete id="batchDelMerAutoAmtByMerCodes">
+		delete from MER_AUTO_AMT
+		where mer_code in
+			<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</delete>
+</mapper>

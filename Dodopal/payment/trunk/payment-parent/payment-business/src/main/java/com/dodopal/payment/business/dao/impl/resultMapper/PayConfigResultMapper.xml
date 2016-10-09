@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.payment.business.dao.PayConfigMapper">
+	<resultMap type="PayConfig" id="payConfigResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		
+		<result property="payType" column="PAY_TYPE" />
+		<result property="payTypeName" column="PAY_TYPE_NAME" />
+		<result property="payChannelMark" column="PAY_CHANNEL_MARK" />
+		<result property="bankGatewayType" column="BANK_GATEWAY_TYPE" />
+		<result property="bankGatewayName" column="BANK_GATEWAY_NAME" />
+		<result property="payWayName" column="PAY_WAY_NAME" />
+		<result property="anotherAccountCode" column="ANOTHER_ACCOUNT_CODE" />
+		<result property="payKey" column="PAY_KEY" />
+		<result property="proceRate" column="PROCE_RATE" />
+		<result property="afterProceRate" column="AFTER_PROCE_RATE" />
+		<result property="afterProceRateDate" column="AFTER_PROCE_RATE_DATE" />
+		<result property="defaultBank" column="DEFAULT_BANK" />
+		<result property="imageName" column="IMAGE_NAME" />
+		<result property="gatewayNumber" column="GATEWAY_NUMBER" />
+		<result property="activate" column="ACTIVATE" />
+	</resultMap>
+</mapper>

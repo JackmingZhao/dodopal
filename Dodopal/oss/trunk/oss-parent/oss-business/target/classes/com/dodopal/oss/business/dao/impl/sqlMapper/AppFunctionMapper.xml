@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.AppFunctionMapper">
+    <select id="findOperationIdByCode" resultType="String" parameterType="java.lang.String">
+        select id from APP_FUNCTION where code = #{code}
+    </select>
+    
+    <insert id="insertFunction"  parameterType="Operation" >
+    	<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select APP_FUNCTION_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+        INSERT INTO APP_FUNCTION(ID, NAME, DESCRIPTION, TYPE, CODE, LEVELS, VISIBILITY, POSITION, PARENT_ID, APP_NAME, CREATE_DATE, UPDATE_DATE, CREATE_USER, UPDATE_USER) 
+        VALUES (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+        #{code,jdbcType=VARCHAR}, #{levels,jdbcType=VARCHAR}, #{visibility,jdbcType=NUMERIC}, #{position,jdbcType=NUMERIC}, 
+        #{parentId,jdbcType=NUMERIC}, #{appName,jdbcType=VARCHAR}, 
+        #{createDate,jdbcType=DATE}, #{updateDate,jdbcType=DATE}, #{createUser,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR})
+    </insert>
+    
+    <select id="findAllMenus" resultType="Operation" resultMap="operationResultMap">
+        select * from APP_FUNCTION  order by position
+    </select>
+    
+    <select id="findAllOperations" resultType="Operation" resultMap="operationResultMap">
+        select * from APP_FUNCTION order by position
+    </select>
+    
+    <select id="loadAllOperationCodes" resultType="String" parameterType="java.lang.String">
+		select code from APP_FUNCTION where id in
+         <foreach item="item" index="index" collection="list" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</select>
+       
+</mapper>

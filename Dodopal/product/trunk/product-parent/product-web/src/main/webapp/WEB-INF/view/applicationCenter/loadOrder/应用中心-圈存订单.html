@@ -1,0 +1,696 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="IE=edge" />
+<title>圈存订单</title>
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/calendar.js" type="text/javascript"></script>
+<script type="text/javascript">
+var c = new Calendar("c");
+document.write(c);
+</script>
+<link href="css/calendar.css" rel="stylesheet" type="text/css" />
+<link href="css/r-base.css" rel="stylesheet" type="text/css" />
+<link href="css/base.css" rel="stylesheet" type="text/css" />
+<link href="css/index.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="header-top">
+	<div class="w1030 clearfix" style="display:none;">
+		<p class="header-top-left" title="都都宝-24小时免费服务电话"><i class="phone-icon"></i>400-817-1000</p>
+		<ul class="header-top-right clearfix">
+			<li><a href="javascript:void(0);">你好，漕河泾<i class="ico_name"></i></a></li>
+			<li><a href="javascript:void(0);">退出</a></li>
+		</ul>
+	</div>
+</div>
+<div class="wd-header">
+	<div class="w1030 clearfix"> <a class="dodopal-logo" href="/"></a>
+		<div class="dodopal-title">
+			<p>圈存订单</p>
+		</div>
+	</div>
+</div>
+<div class="con-main">
+<div class="application-center clearfix">
+	  <div class="app-right">
+		 <div class="app-pay-way quncun-tit">
+			  <a href="应用中心-圈存订单.html" class='blue current'>圈存订单</a><a href="应用中心-圈存订单-订单查询.html" class="" style="padding-left:20px;">订单查询</a>
+		  </div>
+		  <dl class="app-dl clearfix com-bor-box com-bor-box01 app-dl-s pd2070">
+			  <dt>所在城市：</dt>
+			  <dd class="clearfix">北京 [<a href="javascript:;" class="blue" js="setCity">切换城市</a>]
+				  <div class="set-city" style=" display: none;">
+					  <ul class="set-city-list">
+						  <li><a href="javascript:;" class="on">热门</a></li>
+						  <li><a href="javascript:;">ABCD</a></li>
+						  <li><a href="javascript:;">EFGH</a></li>
+						  <li><a href="javascript:;">JKLM</a></li>
+						  <li><a href="javascript:;">NOPQRS</a></li>
+						  <li><a href="javascript:;">TUVWX</a></li>
+						  <li><a href="javascript:;">YZ</a></li>
+					  </ul>
+					  <dl class="set-city-dl clearfix">
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>A</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>B</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+						  <dt>C</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>E</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>F</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+						  <dt>G</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>G</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>K</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+						  <dt>L</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>N</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>O</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+						  <dt>P</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>T</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>U</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+						  <dt>V</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+					  <dl class="set-city-dl clearfix" style="display: none">
+						  <dt>Y</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+							  </ul>
+						  </dd>
+						  <dt>Z</dt>
+						  <dd>
+							  <ul class="clearfix">
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+								  <li><a href="#">北京</a></li>
+								  <li><a href="#">西安</a></li>
+								  <li><a href="#">深圳</a></li>
+								  <li><a href="#">宁波</a></li>
+							  </ul>
+						  </dd>
+					  </dl>
+				  </div>
+			  </dd>
+			  <dt>产品金额：</dt>
+			  <dd class="recharge-amount"><a href="javascript:;">50<s></s></a><a href="javascript:;">100<s></s></a><a href="javascript:;">200<s></s></a></dd>
+              <dt>一卡通卡号：</dt>
+			  <dd class="clearfix">
+				  <input type="text" class="com-input-txt w260" /><i class="err">请输入您的一卡通卡号</i>
+			  </dd>
+			  <dt>再次输入卡号：</dt>
+			  <dd class="clearfix">
+				  <input type="text" class="com-input-txt w260" /><i class="err">请再次输入一卡通卡号</i>
+			  </dd>
+			  <dt>支付金额：</dt>
+			  <dd><i class="orange">100.00</i> 元</dd>
+			  <dt class="pt10">支付方式：</dt>
+			  <dd>
+			    <div class="pay-way">
+				    <ul class="payway-ul clearfix">
+					    <li class="fl">
+						    <label>
+							    <input type="radio" name="" value="" />
+							    账户余额：15.00 元</label>
+					    </li>
+					    <li class="fr">－<i class="orange">30.00</i> 元</li>
+					    <s></s>
+				    </ul>
+				    <div class="pay-line"></div>
+				    <ul class="clearfix">
+                    	<li class="fl" js="pay-way-common" style="cursor:pointer;">常用支付方式</li>
+                        <li class="fl">&nbsp;|&nbsp;</li>
+					    <li class="fl blue" js="pay-way-other" style="cursor:pointer;">更多支付方式</li>
+					    <li class="fr">还需支付 <i class="orange">20.00</i> 元</li>
+				    </ul>
+                    <div class="pay-way-box2 current" js="pay-list1" style="dispaly:none; border:1px solid #ccc;margin-top:10px">
+                    <p class="recharge_mode"><span>常用充值方式</span>（最多设置5种）：</p>
+                    <ul class="pay-way-list clearfix">
+                        <li>
+                            <label><span class="prompt-span01">充值享8.5折优惠</span>
+                                <input type="radio" name="pay01" value="" />
+                                <span class="span-img"><s></s>
+                                        <img src="css/images/img_pay01.png" alt="" />
+                                    </span></label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="radio" name="pay01" value="" />
+                                <span class="span-img"><s></s>
+                                        <img src="css/images/img_pay01.png" alt="" />
+                                    </span></label>
+                        </li>
+                    </ul>
+                    </div>
+				    <ul class="pay-navi-ul clearfix" js="pay-way-ul">
+					    <li class="on"><a href="javascript:void(0);">网银支付</a></li>
+					    <li><a href="javascript:void(0);">第三方支付</a></li>
+				    </ul>
+				    <div class="pay-way-box">
+					    <ul class="pay-way-list clearfix" js="pay-list">
+						    <li>
+							    <label><span class="prompt-span01">充值享9.5折优惠</span>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label><span class="prompt-span01">充值享9.5折优惠</span>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label><span class="prompt-span02">企<br />
+								    业</span>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li class="more-link only"><a href="javascript:;"><i class="i-more"></i><span>更多</span></a></li>
+					    </ul>
+					    <ul class="pay-way-list clearfix" style="display:none;">
+						    <li>
+							    <label><span class="prompt-span01">充值享8.5折优惠</span>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+						    <li>
+							    <label>
+								    <input type="radio" name="pay01" value="" />
+								    <span class="span-img"><s></s><img src="css/images/img_pay01.png" alt="" /></span></label>
+						    </li>
+					    </ul>
+					    
+				    </div>
+			    </div>
+                </dd>
+				  <dt></dt>
+			  <dd class="btn-recharge"><a href="javascript:;" class="orange-btn-h32" js="qurren">立即支付</a></dd>
+		  </dl>
+		  <dl class="app-dl02">
+			  <dt>嘟卡攻略：</dt>
+			  <dd>1、在整个充值过程中，请不要移动卡片；<br />
+				  2、在显示充值结果前，请不要关闭、刷新或后退浏览器窗口；
+<br />
+				  3、对于未提示充值成功的交易，请再次查询余额，通过对比卡内金额是否增加判断最终结果。</dd>
+		  </dl>
+	  </div>
+	</div>
+	</div>
+
+<div class="footer-copy">
+	<div class="w1030 footer-p">
+		<p><a href="http://www.dodopal.com/">关于都都宝</a>&nbsp;|&nbsp;官方微博 <a href="#">http://weibo.com/dodopal</a></p>
+		<p>都都宝版权所有&nbsp;COPYRIGHT (C) 2014 ICDC(Beijing) ALL RIGHTS RESERVED 京ICP证100323号</p>
+		<p class="orange">使用完毕请安全退出，请勿泄露自己的登录名和密码</p>
+	</div>
+</div>
+<script type="text/javascript">
+function fnokbtn(obj){
+	var timer=null;
+	$(obj).closest('[js="qurrenjiner"]').hide();
+	$('[js="qurrenok"]').show();
+	/*$('.wait-result').show();
+	clearTimeout(timer);
+	$('.ul-btn,.ok-tips,.err-tips').hide();
+	timer=setTimeout(function(){
+	$('.wait-result').slideUp(500);
+	$('.ul-btn').slideDown();
+	$('.ok-tips').slideDown(500);
+}, 5000);*/
+		
+}
+function fnokbtn1(obj){
+	var timer=null;
+	$(obj).closest('[js="qurrenok"]').hide();
+	$('[js="qurrenok1"]').show();
+	$('.wait-result').show();
+	clearTimeout(timer);
+	$('.ul-btn,.ok-tips,.err-tips').hide();
+	timer=setTimeout(function(){
+	$('.wait-result').slideUp(500);
+	$('.ul-btn').slideDown();
+	$('.ok-tips').slideDown(500);
+}, 5000);
+		
+}
+$(document).ready(function(e) {
+	/*支付方式*/
+	$('[js="pay-way-common"]').click(function(){
+			$(this).addClass('blue').siblings().removeClass('blue');
+			$('[js="pay-list1"]').css('display','block');
+			$('[js="pay-way-ul"]').css('display','none');
+			$('.pay-way-box').css('display','none');
+		})
+	$('[js="pay-way-other"]').click(function(){
+			$(this).addClass('blue').siblings().removeClass('blue');
+			$('[js="pay-list1"]').css('display','none');
+			$('[js="pay-way-ul"]').css('display','block');
+			$('.pay-way-box').css('display','block');
+		})
+	var setcity=0;
+	$('[js="setCity"]').click(function(event){
+		  event.stopPropagation();
+		$('.set-city').show();
+		setcity=1;
+	});
+	
+	$('body').click(function(){
+		if(setcity=1){
+			$('.set-city').hide();
+		}
+	});
+	var timer=null;
+	$('[js="qurren"]').click(function(){
+		$('[js="qurrenjiner"]').show();
+		
+	});
+	
+
+
+	$('.set-city-list li').click(function(event){
+		event.stopPropagation();
+		var i=$(this).index();
+		$('.set-city-list li').find('a').removeClass('on');
+		$(this).find('a').addClass('on');
+		$('.set-city-dl').eq(i).show().siblings('.set-city-dl').hide();
+	});
+	$('.set-city-dl li a').click(function(event){
+		event.stopPropagation();
+	});
+	$('.header-inr-nav ul li a').each(function(){
+		if($.trim($(this).text())=="应用产品"){
+			$(this).addClass('cur');
+		}
+	});
+	
+	
+	$('[js="pay-list"] li:gt(4)').hide();
+	$('[js="pay-list"] li.only').show();
+	var a=0;
+	$('[js="pay-list"] li.only').click(function(){
+		if(a==0){
+			$('[js="pay-list"] li').show();
+			$('.i-more').css({'background-position':-31+'px '+-414+'px'});
+			$(this).children().children('span').text('收起');
+			a=1;
+		}else{
+			$('[js="pay-list"] li:gt(4)').hide();
+			$('[js="pay-list"] li.only').show();
+			$('.i-more').css({'background-position':-2+'px '+-414+'px'});
+			$(this).children().children('span').text('更多');
+			a=0;
+		}		
+	});
+$('.recharge-amount a').click(function(){
+	$(this).addClass('a-click').siblings("a").removeClass("a-click");
+});
+$('.payway-ul input').click(function(){
+	if(!$(this).attr('checked')){
+		$(this).closest('.payway-ul').addClass('payway-ul-click');
+	}else{
+		$(this).closest('.payway-ul').removeClass('payway-ul-click');
+	}
+	
+})
+  $(".pay-navi-ul li").each(function(i){
+  $(".pay-navi-ul li").eq(i).click(function(){
+  $(this).addClass("on").siblings("li").removeClass("on");
+  $(".pay-way-box ul").eq(i).show().siblings().hide();
+  });
+ });
+ 
+ 
+});
+
+
+
+</script>
+<div style="display: none;" js="qurrenjiner" class="pop-win">
+	<div class="bg-win"></div>
+	<div class="pop-bor" style="height:310px; width: 410px; margin-top: -160px;"></div>
+	<div class="pop-box" style="height:300px; width: 400px; margin-top: -155px;">
+		<h3>提示信息</h3>
+		<div class="popConts">
+			<h4 class="pop-box-title">请确认以下信息是否正确</h4>
+			<ul class="jige-ul mb20">
+				<li><em>商品名称：</em>圈存订单</li>
+				<li> <em>支付方式：</em><span class="orange">联合支付</span></li>
+				<li> <em>支付金额：</em><span class="orange">65</span>元</li>
+			</ul>
+			<p class="mb10">
+				<label style="padding-left:50px;">
+					<input type="checkbox" />
+					不再提示此消息</label>
+			</p>
+		</div>
+		<ul class="ul-btn ul-btn01 ul-btn02">
+			<li><a onclick="fnokbtn(this)" class="pop-borange" href="javascript:;">确认</a></li>
+			<li><a class="pop-bgrange" js="clopop" href="javascript:;">取消</a></li>
+		</ul>
+	</div>
+</div>
+<div style="display: none;" js="qurrenok" class="pop-win">
+	<div class="bg-win"></div>
+	<div class="pop-bor" style="height:260px; width: 390px; margin-top: -205px;"></div>
+	<div class="pop-box" style="height:250px; width: 380px; margin-top: -200px;">
+		<h3>支付提示</h3>
+        <h4 style="padding-left:100px;">请您在新打开的页面上完成支付</h4>
+		<p style="padding-left:90px;">支付完成前，请不要关闭窗口。</p>
+        <p style="padding-left:90px;">支付完成后，请根据支付情况点击下面的按钮。</p>
+		<ul class="ul-btn ul-btn02" style="margin-left:90px;margin-top:30px;">
+			<li><a  class="pop-borange" href="javascript:;" js="sucess">支付完成</a></li>
+			<li><a class="pop-bgrange" js="clopop" href="一卡通充值-订单查询.html">支付遇到问题</a></li>
+		</ul>
+	</div>
+</div>
+<div class="pop-win" js="editBox" style="display: none;">
+	<div class="bg-win"></div>
+	<div class="pop-bor"  style="width: 530px; margin:-90px 0 0 -265px; height:200px;"></div>
+	<div class="pop-box" style="width: 520px; margin:-85px 0 0 -260px;height:190px;">
+		<h3>提示信息</h3>
+		<div class="innerBox">
+			<h4 class="pop-box-h4"><i></i>确认把该公交卡绑定到账户吗？</h4>
+			<form action="/">
+				<table  class="base-table">
+					<col width="105" />
+					<tr>
+						<td colspan="2" class="a-center"><input type="submit" class="pop-borange mr20" value="确认">
+							<a href="javascript:;" js="clopop" class="pop-bgrange">取消</a></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(e) {
+	$('[js="sucess"]').click(function(e){
+		$('[js="editBox"]').css('display','block');
+		$(this).closest('[js="qurrenok"]').css('display','none');
+	})
+	$('.com-table01 tr:even').find('td').css("background-color",'#f6fafe');
+	$('.com-table02 tr:even').find('td').css("background-color",'#f6fafe');
+	$('.bg-win,[js="clopop"]').click(function(){
+		$(this).closest('.pop-win').hide();
+	});
+	$('.header-nav ul li').click(function(){
+		var i=$(this).index();
+		$('.header-nav ul li a').removeClass('on');
+		$('.header-inr-nav ul').hide();
+		$('.header-inr-nav ul').eq(i).show();
+		$(this).find('a').addClass('on');
+	});
+	if($('.header-inr-nav ul li a').hasClass('cur')){
+		var i=$('.cur').closest('ul').index();
+		$('.header-nav ul li a').removeClass('on').eq(i).addClass('on');
+		$('.header-inr-nav ul').hide();
+		$('.header-inr-nav ul').eq(i).show()
+	};
+	
+});
+
+function popclo(obj){
+	$(obj).closest('.pop-win').hide();
+}
+
+$('.footer-navi .more a').click(function(){
+	if($(this).hasClass('open')){
+		$(this).removeClass('open');
+		$('.footer-navi ul').height(60);
+	}else{
+		$(this).addClass('open');
+		$('.footer-navi ul').removeAttr('style');
+	};
+
+});
+</script>
+<script src="js/select.js" type="text/javascript"></script>
+</body>
+</html>

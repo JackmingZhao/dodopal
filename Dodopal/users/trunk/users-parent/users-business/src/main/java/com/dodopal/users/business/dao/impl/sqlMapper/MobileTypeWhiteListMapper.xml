@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MobileTypeWhiteListMapper">
+
+	<sql id="allColumns">
+		t.ID,t.ACTIVATE,t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE,
+		t.MOBILE_TYPE,t.MOBILE_NAME,t.REMARK
+	</sql>
+
+	<select id="findAllWhiteList" resultType="MobileTypeWhiteList" resultMap="mobileTypeWhiteListResultMapper">
+		select <include refid="allColumns" /> from MOBILE_TYPE_WHITE_LIST t
+	</select>
+</mapper>

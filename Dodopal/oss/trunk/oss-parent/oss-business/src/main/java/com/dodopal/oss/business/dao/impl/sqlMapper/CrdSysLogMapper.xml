@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.CrdSysLogMapper">
+	<sql id="crdSysLogSqlColumn">
+		ID,SERVER_NAME,CRD_ORDER_NUM,PRO_ORDER_NUM,TRADE_TYPE,CLASS_NAME,METHOD_NAME,
+		TXN_TYPE,TRADE_START,TRADE_END,TRADE_TRACK,IN_PARAS,IN_PARA_LENGTH,OUT_PARAS,
+		RESP_CODE,RESP_EXPLAIN,DESCRIPTION,END_DATE,CREATE_DATE
+	</sql>
+	<select id="findCrdSysLogByPage" resultType="CrdSysLog" resultMap="crdSysLogResultMap" parameterType="CrdSysLogQuery">
+		select <include refid="crdSysLogSqlColumn" /> from CRD_SYS_LOG 
+		<where>
+			<if test="crdOrderNum != null and crdOrderNum !=''">
+			CRD_ORDER_NUM like '%'||#{crdOrderNum}||'%'
+			</if>
+			<if test="proOrderNum != null and proOrderNum !=''">
+			AND PRO_ORDER_NUM like '%'||#{proOrderNum}||'%'
+			</if>
+			<if test="txnType != null and txnType !=''">
+			AND TXN_TYPE = #{txnType}
+			</if>
+			<if test="serverName != null and serverName !=''">
+			AND SERVER_NAME like '%'||#{serverName}||'%'
+			</if>
+				<if test="createDateStart != null and createDateStart !=''">   
+	           	  <![CDATA[
+	           	 AND CREATE_DATE >= #{createDateStart,jdbcType=DATE}
+	           	 ]]>
+	     	</if>
+	     		
+	    	<if test="createDateEnd != null and createDateEnd !=''">   
+	        	<![CDATA[
+	        	AND CREATE_DATE  < #{createDateEnd,jdbcType=DATE}+1
+	        	 ]]>
+	    	</if>
+		</where>
+		ORDER BY ID DESC
+	</select>
+</mapper>

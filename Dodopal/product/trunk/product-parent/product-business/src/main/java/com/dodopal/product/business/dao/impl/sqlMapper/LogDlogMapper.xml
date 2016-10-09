@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.LogDlogMapper">
+	<insert id="addLog" parameterType="LogDlog">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select LOG_DLOG_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO LOG_DLOG(
+			ID,CREATE_DATE,DLOG_STAGE,DLOG_SYSTEMDATETIME,DLOG_CODE,
+			DLOG_MESSAGE,DLOG_PRDORDERNUM,DLOG_TRADECARD,DLOG_APDU,DLOG_APDUDATA,
+			DLOG_STATECODE
+		)
+		VALUES (
+			#{id},
+			sysdate,
+			#{dlogStage, jdbcType=VARCHAR},
+			#{dlogSystemdatetime, jdbcType=VARCHAR},
+			#{dlogCode, jdbcType=VARCHAR},
+			#{dlogMessage, jdbcType=VARCHAR},
+			#{dlogPrdordernum, jdbcType=VARCHAR},
+			#{dlogTradecard, jdbcType=VARCHAR},
+			#{dlogApdu, jdbcType=VARCHAR},
+			#{dlogApdudata, jdbcType=VARCHAR},
+			#{dlogStatecode, jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

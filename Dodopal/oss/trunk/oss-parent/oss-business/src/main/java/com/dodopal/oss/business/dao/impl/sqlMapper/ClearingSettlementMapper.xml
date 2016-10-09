@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.ClearingSettlementMapper">
+
+    <!-- 获取服务器系统时间 -->
+    <select id="getSysdate" resultType="String">
+		SELECT to_char(sysdate-1,'yyyymmdd') FROM dual
+	</select>
+
+    <!-- 生成支付网关表数据 -->
+    <insert id="insertBank" parameterType="String">
+		INSERT INTO CLEARING_BANK
+		  SELECT CLEARING_BANK_ID_SEQ.NEXTVAL,
+		         #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		         SYSDATE AS CLEARLING_DATE,
+		         A.PAY_GATEWAY,
+		         A.TRADE_COUNT,
+		         A.TRADE_AMOUNT,
+		         A.BANK_FEE,
+		         A.TRANSFER_AMOUNT,
+		         SYSDATE AS CREATE_DATE
+		    FROM (SELECT BASIC.PAY_GATEWAY,
+		                 COUNT(BASIC.ID) AS TRADE_COUNT,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_SHOULD_FEE, 0)) AS TRADE_AMOUNT,
+		                 SUM(NVL(BASIC.DDP_TO_BANK_FEE, 0)) AS BANK_FEE,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_REAL_FEE, 0)) AS TRANSFER_AMOUNT
+		            FROM CLEARING_BASIC_DATA BASIC
+		           WHERE TO_CHAR(BASIC.BANK_CLEARING_TIME,'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		             AND BASIC.BANK_CLEARING_FLAG = '1'
+		             AND BASIC.BANK_SETTLEMENT_FLAG = '0'
+		           GROUP BY BASIC.PAY_GATEWAY) A
+	</insert>
+
+    <!-- 生成支付网关业务类型表数据 -->
+    <insert id="insertBankTxn" parameterType="String">
+		INSERT INTO CLEARING_BANK_TXN
+		  SELECT CLEARING_BANK_TXN_ID_SEQ.NEXTVAL,
+		         #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		         SYSDATE AS CLEARLING_DATE,
+		         A.PAY_GATEWAY,
+		         A.TXN_TYPE,
+		         A.TRADE_COUNT,
+		         A.TRADE_AMOUNT,
+		         A.BANK_FEE,
+		         A.TRANSFER_AMOUNT,
+		         SYSDATE AS CREATE_DATE
+		    FROM (SELECT BASIC.PAY_GATEWAY,
+		                 BASIC.BUSINESS_TYPE AS TXN_TYPE,
+		                 COUNT(BASIC.ID) AS TRADE_COUNT,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_SHOULD_FEE, 0)) AS TRADE_AMOUNT,
+		                 SUM(NVL(BASIC.DDP_TO_BANK_FEE, 0)) AS BANK_FEE,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_REAL_FEE, 0)) AS TRANSFER_AMOUNT
+		            FROM CLEARING_BASIC_DATA BASIC
+		           WHERE TO_CHAR(BASIC.BANK_CLEARING_TIME,'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		             AND BASIC.BANK_CLEARING_FLAG = '1'
+		             AND BASIC.BANK_SETTLEMENT_FLAG = '0'
+		           GROUP BY BASIC.PAY_GATEWAY，BASIC.BUSINESS_TYPE) A
+	</insert>
+
+    <!-- 更新清分基础表数据bank -->
+    <update id="updateBank" parameterType="String">
+		UPDATE CLEARING_BASIC_DATA T
+		   SET T.BANK_SETTLEMENT_FLAG = '1', T.BANK_SETTLEMENT_TIME = SYSDATE
+		 WHERE TO_CHAR(T.BANK_CLEARING_TIME, 'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		   AND T.BANK_CLEARING_FLAG = '1'
+		   AND T.BANK_SETTLEMENT_FLAG = '0'
+	</update>
+
+    <!-- 插入通卡公司表 -->
+    <insert id="insertYkt" parameterType="String">
+		INSERT INTO CLEARING_YKT
+		  SELECT CLEARING_YKT_ID_SEQ.NEXTVAL,
+		         #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		         SYSDATE AS CLEARLING_DATE,
+		         A.YKT_CODE,
+		         A.YKT_NAME,
+		         A.TRADE_COUNT,
+		         A.TRADE_AMOUNT,
+		         A.YKT_FEE,
+		         A.TRANSFER_AMOUNT,
+		         SYSDATE
+		    FROM (SELECT BASIC.SUPPLIER_CODE AS YKT_CODE,
+		                 BASIC.SUPPLIER_NAME AS YKT_NAME,
+		                 COUNT(BASIC.ID) AS TRADE_COUNT,
+		                 SUM(NVL(BASIC.DDP_TO_SUPPLIER_SHOULD_AMOUNT, 0)) AS TRADE_AMOUNT,
+		                 SUM(NVL(BASIC.SUPPLIER_TO_DDP_SHOULD_REBATE, 0)) AS YKT_FEE,
+		                 SUM(NVL(BASIC.DDP_TO_SUPPLIER_REAL_AMOUNT, 0)) AS TRANSFER_AMOUNT
+		            FROM CLEARING_BASIC_DATA BASIC
+		           WHERE TO_CHAR(BASIC.SUPPLIER_CLEARING_TIME,'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		             AND BASIC.SUPPLIER_CLEARING_FLAG = '1'
+		             AND BASIC.SUPPLIER_SETTLEMENT_FLAG = '0'
+		           GROUP BY BASIC.SUPPLIER_CODE,
+		                    BASIC.SUPPLIER_NAME) A
+	</insert>
+
+    <!-- 插入通卡公司城市表 -->
+    <insert id="insertYktCity" parameterType="String">
+		INSERT INTO CLEARING_YKT_CITY
+		   SELECT CLEARING_YKT_CITY_ID_SEQ.NEXTVAL,
+		          #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		          SYSDATE AS CLEARLING_DATE,
+		          A.YKT_CODE,
+		          A.YKT_NAME,
+		          A.CITY_CODE,
+		          A.CITY_NAME,
+		          A.TRADE_COUNT,
+		          A.TRADE_AMOUNT,
+		          A.YKT_FEE,
+		          A.TRANSFER_AMOUNT,
+		          SYSDATE
+		     FROM (SELECT BASIC.SUPPLIER_CODE AS YKT_CODE,
+		                  BASIC.SUPPLIER_NAME AS YKT_NAME,
+		                  BASIC.CITY_CODE AS CITY_CODE,
+		                  TRIM(BASIC.CITY_NAME) AS CITY_NAME,          
+		                  COUNT(BASIC.ID) AS TRADE_COUNT,
+		                  SUM(NVL(BASIC.DDP_TO_SUPPLIER_SHOULD_AMOUNT, 0)) AS TRADE_AMOUNT,
+		                  SUM(NVL(BASIC.SUPPLIER_TO_DDP_SHOULD_REBATE, 0)) AS YKT_FEE,
+		                  SUM(NVL(BASIC.DDP_TO_SUPPLIER_REAL_AMOUNT, 0)) AS TRANSFER_AMOUNT
+		             FROM CLEARING_BASIC_DATA BASIC
+		            WHERE TO_CHAR(BASIC.SUPPLIER_CLEARING_TIME,'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		              AND BASIC.SUPPLIER_CLEARING_FLAG = '1'
+		              AND BASIC.SUPPLIER_SETTLEMENT_FLAG = '0'
+		            GROUP BY BASIC.SUPPLIER_CODE,
+		                     BASIC.SUPPLIER_NAME,
+		                     BASIC.CITY_CODE,
+		                     TRIM(BASIC.CITY_NAME)) A
+	</insert>
+
+    <!-- 更新清分基础表数据ykt -->
+    <update id="updateYkt" parameterType="String">
+		UPDATE CLEARING_BASIC_DATA T
+		   SET T.SUPPLIER_SETTLEMENT_FLAG = '1', T.SUPPLIER_SETTLEMENT_TIME = SYSDATE
+		 WHERE TO_CHAR(T.SUPPLIER_CLEARING_TIME, 'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		   AND T.SUPPLIER_CLEARING_FLAG = '1'
+		   AND T.SUPPLIER_SETTLEMENT_FLAG = '0'
+	</update>
+
+    <!-- 插入商户表 -->
+    <insert id="insertMer" parameterType="String">
+		INSERT INTO CLEARING_MER
+		  SELECT CLEARING_MER_ID_SEQ.NEXTVAL,
+		         #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		         SYSDATE AS CLEARLING_DATE,
+		         A.MER_CODE,
+		         A.MER_NAME,
+		         A.TRADE_COUNT,
+		         A.TRADE_AMOUNT,
+		         A.SERVICE_FEE,
+		         A.MER_PROFIT,
+		         A.REAL_FEE,
+		         A.TRANSFER_AMOUNT,
+		         SYSDATE
+		    FROM (SELECT BASIC.CUSTOMER_NO AS MER_CODE,
+		                 TRIM(BASIC.CUSTOMER_NAME) AS MER_NAME,
+		                 COUNT(BASIC.ID) AS TRADE_COUNT,
+		                 SUM(NVL(BASIC.ORDER_AMOUNT, 0)) AS TRADE_AMOUNT,
+		                 SUM(NVL(DDP_GET_MERCHANT_PAY_FEE, 0)) AS SERVICE_FEE,
+		                 SUM(NVL(BASIC.CUSTOMER_REAL_PROFIT, 0)) AS MER_PROFIT,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_REAL_FEE, 0)) AS REAL_FEE,
+		                 SUM(NVL(BASIC.DDP_TO_CUSTOMER_REAL_FEE, 0)) AS TRANSFER_AMOUNT
+		            FROM CLEARING_BASIC_DATA BASIC
+		           WHERE BASIC.CUSTOMER_TYPE != '99'
+		             AND TO_CHAR(BASIC.CUSTOMER_CLEARING_TIME,'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		             AND BASIC.CUSTOMER_CLEARING_FLAG = '1'
+		             AND BASIC.CUSTOMER_SETTLEMENT_FLAG = '0'
+		           GROUP BY BASIC.CUSTOMER_NO,TRIM(BASIC.CUSTOMER_NAME)) A
+	</insert>
+
+    <!-- 插入商户业务表 -->
+    <insert id="insertMerTxn" parameterType="String">
+		INSERT INTO CLEARING_MER_TXN
+		  SELECT CLEARING_MER_TXN_ID_SEQ.NEXTVAL,
+		         #{sysdate,jdbcType=VARCHAR} AS CLEARLING_DAY,
+		         SYSDATE AS CLEARLING_DATE,
+		         A.MER_CODE,
+		         A.MER_NAME,
+		         A.TXN_TYPE,
+		         A.TRADE_COUNT,
+		         A.TRADE_AMOUNT,
+		         A.SERVICE_FEE,
+		         A.MER_PROFIT,
+		         A.REAL_FEE,
+		         A.TRANSFER_AMOUNT,
+		         SYSDATE
+		    FROM (SELECT BASIC.CUSTOMER_NO AS MER_CODE,
+		                 TRIM(BASIC.CUSTOMER_NAME) AS MER_NAME,
+		                 BASIC.BUSINESS_TYPE AS TXN_TYPE,
+		                 COUNT(BASIC.ID) AS TRADE_COUNT,
+		                 SUM(NVL(BASIC.ORDER_AMOUNT, 0)) AS TRADE_AMOUNT,
+		                 SUM(NVL(DDP_GET_MERCHANT_PAY_FEE, 0)) AS SERVICE_FEE,
+		                 SUM(NVL(BASIC.CUSTOMER_REAL_PROFIT, 0)) AS MER_PROFIT,
+		                 SUM(NVL(BASIC.DDP_FROM_BANK_REAL_FEE, 0)) AS REAL_FEE,
+		                 SUM(NVL(BASIC.DDP_TO_CUSTOMER_REAL_FEE, 0)) AS TRANSFER_AMOUNT
+		            FROM CLEARING_BASIC_DATA BASIC
+		           WHERE BASIC.CUSTOMER_TYPE != '99'
+		             AND TO_CHAR(BASIC.CUSTOMER_CLEARING_TIME,'yyyymmdd')  = #{sysdate,jdbcType=VARCHAR}
+		             AND BASIC.CUSTOMER_CLEARING_FLAG = '1'
+		             AND BASIC.CUSTOMER_SETTLEMENT_FLAG = '0'
+		           GROUP BY BASIC.CUSTOMER_NO,
+		                    TRIM(BASIC.CUSTOMER_NAME),
+		                    BASIC.BUSINESS_TYPE) A
+	</insert>
+
+    <!-- 更新清分基础表数据Mer -->
+    <update id="updateMer" parameterType="String">
+		UPDATE CLEARING_BASIC_DATA T
+		   SET T.CUSTOMER_SETTLEMENT_FLAG = '1', T.BANK_SETTLEMENT_TIME = SYSDATE
+		 WHERE t.CUSTOMER_TYPE != '99'
+		   AND TO_CHAR(T.CUSTOMER_CLEARING_TIME, 'yyyymmdd') = #{sysdate,jdbcType=VARCHAR}
+		   AND T.CUSTOMER_CLEARING_FLAG = '1'
+		   AND T.CUSTOMER_SETTLEMENT_FLAG = '0'
+	</update>
+    <!--将数据插入分润汇总表-->
+    <insert id="addProfitCollect" parameterType="ProfitCollect">
+        <selectKey resultType="String" keyProperty="id" order="BEFORE">
+            select PROFIT_COLLECT_ID_SEQ.NEXTVAL from dual
+        </selectKey>
+        INSERT
+        INTO PROFIT_COLLECT(ID,COLLECT_DATE,COLLECT_TIME,CUSTOMER_CODE,CUSTOMER_NAME,BUSSINESS_TYPE,TRADE_COUNT,TRADE_AMOUNT,PROFIT)
+        VALUES(#{id,jdbcType=VARCHAR},#{collectDate,jdbcType=VARCHAR},sysdate-1,#{customerCode,jdbcType=VARCHAR},
+        #{customerName,jdbcType=VARCHAR},#{bussinessType,jdbcType=VARCHAR},#{tradeCount,jdbcType=BIGINT},
+        #{tradeAmount,jdbcType=BIGINT},#{profit,jdbcType=BIGINT})
+    </insert>
+    <!--根据客户号查询客户名称-->
+    <select id="queryMerchantName" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT MER_NAME FROM MERCHANT WHERE MER_CODE = #{merCode}
+    </select>
+    <!--查询分润汇总数据-->
+    <select id="queryProfitCollect" resultType="ProfitCollect">
+	SELECT CUSTOMER_CODE AS customerCode,BUSSINESS_TYPE AS bussinessType,count(id) AS tradeCount, sum(nvl(ORDER_AMOUNT,0)) AS tradeAmount, sum(nvl(CUSTOMER_REAL_PROFIT,0)) as profit
+    FROM PROFIT_DETAILS
+    Where  PROFIT_DATE = TO_CHAR(sysdate-1,'yyyyMMdd')
+    Group by CUSTOMER_CODE,BUSSINESS_TYPE
+	</select>
+	<delete id="deleteProfitCollect" parameterType="java.lang.String">
+		DELETE FROM PROFIT_COLLECT WHERE COLLECT_DATE=#{dateStr}
+	</delete>
+</mapper>

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.IcdcRechargeMapper">
+	<select id="queryCrdSysOrderCountByPrdOrderId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(1) FROM CRD_SYS_LOAD_ORDER T WHERE
+		T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</select>
+
+	<select id="queryCardSysOrderByPrdOrderId" resultType="CrdSysOrder" resultMap="crdSysOrderResultMap"
+		parameterType="java.lang.String">
+		SELECT 
+			CRD_ORDER_NUM,
+			PRO_ORDER_NUM,
+			PRO_CODE,
+			MER_CODE,
+			MER_ORDER_CODE,
+			CRD_ORDER_STATES,
+			CRD_BEFOREORDER_STATES,
+			RESP_CODE,
+			USER_CODE,
+			CITY_CODE,
+			YKT_CODE,
+			CARD_INNER_NO,
+			CARD_FACE_NO,
+			ORDER_CARD_NO,
+			CARD_TYPE,
+			POS_TYPE,
+			POS_CODE,
+			POS_SEQ,
+			BEFBAL,
+			BLACK_AMT,
+			TXN_AMT,
+			CARD_LIMIT,
+			SOURCE,
+			TXN_TYPE,
+			TXN_SEQ,
+			TXN_DATE,
+			TXN_TIME,
+			CHECK_CARD_NO,
+			CHECK_SEND_CARD_DATE,
+			CHECK_RES_CARD_DATE,
+			CHECK_CARD_POS_CODE,
+			CHARGE_CARD_NO,
+			CHARGE_CARD_POS_CODE,
+			CHARGE_SEND_CARD_DATE,
+			CHARGE_RES_CARD_DATE,
+			RESULT_SEND_CARD_DATE,
+			RESULT_RES_CARD_DATE,
+			CHARGE_TYPE,
+			METROPASS_TYPE,
+			METROPASS_CHARGE_START_DATE,
+			METROPASS_CHARGE_END_DATE,
+			DOUNKNOW_FLAG,
+			CARD_COUNTER,
+			AFTER_CARD_NOTES,
+			BEFORE_CARD_NOTES,
+			TRADE_STEP,
+			TRADE_STEP_VER,
+			TRADE_END_FLAG,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		FROM 
+			CRD_SYS_LOAD_ORDER T 
+		WHERE 
+			T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</select>
+	
+	<select id="queryBJCardSysOrderByPrdOrderId" resultType="CrdSysOrder" resultMap="bjCrdSysOrderResultMap" parameterType="java.lang.String">
+		SELECT 
+			CRD_ORDER_NUM,
+			PRO_ORDER_NUM,
+			PRO_CODE,
+			MER_CODE,
+			MER_ORDER_CODE,
+			CRD_ORDER_STATES,
+			CRD_BEFOREORDER_STATES,
+			RESP_CODE,
+			USER_CODE,
+			CITY_CODE,
+			YKT_CODE,
+			CARD_INNER_NO,
+			CARD_FACE_NO,
+			ORDER_CARD_NO,
+			CARD_TYPE,
+			POS_TYPE,
+			POS_CODE,
+			POS_SEQ,
+			BEFBAL,
+			BLACK_AMT,
+			TXN_AMT,
+			CARD_LIMIT,
+			SOURCE,
+			TXN_TYPE,
+			TXN_SEQ,
+			TXN_DATE,
+			TXN_TIME,
+			CHECK_CARD_NO,
+			CHECK_SEND_CARD_DATE,
+			CHECK_RES_CARD_DATE,
+			CHECK_CARD_POS_CODE,
+			CHARGE_CARD_NO,
+			CHARGE_CARD_POS_CODE,
+			CHARGE_SEND_CARD_DATE,
+			CHARGE_RES_CARD_DATE,
+			RESULT_SEND_CARD_DATE,
+			RESULT_RES_CARD_DATE,
+			CHARGE_TYPE,
+			METROPASS_TYPE,
+			METROPASS_CHARGE_START_DATE,
+			METROPASS_CHARGE_END_DATE,
+			DOUNKNOW_FLAG,
+			CARD_COUNTER,
+			AFTER_CARD_NOTES,
+			BEFORE_CARD_NOTES,
+			TRADE_STEP,
+			TRADE_STEP_VER,
+			TRADE_END_FLAG,
+			CARD_LOGIC_TYPE,
+			POS_TRANS_SEQ,
+			KEY_INDEX,
+			APP_ID,
+			OFFLINE_FLAG,
+			SAM_NO,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		FROM 
+			CRD_SYS_LOAD_ORDER T 
+		WHERE 
+			T.PRO_ORDER_NUM = #{PRO_ORDER_NUM}
+	</select>
+	
+	<select id="queryCardSysOrderByCrdOrderId" resultType="CrdSysOrder" resultMap="crdSysOrderResultMap"
+		parameterType="java.lang.String">
+		SELECT 
+			CRD_ORDER_NUM,
+			PRO_ORDER_NUM,
+			PRO_CODE,
+			MER_CODE,
+			MER_ORDER_CODE,
+			CRD_ORDER_STATES,
+			CRD_BEFOREORDER_STATES,
+			RESP_CODE,
+			USER_CODE,
+			CITY_CODE,
+			YKT_CODE,
+			CARD_INNER_NO,
+			CARD_FACE_NO,
+			ORDER_CARD_NO,
+			CARD_TYPE,
+			POS_TYPE,
+			POS_CODE,
+			POS_SEQ,
+			BEFBAL,
+			BLACK_AMT,
+			TXN_AMT,
+			CARD_LIMIT,
+			SOURCE,
+			TXN_TYPE,
+			TXN_SEQ,
+			TXN_DATE,
+			TXN_TIME,
+			CHECK_CARD_NO,
+			CHECK_SEND_CARD_DATE,
+			CHECK_RES_CARD_DATE,
+			CHECK_CARD_POS_CODE,
+			CHARGE_CARD_NO,
+			CHARGE_CARD_POS_CODE,
+			CHARGE_SEND_CARD_DATE,
+			CHARGE_RES_CARD_DATE,
+			RESULT_SEND_CARD_DATE,
+			RESULT_RES_CARD_DATE,
+			CHARGE_TYPE,
+			METROPASS_TYPE,
+			METROPASS_CHARGE_START_DATE,
+			METROPASS_CHARGE_END_DATE,
+			DOUNKNOW_FLAG,
+			CARD_COUNTER,
+			AFTER_CARD_NOTES,
+			BEFORE_CARD_NOTES,
+			TRADE_STEP,
+			TRADE_STEP_VER,
+			TRADE_END_FLAG,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		FROM 
+			CRD_SYS_LOAD_ORDER T 
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM}
+	</select>
+
+	<select id="queryCrdSysSupplementByCrdOrderId" resultType="CrdSysSupplement" resultMap="crdSysSupplementResultMap"
+		parameterType="java.lang.String">
+		SELECT 
+			CRD_ORDER_NUM,
+			TXN_TYPE,
+			CHECK_YKTMW,
+			CHECK_YKTKEY,
+			CHARGE_YKTMW,
+			CHARGE_KEY,
+			RESULT_YKTMW,
+			TXN_DATE,
+			TXN_TIME,
+			LAST_READ_KEY_TIME,
+			LAST_CHARGE_KEY_TIME,
+			LAST_RESULT_TIME,
+			REQUEST_READ_KEY_COUNT,
+			REQUEST_CHARGE_KEY_COUNT,
+			SEND_RESULT_COUNT,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE
+		FROM 
+			CRD_SYS_SUPPLEMENT T 
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM}
+	</select>
+	<update id="updateCardSysOrderByCrdOrderId" parameterType="java.util.HashMap">
+		UPDATE 
+			CRD_SYS_LOAD_ORDER T
+		<set>
+			<if test="MER_CODE != null and MER_CODE !=''">
+				T.MER_CODE = #{MER_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="MER_ORDER_CODE != null and MER_ORDER_CODE !=''">
+				T.MER_ORDER_CODE = #{MER_ORDER_CODE,jdbcType=VARCHAR},
+			</if>
+				T.CRD_BEFOREORDER_STATES = T.CRD_ORDER_STATES,
+			<if test="CRD_ORDER_STATES != null and CRD_ORDER_STATES !=''">
+				T.CRD_ORDER_STATES = #{CRD_ORDER_STATES,jdbcType=VARCHAR},
+			</if>
+			<if test="RESP_CODE != null and RESP_CODE !=''">
+				T.RESP_CODE = #{RESP_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="CARD_TAC != null and CARD_TAC !=''">
+				T.CARD_TAC = #{CARD_TAC,jdbcType=VARCHAR},
+			</if>
+			<if test="USER_CODE != null and USER_CODE !=''">
+				T.USER_CODE = #{USER_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="CITY_CODE != null and CITY_CODE !=''">
+				T.CITY_CODE = #{CITY_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="YKT_CODE != null and YKT_CODE !=''">
+				T.YKT_CODE = #{YKT_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="CARD_INNER_NO != null and CARD_INNER_NO !=''">
+				T.CARD_INNER_NO = #{CARD_INNER_NO,jdbcType=VARCHAR},
+			</if>
+			<if test="CARD_FACE_NO != null and CARD_FACE_NO !=''">
+				T.CARD_FACE_NO = #{CARD_FACE_NO,jdbcType=VARCHAR},
+			</if>
+			<if test="ORDER_CARD_NO != null and ORDER_CARD_NO !=''">
+				T.ORDER_CARD_NO = #{ORDER_CARD_NO,jdbcType=VARCHAR},
+			</if>
+			<if test="POS_TYPE != null and POS_TYPE !=''">
+				T.POS_TYPE = #{POS_TYPE,jdbcType=VARCHAR},
+			</if>
+			<if test="POS_CODE != null and POS_CODE !=''">
+				T.POS_CODE = #{POS_CODE,jdbcType=VARCHAR},
+			</if>
+			<if test="POS_SEQ != null">
+				T.POS_SEQ = #{POS_SEQ,jdbcType=NUMERIC},
+			</if>
+			<if test="BEFBAL != null">
+				T.BEFBAL = #{BEFBAL,jdbcType=NUMERIC},
+			</if>
+			<if test="BLACK_AMT != null">
+				T.BLACK_AMT = #{BLACK_AMT,jdbcType=NUMERIC},
+			</if>
+			<if test="TXN_AMT != null" >
+				T.TXN_AMT = #{TXN_AMT,jdbcType=NUMERIC},
+			</if>
+			<if test="TXN_TYPE != null">
+				T.TXN_TYPE = #{TXN_TYPE,jdbcType=NUMERIC},
+			</if>
+			<if test="TXN_SEQ != null">
+				T.TXN_SEQ = #{TXN_SEQ,jdbcType=NUMERIC},
+			</if>
+			<if test="TXN_DATE != null and TXN_DATE !=''">
+				T.TXN_DATE = #{TXN_DATE,jdbcType=VARCHAR},
+			</if>
+			<if test="TXN_TIME != null and TXN_TIME !=''">
+				T.TXN_TIME = #{TXN_TIME,jdbcType=VARCHAR},
+			</if>
+			<if test="TRADE_STEP != null and TRADE_STEP !=''">
+				T.TRADE_STEP = #{TRADE_STEP,jdbcType=VARCHAR},
+			</if>
+			<if test="TRADE_STEP_VER != null and TRADE_STEP_VER !=''">
+				T.TRADE_STEP_VER = #{TRADE_STEP_VER,jdbcType=VARCHAR},
+			</if>
+			<if test="RESULT_SEND_CARD_DATE != null and RESULT_SEND_CARD_DATE !=''">
+				T.RESULT_SEND_CARD_DATE = to_date(#{RESULT_SEND_CARD_DATE,jdbcType=VARCHAR},'yyyymmddhh24miss'),
+			</if>
+			<if test="RESULT_RES_CARD_DATE != null and RESULT_RES_CARD_DATE !=''">
+				T.RESULT_RES_CARD_DATE = to_date(#{RESULT_RES_CARD_DATE,jdbcType=VARCHAR},'yyyymmddhh24miss'),
+			</if>
+			<if test="POS_TRANS_SEQ != null and POS_TRANS_SEQ !=''">
+				T.POS_TRANS_SEQ = #{POS_TRANS_SEQ,jdbcType=VARCHAR},
+			</if>
+			<if test="CREATE_USER != null and CREATE_USER !=''">
+				T.CREATE_USER = #{CREATE_USER,jdbcType=VARCHAR},
+				T.CREATE_DATE = SYSDATE,
+			</if>
+			<if test="UPDATE_USER != null and UPDATE_USER !=''">
+				T.UPDATE_USER = #{UPDATE_USER,jdbcType=VARCHAR},
+				T.UPDATE_DATE = SYSDATE
+			</if>
+		</set>
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+	<update id="updateCardSysSupplementByCrdOrderId" parameterType="java.util.HashMap">
+		UPDATE 
+			CRD_SYS_SUPPLEMENT T
+		<set>
+			<if test="CHECK_YKTMW != null and CHECK_YKTMW !=''">
+				T.CHECK_YKTMW = #{CHECK_YKTMW,jdbcType=VARCHAR},
+			</if>
+			<if test="CHECK_YKTKEY != null and CHECK_YKTKEY !=''">
+				T.CHECK_YKTKEY = #{CHECK_YKTKEY,jdbcType=VARCHAR},
+			</if>
+			<if test="CHARGE_YKTMW != null and CHARGE_YKTMW !=''">
+				T.CHARGE_YKTMW = #{CHARGE_YKTMW,jdbcType=VARCHAR},
+			</if>
+			<if test="CHARGE_KEY != null and CHARGE_KEY !=''">
+				T.CHARGE_KEY = #{CHARGE_KEY,jdbcType=VARCHAR},
+			</if>
+			<if test="RESULT_YKTMW != null and RESULT_YKTMW !=''">
+				T.RESULT_YKTMW = #{RESULT_YKTMW,jdbcType=VARCHAR},
+			</if>
+			<if test="TXN_DATE != null and TXN_DATE !=''">
+				T.TXN_DATE = #{TXN_DATE,jdbcType=VARCHAR},
+			</if>
+			<if test="TXN_TIME != null and TXN_TIME !=''">
+				T.TXN_TIME = #{TXN_TIME,jdbcType=VARCHAR},
+			</if>
+			<if test="LAST_READ_KEY_TIME != null">
+				T.LAST_READ_KEY_TIME = #{LAST_READ_KEY_TIME,jdbcType=VARCHAR},
+			</if>
+			<if test="LAST_CHARGE_KEY_TIME != null">
+				T.LAST_CHARGE_KEY_TIME = #{LAST_CHARGE_KEY_TIME,jdbcType=VARCHAR},
+			</if>
+			<if test="LAST_RESULT_TIME != null">
+				T.LAST_RESULT_TIME = #{LAST_RESULT_TIME,jdbcType=VARCHAR},
+			</if>
+			<if test="REQUEST_READ_KEY_COUNT != null">
+				T.REQUEST_READ_KEY_COUNT = #{REQUEST_READ_KEY_COUNT,jdbcType=INTEGER},
+			</if>
+			<if test="REQUEST_CHARGE_KEY_COUNT != null">
+				T.REQUEST_CHARGE_KEY_COUNT = #{REQUEST_CHARGE_KEY_COUNT,jdbcType=INTEGER},
+			</if>
+			<if test="SEND_RESULT_COUNT != null">
+				T.SEND_RESULT_COUNT = #{SEND_RESULT_COUNT,jdbcType=INTEGER},
+			</if>
+			<if test="CREATE_USER != null and CREATE_USER !=''">
+				T.CREATE_USER = #{CREATE_USER,jdbcType=VARCHAR},
+				T.CREATE_DATE = SYSDATE,
+			</if>
+			<if test="SEND_COUNT != null and SEND_COUNT !=''">
+				T.SEND_RESULT_COUNT = SEND_RESULT_COUNT + 1,
+			</if>
+			<if test="UPDATE_USER != null and UPDATE_USER !=''">
+				T.UPDATE_USER = #{UPDATE_USER,jdbcType=VARCHAR},
+				T.UPDATE_DATE = SYSDATE
+			</if>
+		</set>
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+	<update id="updateCardSysOrderBackAmtByCrdOrderId" parameterType="java.lang.String">
+		UPDATE 
+			CRD_SYS_LOAD_ORDER T
+		SET T.BLACK_AMT = T.TXN_AMT+T.BEFBAL
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+	<update id="updateResetCardSysOrderBackAmtByCrdOrderId" parameterType="java.lang.String">
+		UPDATE 
+			CRD_SYS_LOAD_ORDER T
+		SET T.BLACK_AMT = T.BEFBAL
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+	<update id="updateClearCardSysOrderBackAmtByCrdOrderId" parameterType="java.lang.String">
+		UPDATE 
+			CRD_SYS_LOAD_ORDER T
+		SET T.BLACK_AMT = NULL
+		WHERE 
+			T.CRD_ORDER_NUM = #{CRD_ORDER_NUM,jdbcType=VARCHAR}
+	</update>
+</mapper>

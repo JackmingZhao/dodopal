@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.AccountAdjustmentMapper">
+	
+	<sql id="sqlColumn">
+				P.ID,
+				P.ACCOUNT_ADJUST_CODE,
+				P.ACCOUNT_ADJUST_TYPE,
+				P.CUSTOMER_TYPE,
+				P.CUSTOMER_NO,
+				P.CUSTOMER_NAME,
+				P.FUND_TYPE,
+				P.FUND_ACCOUNT_CODE,
+				P.ACCOUNT_ADJUST_AMOUNT,
+				P.ACCOUNT_ADJUST_REASON,
+				P.ACCOUNT_ADJUST_STATE,
+				P.ACCOUNT_ADJUST_APPLY_DATE,
+				
+				P.ACCOUNT_ADJUST_AUDIT_EXPLAIN,
+				P.ACCOUNT_ADJUST_AUDIT_DATE,
+				P.COMPLETE_DATE,
+		        
+				V.nick_name as CREATE_USER,				
+				P.CREATE_DATE,			
+				V2.nick_name as UPDATE_USER,			
+				P.UPDATE_DATE,
+				V3.nick_name as ACCOUNT_ADJUST_APPLY_USER,
+				v4.nick_name as ACCOUNT_ADJUST_AUDIT_USER
+	</sql>
+	
+	<sql id="pageSqlColumn">
+				P.ID,
+				P.ACCOUNT_ADJUST_CODE,
+				P.ACCOUNT_ADJUST_TYPE,
+				P.CUSTOMER_TYPE,
+				P.CUSTOMER_NO,
+				P.CUSTOMER_NAME,
+				P.FUND_TYPE,
+				P.FUND_ACCOUNT_CODE,
+				P.ACCOUNT_ADJUST_AMOUNT,
+				P.ACCOUNT_ADJUST_REASON,
+				P.ACCOUNT_ADJUST_STATE,
+				P.ACCOUNT_ADJUST_APPLY_DATE,
+				
+				P.ACCOUNT_ADJUST_AUDIT_EXPLAIN,
+				P.ACCOUNT_ADJUST_AUDIT_DATE,
+				P.COMPLETE_DATE,
+		        
+				P.CREATE_DATE,			
+				P.UPDATE_DATE,
+				B.nick_name as ACCOUNT_ADJUST_APPLY_USER,
+				V.nick_name as ACCOUNT_ADJUST_AUDIT_USER
+	</sql>
+	<select id="findAccountAdjustmentByPage" resultType="AccountAdjustment" resultMap="accountAdjustmentResultMap" parameterType="AccountAdjustmentQuery">
+		select P.ID, 							P.ACCOUNT_ADJUST_CODE, 			P.ACCOUNT_ADJUST_TYPE,
+			   P.CUSTOMER_TYPE, 				P.CUSTOMER_NO, 					P.CUSTOMER_NAME,
+			   P.FUND_TYPE, 					P.FUND_ACCOUNT_CODE, 			P.ACCOUNT_ADJUST_AMOUNT,
+			   P.ACCOUNT_ADJUST_REASON, 		P.ACCOUNT_ADJUST_STATE, 		P.ACCOUNT_ADJUST_APPLY_DATE,
+			
+			   P.ACCOUNT_ADJUST_AUDIT_EXPLAIN, 	P.ACCOUNT_ADJUST_AUDIT_DATE,	P.COMPLETE_DATE,
+		       
+			   P.CREATE_DATE,					P.UPDATE_DATE,					
+			   V1.NICK_NAME AS CREATE_USER,
+			   V2.NICK_NAME AS UPDATE_USER,
+			   B.nick_name as ACCOUNT_ADJUST_APPLY_USER,
+			   V.nick_name as ACCOUNT_ADJUST_AUDIT_USER
+		from ACCOUNT_ADJUSTMENT P 
+		left join V_USER_INFO V on P.ACCOUNT_ADJUST_AUDIT_USER = V.id
+		left join V_USER_INFO B on P.ACCOUNT_ADJUST_APPLY_USER = B.id
+		LEFT JOIN V_USER_INFO V1 ON P.CREATE_USER = V1.ID
+		LEFT JOIN V_USER_INFO V2 ON P.UPDATE_USER = V2.ID
+		<where>
+			<if test="customerNo != null and customerNo !=''">
+				P.CUSTOMER_NO like '%'||#{customerNo}||'%'
+			</if>
+			<if test="customerName != null and customerName !=''">
+				and  P.CUSTOMER_NAME like '%'||#{customerName}||'%'
+			</if>
+			<if test="accountAdjustApplyStartDate != null and accountAdjustApplyStartDate !=''">
+				<![CDATA[ and P.ACCOUNT_ADJUST_APPLY_DATE >=  #{accountAdjustApplyStartDate} ]]>
+			</if>
+			<if test="accountAdjustApplyEndDate != null and accountAdjustApplyEndDate !=''">
+				<![CDATA[and P.ACCOUNT_ADJUST_APPLY_DATE < #{accountAdjustApplyEndDate}+1]]>
+			</if>
+			<if test="accountAdjustAuditStartDate != null and accountAdjustAuditStartDate !=''">
+				<![CDATA[ and P.ACCOUNT_ADJUST_AUDIT_DATE >=  #{accountAdjustAuditStartDate} ]]>
+			</if>
+			<if test="accountAdjustAuditEndDate != null and accountAdjustAuditEndDate !=''">
+				<![CDATA[and P.ACCOUNT_ADJUST_AUDIT_DATE  < #{accountAdjustAuditEndDate}+1]]>
+			</if>
+			<if test="accountAdjustState != null and accountAdjustState !=''">
+				and P.ACCOUNT_ADJUST_STATE = #{accountAdjustState}
+			</if>
+			<if test="fundType != null and fundType !=''">
+				and P.FUND_TYPE = #{fundType}
+			</if>
+			<if test="accountAdjustType != null and accountAdjustType !=''">
+				and P.ACCOUNT_ADJUST_TYPE = #{accountAdjustType}
+			</if>
+			<if test="accountAdjustAuditUser != null and accountAdjustAuditUser !=''">
+				and V.NICK_NAME like '%'||#{accountAdjustAuditUser}||'%' 
+			</if>
+			<if test="accountAdjustApplyUser != null and accountAdjustApplyUser !=''">
+				and B.NICK_NAME like '%'||#{accountAdjustApplyUser}||'%' 
+			</if>
+			
+		</where>
+		order by P.ACCOUNT_ADJUST_AUDIT_DATE desc, P.ACCOUNT_ADJUST_APPLY_DATE desc
+	</select>
+
+	<select id="findAccountAdjustment" resultType="AccountAdjustment" resultMap="accountAdjustmentResultMap" parameterType="java.lang.String">
+		select <include refid="sqlColumn" /> from ACCOUNT_ADJUSTMENT P, V_USER_INFO V, V_USER_INFO V2 , V_USER_INFO V3, V_USER_INFO V4 
+		where P.id = #{id} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+		 and P.ACCOUNT_ADJUST_APPLY_USER = V3.id(+) and P.ACCOUNT_ADJUST_AUDIT_USER = V4.id(+)
+	</select>
+
+	<insert id="applyAccountAdjustment" parameterType="AccountAdjustment">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select ACCOUNT_ADJUSTMENT_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO ACCOUNT_ADJUSTMENT(
+					ID,
+					ACCOUNT_ADJUST_CODE,
+					ACCOUNT_ADJUST_TYPE,
+					CUSTOMER_TYPE,
+					CUSTOMER_NO,
+					CUSTOMER_NAME,
+					FUND_TYPE,
+					FUND_ACCOUNT_CODE,
+					ACCOUNT_ADJUST_AMOUNT,
+					ACCOUNT_ADJUST_REASON,
+					ACCOUNT_ADJUST_STATE,
+					ACCOUNT_ADJUST_APPLY_USER,
+					ACCOUNT_ADJUST_APPLY_DATE,
+					ACCOUNT_ADJUST_AUDIT_USER,
+					ACCOUNT_ADJUST_AUDIT_EXPLAIN,
+				 	CREATE_USER,
+					CREATE_DATE
+				)
+		VALUES (
+				#{id,jdbcType=VARCHAR}, 
+				#{accountAdjustCode,jdbcType=VARCHAR}, 
+				#{accountAdjustType,jdbcType=VARCHAR}, 
+				#{customerType,jdbcType=VARCHAR}, 
+				#{customerNo,jdbcType=VARCHAR}, 
+				#{customerName,jdbcType=VARCHAR}, 
+				#{fundType,jdbcType=VARCHAR}, 
+				#{fundAccountCode,jdbcType=VARCHAR}, 
+				#{accountAdjustAmount, jdbcType=NUMERIC},
+				#{accountAdjustReason,jdbcType=VARCHAR}, 
+				#{accountAdjustState,jdbcType=VARCHAR}, 
+				#{accountAdjustApplyUser, jdbcType=VARCHAR},  
+				sysdate,
+				#{accountAdjustAuditUser, jdbcType=VARCHAR},
+				#{accountAdjustAuditExplain, jdbcType=VARCHAR},
+				#{createUser,jdbcType=VARCHAR}, 
+				sysdate
+			  )
+	</insert>
+	
+	<select id="selectAdjustmentCodeSeq" resultType = "java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select ACCOUNT_ADJUST_CODE_SEQ.NEXTVAL as accountAdjustCode from dual ]]>
+	</select>
+
+	<update id="updatetAccountAdjustment" parameterType="AccountAdjustment">
+		update ACCOUNT_ADJUSTMENT
+		<trim prefix="SET" suffixOverrides=",">
+				ACCOUNT_ADJUST_AMOUNT=#{accountAdjustAmount, jdbcType=NUMERIC},
+				ACCOUNT_ADJUST_REASON=#{accountAdjustReason,jdbcType=VARCHAR},
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteAccountAdjustment" parameterType="java.lang.String">
+		delete from ACCOUNT_ADJUSTMENT where ACCOUNT_ADJUST_STATE = '0' and id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	<update id="updateAuditAccountAdjustment" parameterType="AccountAdjustment">
+		update ACCOUNT_ADJUSTMENT
+		<trim prefix="SET" suffixOverrides=",">
+				ACCOUNT_ADJUST_STATE = #{accountAdjustState, jdbcType=VARCHAR},
+				ACCOUNT_ADJUST_AUDIT_USER = #{accountAdjustAuditUser, jdbcType=VARCHAR},
+				ACCOUNT_ADJUST_AUDIT_EXPLAIN = #{accountAdjustAuditExplain, jdbcType=VARCHAR},
+				ACCOUNT_ADJUST_AUDIT_DATE = sysdate,
+				COMPLETE_DATE = sysdate,
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+	
+	
+</mapper>

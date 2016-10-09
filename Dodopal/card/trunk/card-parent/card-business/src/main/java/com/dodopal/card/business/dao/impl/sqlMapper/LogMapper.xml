@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.LogMapper">
+
+	<insert id="insertLog" parameterType="CrdSysLog">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select CRD_SYS_LOG_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO CRD_SYS_LOG
+		  (ID,
+		   SERVER_NAME,
+		   CRD_ORDER_NUM,
+		   PRO_ORDER_NUM,
+		   TRADE_TYPE,
+		   CLASS_NAME,
+		   METHOD_NAME,
+		   TRADE_START,
+		   TRADE_END,
+		   TRADE_TRACK,
+		   IN_PARAS,
+		   IN_PARA_LENGTH,
+		   OUT_PARAS,
+		   RESP_CODE,
+		   RESP_EXPLAIN,
+		   DESCRIPTION,
+		   END_DATE,
+		   CREATE_DATE,
+		   TXN_TYPE)
+		VALUES (#{id, jdbcType=INTEGER}, #{serverName, jdbcType=VARCHAR}, #{crdOrderNum,jdbcType=VARCHAR}, 
+		#{proOrderNum, jdbcType=VARCHAR}, #{tradeType,jdbcType=INTEGER},#{className, jdbcType=VARCHAR}, 
+		#{methodName, jdbcType=VARCHAR}, #{tradeStart,jdbcType=INTEGER}, #{tradeEnd,jdbcType=INTEGER},
+		#{tradeTrack, jdbcType=INTEGER},#{inParas, jdbcType=VARCHAR},#{inParaLength, jdbcType=INTEGER},
+		#{outParas, jdbcType=VARCHAR},#{respCode, jdbcType=VARCHAR},#{respExplain, jdbcType=VARCHAR},
+		#{description, jdbcType=VARCHAR},#{endDate, jdbcType=VARCHAR},SYSDATE,
+		#{txnType, jdbcType=INTEGER})
+	</insert>
+	
+</mapper>

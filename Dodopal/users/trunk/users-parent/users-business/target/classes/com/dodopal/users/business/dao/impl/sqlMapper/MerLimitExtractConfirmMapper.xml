@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerLimitExtractConfirmMapper">
+	<sql id="allColumns">
+	  ID,
+	  PARENT_MER_CODE,
+	  EXTRACT_USER,
+	  to_char(EXTRACT_DATE,'yyyy-MM-dd HH24:MI:SS') as EXTRACT_DATE,
+	  EXTRACT_AMT,
+	  CHILD_MER_CODE,
+	  CONFIRM_USER,
+	  CONFIRM_DATE,
+	  STATE,
+	  CONCEL_USER,
+	  CONCEL_DATE,
+	  PARENT_MER_NAME,
+	  CHILD_MER_NAME
+	</sql>
+	<insert id="insertMerLimitExtractConfirm" parameterType="com.dodopal.users.business.model.MerLimitExtractConfirm">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select MER_LIMIT_EXT_CONFIRM_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO MER_LIMIT_EXTRACT_CONFIRM(ID, PARENT_MER_CODE, EXTRACT_USER, EXTRACT_DATE, EXTRACT_AMT,CHILD_MER_CODE ,STATE,PARENT_MER_NAME,CHILD_MER_NAME)
+		VALUES (#{id, jdbcType=VARCHAR} ,#{parentMerCode, jdbcType=VARCHAR}, #{extractUser, jdbcType=VARCHAR}, sysdate,
+		#{extractAmt, jdbcType=VARCHAR},#{childMerCode,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},#{parentMerName,jdbcType=VARCHAR},#{childMerName,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="findMerLimitExtractConfirmByCode" parameterType="com.dodopal.users.business.model.MerLimitExtractConfirm" resultType="java.lang.Integer">
+		select count(*) from MER_LIMIT_EXTRACT_CONFIRM o where o.EXTRACT_USER =#{extractUser, jdbcType=VARCHAR}  
+		and o.child_mer_code = #{childMerCode,jdbcType=VARCHAR} and o.state = 0
+	</select>
+
+	<!--根据商户号查看连锁加盟网点或者连锁商户的额度提取记录 -->
+	<select id="findMerLimitExtractConfirmByPage" resultType="MerLimitExtractConfirm" resultMap="merLimitExtractConfirmResultMap" parameterType="MerLimitExtractConfirmQuery">
+  		select <include refid="allColumns" /> from MER_LIMIT_EXTRACT_CONFIRM
+ 		<where>
+ 		
+        	<if test="parentMerCode!=null and parentMerCode!=''">   
+            	and PARENT_MER_CODE = #{parentMerCode}  
+        	</if>   
+        	<if test="childMerCode != null and childMerCode !=''">   
+           	    and CHILD_MER_CODE = #{childMerCode}      
+       		</if>
+       		<if test="childMerName != null and childMerName !=''"> 
+       		and instr(CHILD_MER_NAME,#{childMerName}) > 0  
+       		</if>
+       		<if test="extractStartDate != null and extractStartDate !=''"> 
+       		 <![CDATA[
+           		and EXTRACT_DATE >=  to_date(#{extractStartDate},'yyyy-MM-dd')
+           	 ]]>
+       		</if>
+       		<if test="extractEndDate != null and extractEndDate !=''"> 
+           		<![CDATA[
+           		and EXTRACT_DATE <  to_date(#{extractEndDate},'yyyy-MM-dd')+1
+           	 ]]>
+       		</if>
+       		<if test="state != null and state !=''"> 
+       			and STATE = #{state}  
+       		</if>
+    	</where>  
+    	order by id desc
+	</select>
+	<!-- 修改连锁加盟网点或者连锁商户的额度提取状态-->
+	<update id="updateMerLimitExtractConfirmByCode" parameterType="MerLimitExtractConfirm">
+		update MER_LIMIT_EXTRACT_CONFIRM
+		<trim prefix="SET" suffixOverrides=",">
+				STATE = #{state},
+		<if test="concelUser != null and concelUser !=''">   
+	           	 CONCEL_USER = #{concelUser},
+	           	 CONCEL_DATE  = sysdate,     
+	    </if>
+	    <if test="confirmUser != null and confirmUser !=''">   
+	           	 CONFIRM_USER = #{confirmUser},
+	           	 CONFIRM_DATE  = sysdate,     
+	    </if>
+		</trim>
+		<where>
+			 ID = #{id}
+			<if test="parentMerCode!=null and parentMerCode!=''">   
+            	and PARENT_MER_CODE = #{parentMerCode}  
+        	</if> 
+        	<if test="childMerCode != null and childMerCode !=''">   
+           	    and CHILD_MER_CODE = #{childMerCode}      
+       		</if>
+    	</where>
+	</update>
+	
+</mapper>

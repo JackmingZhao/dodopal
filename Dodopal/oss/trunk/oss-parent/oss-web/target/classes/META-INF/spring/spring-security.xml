@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security-3.2.xsd" default-autowire="byType">
+
+
+ 	<security:http pattern="/login" security="none" />  
+    <security:http pattern="/**.js" security="none" />  
+    <security:http pattern="/**.css" security="none" /> 
+    <security:http pattern="/**.img" security="none" />  
+     <security:http pattern="/**.ico" security="none" />  
+    
+    <!-- SecurityContext -->
+    <security:http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint"
+            access-decision-manager-ref="accessDecisionManager" use-expressions="true" access-denied-page="/login.ftl">
+        <security:logout logout-url="/logout"/>
+        
+        <security:intercept-url pattern="/index" access="isAuthenticated()" />
+        <security:intercept-url pattern="/" access="isAuthenticated()" />
+        <security:intercept-url pattern="/basic/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/loadOrder/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/merchant/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/payment/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/product/**" access="isAuthenticated()" />  
+        <security:intercept-url pattern="/systems/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/pos/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/crdSys/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/account/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/pay/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/finance/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/logManage/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/operationalReport/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/statistics/**" access="isAuthenticated()" />
+        <security:custom-filter ref="formLoginFilter" position="FORM_LOGIN_FILTER"/>
+    </security:http>
+
+    <bean id="loginUrlAuthenticationEntryPoint" class="com.dodopal.oss.business.auth.AuthenticationEntryPoint">
+        <property name="loginFormUrl" value="/login"/>
+    </bean>
+
+    <bean id="formLoginFilter"
+          class="com.dodopal.oss.business.auth.DefaultUsernamePasswordAuthenticationFilter">
+        <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
+        <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
+        <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
+        <property name="filterProcessesUrl" value="/app/j_spring_security_check"/>
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="authenticationDetailsSource"
+          class="com.dodopal.oss.business.auth.WebAuthenticationDetailsSource">
+    </bean>
+    
+    <bean id="authenticationFailureHandler" class="com.dodopal.oss.business.auth.AuthenticationFailureHandler">
+        <property name="defaultFailureUrl" value="/login?error=true" />
+    </bean>
+    
+    <security:global-method-security secured-annotations="enabled" jsr250-annotations="enabled">
+    </security:global-method-security>
+    
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="customAuthenticationProvider" />
+    </security:authentication-manager>
+
+    <bean id="customAuthenticationProvider" class="com.dodopal.oss.business.auth.DomainAuthenticationProvider">
+    </bean>
+
+    <bean id="md5PasswordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+    
+    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <property name="decisionVoters">  
+            <list>
+           		<bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+            </list>  
+        </property>  
+    </bean>  
+
+</beans>

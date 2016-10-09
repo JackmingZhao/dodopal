@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.DdicResMsgMapper">
+
+
+	<select id="findDdicResMsgsByPage" resultType="DdicResMsg" resultMap="ddicResMsgResultMap" parameterType="DdicResMsgQuery">
+		SELECT t.ID, t.MSG_CODE, t.MSG_TYPE, t.MESSAGE, a.NICK_NAME AS CREATE_USER, t.CREATE_DATE, b.NICK_NAME AS UPDATE_USER, t.UPDATE_DATE 
+		FROM RESPONSE_MESSAGE t
+		LEFT JOIN V_USER_INFO a ON t.CREATE_USER = a.ID
+		LEFT JOIN V_USER_INFO b ON t.UPDATE_USER = b.ID
+		<where>
+			<if test="msgCode != null and msgCode !=''">
+				AND MSG_CODE LIKE '%'||#{msgCode}||'%'
+			</if>
+			<if test="msgType != null and msgType !=''">
+				AND MSG_TYPE LIKE '%'||#{msgType}||'%'
+			</if>
+		</where>
+		<!-- ORDER BY ID DESC -->
+		ORDER BY CREATE_DATE DESC
+	</select>
+	
+	<select id="findDdicResMsgById" resultType="DdicResMsg" resultMap="ddicResMsgResultMap" parameterType="java.lang.String">
+		SELECT t.ID, t.MSG_CODE, t.MSG_TYPE, t.MESSAGE, a.NICK_NAME AS CREATE_USER, t.CREATE_DATE, b.NICK_NAME AS UPDATE_USER, t.UPDATE_DATE 
+		FROM ((SELECT * FROM RESPONSE_MESSAGE WHERE ID = #{id} )) t
+		LEFT JOIN V_USER_INFO a ON t.CREATE_USER=a.ID
+		LEFT JOIN V_USER_INFO b ON t.UPDATE_USER=b.ID
+	</select>
+	
+	<insert id="insertDdicResMsg" parameterType="DdicResMsg">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		SELECT REP_MSG_ID_SEQ.NEXTVAL FROM DUAL
+   		</selectKey>
+   		INSERT INTO RESPONSE_MESSAGE(ID, CREATE_USER, CREATE_DATE, MSG_CODE, MSG_TYPE, MESSAGE)
+		VALUES (#{id}, #{createUser}, #{createDate}, #{msgCode}, #{msgType}, #{message})
+	</insert>
+	
+	<update id="updateDdicResMsg" parameterType="DdicResMsg">
+		UPDATE RESPONSE_MESSAGE SET
+			<if test="msgCode != null and msgCode != ''">
+				MSG_CODE = #{msgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="msgType != null and msgType != ''">
+				MSG_TYPE = #{msgType},
+			</if>
+			<if test="message != null and message != ''">
+				MESSAGE = #{message},
+			</if>
+			<if test="updateUser != null and updateUser != ''">
+				UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			UPDATE_DATE=sysdate
+			
+		WHERE ID=#{id}
+	</update>
+	 
+	<delete id="batchDelDdicResMsg">
+		DELETE FROM RESPONSE_MESSAGE WHERE ID IN
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+
+</mapper>

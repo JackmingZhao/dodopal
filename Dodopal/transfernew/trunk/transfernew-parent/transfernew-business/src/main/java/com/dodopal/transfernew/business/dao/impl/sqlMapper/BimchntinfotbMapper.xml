@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.BimchntinfotbMapper">
+<sql id="allBimchntinfotbColumns">
+	ibim.MCHNITID,
+	ibim.MCHNITNAME,
+	ibim.PAYPWD,
+	ibim.BACKPAYPWD,
+	ibim.RETURNURL,
+	ibim.BIUNITTBPKID,
+	ibim.PARENTMCHNITID,
+	ibim.LINKMAN,
+	ibim.TEL,
+	ibim.FAX,
+	ibim.ADDRESS,
+	ibim.ZIPCODE,
+	ibim.STATUS,
+	ibim.BANKACC,
+	ibim.BANKACCNAME,
+	ibim.UNIONCODE,
+	ibim.HEADFLAG,
+	ibim.POINT,
+	ibim.TRADEID,
+	ibim.PROVINCEID,
+	ibim.CITYID,
+	ibim.LASTTIME,
+	ibim.AREAID,
+	ibim.MCHZCFLAG,
+	ibim.QUERYURL,
+	ibim.ORDERURL,
+	ibim.MCHNITIP,
+	ibim.POSFALG,
+	ibim.RATEAMT,
+	ibim.TRANSFERMARK,
+	ibim.TRANSFERTYPE,
+	ibim.SALE,
+	ibim.SALEBAK,
+	ibim.SETSALE,
+	ibim.SETSALEBAK
+</sql>
+<!-- TEST 测试 -->
+<select id="findBimchntinfotb" resultType="Bimchntinfotb" resultMap="bimchntinfotbResultMap">
+select <include refid="allBimchntinfotbColumns" /> 
+from icpay.bimchntinfotb ibim
+left join icpay.BIMCHNTINFOTB_EXTEND ibe on ibim.mchnitid = ibe.mchnitid
+where ibim.mchnitid in (select tm.mchntid from transfer_merchant tm)
+<!-- and (ibim.trans_flag != '0' or ibim.trans_flag is null) and ibim.mchnitid = #{mchnitid} -->
+    and (ibe.trans_flag is null or ibe.trans_flag='1') and ibim.mchnitid = #{mchnitid}
+   </select>
+<!-- 数据迁移连锁商户 -->
+<select id="findAllBimchntinfotb" resultType="Bimchntinfotb" resultMap="bimchntinfotbResultMap">
+select <include refid="allBimchntinfotbColumns" /> 
+from icpay.bimchntinfotb ibim
+left join icpay.BIMCHNTINFOTB_EXTEND ibe on ibim.mchnitid = ibe.mchnitid
+where ibim.mchnitid in (select tm.mchntid from transfer_merchant tm)
+   <!-- and (ibim.trans_flag != '0' or ibim.trans_flag is null) -->
+   and (ibe.trans_flag is null or ibe.trans_flag='1')
+</select>
+<!-- 根据userid反推出上级商户的信息 -->
+<select id="findBimchntinfotbChanJoin" resultType="Bimchntinfotb" resultMap="bimchntinfotbResultMap">
+select <include refid="allBimchntinfotbColumns" />
+   from icpay.bimchntinfotb ibim
+  where ibim.mchnitid in （
+   select substr(ibpos.mchnitid, 0, 15) mchnitid
+           from icpay.biposinfotb ibpos
+          where ibpos.posid in
+                (select ibip.posid
+                   from icpay.biposinuserstb ibip
+                  where ibip.userid in
+                        (select isys.userid
+                           from icpay.sysuserstb isys
+                          where isys.userid = #{userid})))
+</select>
+
+<!-- 更新老系统迁移标志，0已迁移，1未迁移 -->
+<update id="updateTransFlag" parameterType="java.lang.String">
+	update icpay.bimchntinfotb set trans_flag='0'
+	where mchnitid=#{mchnitid}
+</update>
+
+<!-- 老系统商户中间表增加记录 -->
+<insert id="addBimchntinfotbExtend">
+	insert into ICPAY.BIMCHNTINFOTB_EXTEND(mchnitid,trans_flag) 
+	values(#{mchnitid},#{transFlag})
+</insert>
+
+
+
+</mapper>

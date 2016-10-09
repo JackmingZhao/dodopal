@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.payment.business.dao.PayWayMapper">
+	<resultMap type="PayWay" id="payWayResultMap">
+		<result property="id" column="ID" />
+		<result property="payType" column="PAY_TYPE" />
+		<result property="payName" column="PAY_WAY_NAME" />
+		<result property="payLogo" column="IMAGE_NAME" />
+		<result property="payServiceRate" column="PAY_SERVICE_RATE" />
+		<result property="proceRate" column="PROCE_RATE" />
+		<result property="bankGatewayType" column="BANK_GATEWAY_TYPE" />
+		<result property="bankGatewayName" column="BANK_GATEWAY_NAME" />
+	</resultMap>
+</mapper>

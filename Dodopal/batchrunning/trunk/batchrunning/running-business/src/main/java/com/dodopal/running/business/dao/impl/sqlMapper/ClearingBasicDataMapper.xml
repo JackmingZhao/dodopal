@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.ClearingBasicDataMapper">
+	
+	<!-- 根据订单交易号查询清分基础信息 -->
+	<select id="getClearingBasicDataByOrderNoAndCustomerNo" resultType="ClearingBasicData" parameterType="java.lang.String">
+		select ID                             as id,
+		       ORDER_NO                       as orderNo,
+		       ORDER_DATE                     as orderDate,
+		       ORDER_DAY                      as orderDay,
+		       CUSTOMER_NO                    as customerNo,
+		       CUSTOMER_NAME                  as customerName,
+		       CUSTOMER_TYPE                  as customerType,
+		       BUSINESS_TYPE                  as businessType,
+		       CUSTOMER_RATE_TYPE             as customerRateType,
+		       CUSTOMER_RATE                  as customerRate,
+		       ORDER_AMOUNT                   as orderAmount,
+		       CUSTOER_REAL_PAY_AMOUNT        as customerRealPayAmount,
+		       CUSTOMER_SHOULD_PROFIT         as customerShouldProfit,
+		       CUSTOMER_REAL_PROFIT           as customerRealProfit,
+		       CUSTOMER_ACCOUNT_SHOULD_AMOUNT as customerAccountShouldAmount,
+		       CUSTOMER_ACCOUNT_REAL_AMOUNT   as customerAccountRealAmount,
+		       CUSTOMER_CLEARING_FLAG         as customerClearingFlag,
+		       CUSTOMER_CLEARING_TIME         as customerClearingTime,
+		       CUSTOMER_SETTLEMENT_FLAG       as customerSettlementFlag,
+		       CUSTOMER_SETTLEMENT_TIME       as customerSettlementTime,
+		       DDP_GET_MERCHANT_PAY_FEE       as ddpGetMerchantPayFee,
+		       DDP_TO_CUSTOMER_REAL_FEE       as ddpToCustomerRealFee,
+		       SUB_MERCHANT_CODE              as subMerchantCode,
+		       SUB_MERCHANT_NAME              as subMerchantName,
+		       SUB_MERCHANT_SHOULD_PROFIT     as subMerchantShouldProfit,
+		       PAY_GATEWAY                    as payGateWay,
+		       PAY_TYPE                       as payType,
+		       PAY_WAY                        as payWay,
+		       SERVICE_RATE_TYPE              as serviceRateType,
+		       SERVICE_RATE                   as serviceRate,
+		       DDP_BANK_RATE                  as ddpBankRate,
+		       DDP_TO_BANK_FEE                as ddpToBankFee,
+		       DDP_FROM_BANK_SHOULD_FEE       as ddpFromBankShouldFee,
+		       DDP_FROM_BANK_REAL_FEE         as ddpFromBankRealFee,
+		       BANK_CLEARING_FLAG             as bankClearingFlag,
+		       BANK_CLEARING_TIME             as bankClearingTime,
+		       BANK_SETTLEMENT_FLAG           as bankSettlementFlag,
+		       BANK_SETTLEMENT_TIME           as bankSettlementTime,
+		       SUPPLIER_CODE                  as supplierCode,
+		       SUPPLIER_NAME                  as supplierName,
+		       CITY_CODE                      as cityCode,
+		       CITY_NAME                      as cityName,
+		       DDP_TO_SUPPLIER_SHOULD_AMOUNT  as ddpToSupplierShouldAmount,
+		       DDP_TO_SUPPLIER_REAL_AMOUNT    as ddpToSupplierRealAmount,
+		       DDP_SUPPLIER_RATE              as ddpSupplierRate,
+		       SUPPLIER_TO_DDP_SHOULD_REBATE  as supplierToDdpShouldRebate,
+		       SUPPLIER_TO_DDP_REAL_REBATE    as supplierToDdpRealRebate,
+		       SUPPLIER_CLEARING_FLAG         as supplierClearingFlag,
+		       SUPPLIER_CLEARING_TIME         as supplierClearingTime,
+		       SUPPLIER_SETTLEMENT_FLAG       as supplierSettlementFlag,
+		       SUPPLIER_SETTLEMENT_TIME       as supplierSettlementTime,
+		       ORDER_FROM                     as orderFrom,
+		       ORDER_CIRCLE                   as orderCircle,
+		       TOP_MERCHANT_PROFIT_FLAG       as topMerchantProfitFlag
+		  from clearing_basic_data
+		 where ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+		   and CUSTOMER_NO = #{customerNo,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 更新清分基础信息表状态 (（与客户清分状态 = 1；客户账户实际加值 = 订单金额；与客户清分日期 = sysdate）)-->
+	<update id="updateCustomerClearingStateAfterAccountRecharge" parameterType="ClearingBasicData">
+		update clearing_basic_data t set
+			   t.CUSTOMER_ACCOUNT_REAL_AMOUNT=#{customerAccountRealAmount,jdbcType=BIGINT},
+			   t.CUSTOMER_CLEARING_FLAG=#{customerClearingFlag,jdbcType=VARCHAR},
+			   t.CUSTOMER_CLEARING_TIME=to_date(to_char(sysdate,'yyyy-MM-dd') ,'yyyy-MM-dd')
+		 where t.ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+		   and CUSTOMER_NO = #{customerNo,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 更新清分基础信息表状态 （与供应商清分状态=0；与客户清分状态=0；） -->
+	<update id="updateCustomerClearingStateAfterAccountUnfreeze" parameterType="ClearingBasicData">
+		update clearing_basic_data t set
+			   t.SUPPLIER_CLEARING_FLAG=#{supplierClearingFlag,jdbcType=VARCHAR},
+			   t.CUSTOMER_CLEARING_FLAG=#{customerClearingFlag,jdbcType=VARCHAR}
+	     where t.ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+		   and CUSTOMER_NO = #{customerNo,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 更新清分基础信息表状态 （与客户清分状态=1；与客户清分日期=sysDate；商户实际分润=商户应得分润） -->
+	<update id="updateCustomerClearingStateAfterAccountDeduct" parameterType="ClearingBasicData">
+		update clearing_basic_data t set
+			   t.CUSTOMER_REAL_PROFIT=#{customerRealProfit,jdbcType=BIGINT},
+			   t.CUSTOMER_CLEARING_FLAG=#{customerClearingFlag,jdbcType=VARCHAR},
+			<if test="supplierClearingFlag==1">
+				t.SUPPLIER_CLEARING_FLAG=#{supplierClearingFlag,jdbcType=VARCHAR},
+				t.DDP_TO_SUPPLIER_REAL_AMOUNT=#{ddpToSupplierRealAmount,jdbcType=BIGINT},
+				t.SUPPLIER_TO_DDP_REAL_REBATE=#{supplierToDdpRealRebate,jdbcType=BIGINT},
+				t.SUPPLIER_CLEARING_TIME=to_date(to_char(sysdate,'yyyy-MM-dd') ,'yyyy-MM-dd'),
+			</if>
+			   t.CUSTOMER_CLEARING_TIME=to_date(to_char(sysdate,'yyyy-MM-dd') ,'yyyy-MM-dd')
+		 where t.ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+		   and CUSTOMER_NO = #{customerNo,jdbcType=VARCHAR}
+	</update>
+	
+	
+	
+	
+	<!--                    下面处理   一卡通消费订单异常处理   begin                                     -->
+	<!-- 
+		更新  清分基础数据表  数据
+		 与客户清分状态=1；
+      	 与客户清分日期=sysDate
+        DDP实际转给商户业务费用=ol.订单金额 - ol.DDP应收商户支付方式服务费
+		与银行清分状态=1；
+       	与银行清分日期=sysDate
+	    DDP支付给银行的手续费 = ol.订单金额 *  ol. DDP与银行的手续费率
+        DDP从银行实收业务费用 = ol.DDP从银行应收业务费用 -  ol.DDP支付给银行的手	续费
+	 -->
+	<update id="updateClearingBasicData" parameterType="ClearingBasicData">
+		update clearing_basic_data t set t.CUSTOMER_CLEARING_FLAG=#{customerClearingFlag,jdbcType=VARCHAR},
+		t.CUSTOMER_CLEARING_TIME = to_date(to_char(sysdate,'yyyy-MM-dd') ,'yyyy-MM-dd'),t.DDP_TO_CUSTOMER_REAL_FEE=#{ddpToCustomerRealFee},
+		t.BANK_CLEARING_FLAG = #{bankClearingFlag,jdbcType=VARCHAR},
+		<if test="bankClearingTime != '' and bankClearingTime != null">
+			t.BANK_CLEARING_TIME =to_date(to_char(sysdate,'yyyy-MM-dd') ,'yyyy-MM-dd'),
+		</if>
+		t.DDP_TO_BANK_FEE = #{ddpToBankFee},t.DDP_FROM_BANK_REAL_FEE = #{ddpFromBankRealFee}
+		where t.order_no = #{orderNo,jdbcType=VARCHAR} AND t.customer_no = #{customerNo,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>

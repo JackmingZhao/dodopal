@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.PosLogMapper">
+
+    <sql id="sqlColumn">
+		        T.ID,				
+				T.CREATE_USER,				
+				T.CREATE_DATE,			
+				T.UPDATE_USER,			
+				T.UPDATE_DATE,			
+				T.CODE,				
+				T.MER_CODE,				
+				T.MER_NAME,				
+				T.OPER_STATUS,				
+				T.OPER_NAME,
+				T.SOURCE
+			 
+	</sql>
+	<!-- 按条件查询用户列表'%'||#{supplierID}||'%' -->
+	<select id="findPosLogListByPage" resultType="PosLog" resultMap="posLogResultMap" parameterType="PosLogQuery">
+		select  
+		<include refid="sqlColumn" /> 
+		FROM POS_LOG t
+		<where>	
+		     <if test="code!=null and code !=''">   
+              t.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merCode!=null and merCode !=''">   
+             AND t.MER_CODE LIKE '%'||#{merCode}||'%'      
+        	</if>   
+        	<if test="merName != null and merName !=''">   
+             AND t.MER_NAME LIKE '%'||#{merName}||'%'   
+        	</if>   
+        	<if test="operStatus!= null and operStatus!=''">   
+           	 AND t.OPER_STATUS = #{operStatus}    
+       		</if>
+            <if test="operName!= null and operName!=''">   
+           	 AND t.OPER_NAME LIKE '%'||#{operName}||'%'   
+       		</if>
+       		<if test="source!= null and source!=''">   
+           	 AND t.SOURCE =#{source}   
+       		</if>         		      		     		
+    	</where>  
+    	ORDER by t.ID DESC 
+	</select>
+	
+	
+	
+	
+	<!-- pos操作日志 导出 -->
+	<select id="findPosLogByList" resultType="PosLog" resultMap="posLogResultMap" parameterType="PosLogQuery">
+		select  
+		<include refid="sqlColumn" /> 
+		FROM POS_LOG t
+		<where>	
+		     <if test="code!=null and code !=''">   
+              t.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merCode!=null and merCode !=''">   
+             AND t.MER_CODE LIKE '%'||#{merCode}||'%'      
+        	</if>   
+        	<if test="merName != null and merName !=''">   
+             AND t.MER_NAME LIKE '%'||#{merName}||'%'   
+        	</if>   
+        	<if test="operStatus!= null and operStatus!=''">   
+           	 AND t.OPER_STATUS = #{operStatus}    
+       		</if>
+            <if test="operName!= null and operName!=''">   
+           	 AND t.OPER_NAME LIKE '%'||#{operName}||'%'   
+       		</if>
+       		<if test="source!= null and source!=''">   
+           	 AND t.SOURCE =#{source}   
+       		</if>         		      		     		
+    	</where>  
+    	ORDER by t.ID DESC 
+	</select>
+	
+
+	<insert id="insertPosLog" parameterType="PosLog" >
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select POS_LOG_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO POS_LOG T
+		     (<include refid="sqlColumn" />)
+		VALUES (
+			#{id, jdbcType=VARCHAR}, 
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{updateUser, jdbcType=VARCHAR}, 
+			sysdate,
+			#{code, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR}, 
+			#{merName, jdbcType=VARCHAR},
+			#{operStatus, jdbcType=VARCHAR}, 
+			#{operName, jdbcType=VARCHAR},
+			#{source, jdbcType=VARCHAR}
+		    )
+	</insert>
+	
+</mapper>

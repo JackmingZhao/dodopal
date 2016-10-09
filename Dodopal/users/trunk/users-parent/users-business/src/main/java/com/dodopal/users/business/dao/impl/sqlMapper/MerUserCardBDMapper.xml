@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerUserCardBDMapper">
+	<sql id="merUserCardColumn">
+		usercard.ID,usercard.CREATE_USER,usercard.CREATE_DATE,usercard.UPDATE_USER,
+		usercard.UPDATE_DATE,usercard.MER_USER_NAME,usercard.CARD_NAME,
+		usercard.CARD_CODE,usercard.BUNDLING_TYPE,usercard.UNBUNDLING_USER,usercard.UNBUNDLING_DATE,
+		usercard.REMARK,usercard.CARD_CITY_NAME,usercard.CARD_TYPE,
+	</sql>
+	<select id="findMerUserCardBD" resultType="MerUserCardBD" resultMap="merUserCardBDResultMap" 
+	parameterType="MerUserCardBD">
+		select <include refid="merUserCardColumn" />
+            	meruser.MER_USER_NICKNAME as USER_NAME,
+				ossuser.NICK_NAME as UN_BDING_NAME
+		 from
+		MER_USER_CARD_BD usercard left join
+		 MERCHANT_USER  meruser on usercard.mer_user_name=meruser.mer_user_name left join V_USER_INFO ossuser on
+		ossuser.login_name = usercard.unbundling_user
+		<where>
+        	<if test="merUserNameName !=null and merUserNameName !=''">   
+            	meruser.MER_USER_NICKNAME LIKE CONCAT(CONCAT('%',#{merUserNameName}),'%')
+        	</if>
+        	<if test="merUserName !=null and merUserName !=''">   
+             and usercard.MER_USER_NAME LIKE CONCAT(CONCAT('%',#{merUserName}),'%')
+        	</if>       
+        	<if test="cardCode != null and cardCode !=''">   
+           	 AND usercard.CARD_CODE LIKE CONCAT(CONCAT('%',#{cardCode}) ,'%')    
+       		</if>
+            <if test="bundLingType != null and bundLingType !=''">   
+           	 AND usercard.BUNDLING_TYPE = #{bundLingType}  
+       		</if>
+       		<if test="unBundLingDate != null and unBundLingDate !=''">   
+           	 AND usercard.UNBUNDLING_DATE =  #{unBundLingDate} 
+       		</if>
+       		<if test="unBundLingDateStart != null and unBundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.UNBUNDLING_DATE > #{unBundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="unBundLingDateEnd != null and unBundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND  usercard.UNBUNDLING_DATE < #{unBundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		
+       		<if test="bundLingDateStart != null and bundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE >= #{bundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		
+       		<if test="bundLingDateEnd != null and bundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE  < #{bundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		<if test="cardType != null and cardType !=''">   
+           	 AND CARD_TYPE = #{cardType, jdbcType=VARCHAR}
+       		</if>
+    	</where>  
+    	ORDER by usercard.id DESC 
+	</select>
+	<select id="findMerUserCardBDCount" parameterType="MerUserCardBD" resultType="java.lang.Integer">
+		SELECT COUNT(1) from MER_USER_CARD_BD T WHERE T.MER_USER_NAME=#{merUserName} and BUNDLING_TYPE = '0'
+	</select>
+	<select id="findMerUserCardBDByPage" resultType="MerUserCardBD" resultMap="merUserCardBDResultMap" 
+	parameterType="MerUserCardBDQuery">
+		select <include refid="merUserCardColumn" />
+            	meruser.MER_USER_NICKNAME as USER_NAME,
+				ossuser.NICK_NAME as UN_BDING_NAME
+		 from
+		MER_USER_CARD_BD usercard left join
+		 MERCHANT_USER  meruser on usercard.mer_user_name=meruser.mer_user_name left join V_USER_INFO ossuser on
+		ossuser.id = usercard.unbundling_user
+		<where>
+			<if test="merUserNameName !=null and merUserNameName !=''">   
+            	meruser.MER_USER_NICKNAME LIKE '%'||#{merUserNameName}||'%'
+        	</if>
+        	<if test="merUserName !=null and merUserName !=''">   
+             and usercard.MER_USER_NAME LIKE '%'||#{merUserName}||'%'
+        	</if>       	
+        	<if test="cardCode != null and cardCode !=''">   
+           	 AND usercard.CARD_CODE LIKE '%'||#{cardCode}||'%'
+       		</if>
+            <if test="bundLingType != null and bundLingType !=''">   
+           	 AND usercard.BUNDLING_TYPE = #{bundLingType}  
+       		</if>
+       		<if test="unBundLingDate != null and unBundLingDate !=''">   
+           	 AND usercard.UNBUNDLING_DATE =  #{unBundLingDate} 
+       		</if>
+       		<if test="unBundLingDateStart != null and unBundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.UNBUNDLING_DATE > #{unBundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="unBundLingDateEnd != null and unBundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND usercard.UNBUNDLING_DATE < #{unBundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		
+       		<if test="bundLingDateStart != null and bundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE >= #{bundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="bundLingDateEnd != null and bundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE  < #{bundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		<if test="cardType != null and cardType !=''">   
+           	 AND CARD_TYPE = #{cardType, jdbcType=VARCHAR}
+       		</if>
+    	</where>  
+    	ORDER by usercard.id DESC 
+	</select>
+	
+	<insert id="saveMerUserCardBD" parameterType="MerUserCardBD">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_USER_CD_BD_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MER_USER_CARD_BD 
+			(ID,
+			CREATE_USER,
+			CREATE_DATE,
+			UPDATE_USER,
+			UPDATE_DATE,
+		    CARD_CODE,
+		    BUNDLING_TYPE,
+		    REMARK,
+		    MER_USER_NAME,
+		    CARD_NAME,
+		   	CARD_TYPE,
+		   	CARD_CITY_NAME
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+		 	#{createUser,jdbcType=VARCHAR},
+			sysdate,
+			#{updateUser,jdbcType=VARCHAR},
+			sysdate,
+			#{cardCode, jdbcType=VARCHAR}, 
+			#{bundLingType, jdbcType=VARCHAR}, 
+			#{remark, jdbcType=VARCHAR},
+			#{merUserName, jdbcType=VARCHAR},
+			#{cardName, jdbcType=VARCHAR},
+			#{cardType, jdbcType=VARCHAR},
+			#{cardCityName, jdbcType=VARCHAR}
+			)
+	</insert>
+	<!-- 解绑用户 -->
+	<update id="unBundlingCard" parameterType="java.util.Map">
+	update MER_USER_CARD_BD t set
+		t.BUNDLING_TYPE = '1' ,
+		t.unbundling_user = #{name, jdbcType=VARCHAR},
+		t.UNBUNDLING_DATE = sysdate,t.UPDATE_DATE = sysdate,
+		t.UPDATE_USER = #{name, jdbcType=VARCHAR}
+		where t.id in
+    	<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+	
+	<select id="findMerUserCardById" resultType="MerUserCardBD" resultMap="merUserCardBDResultMap">
+	   select <include refid="merUserCardColumn" />
+            	meruser.MER_USER_NICKNAME as USER_NAME,
+				ossuser.NICK_NAME as UN_BDING_NAME,
+				meruser.USER_CODE as  USER_CODE
+		 from
+		MER_USER_CARD_BD usercard left join
+		 MERCHANT_USER  meruser on usercard.mer_user_name=meruser.mer_user_name left join V_USER_INFO ossuser on
+		ossuser.login_name = usercard.unbundling_user
+		where usercard.ID = #{id}
+	</select>
+	
+	<update id="editUserCard" parameterType="MerUserCardBD">
+	  update MER_USER_CARD_BD t set
+		t.REMARK = #{remark, jdbcType=VARCHAR},
+		t.CARD_NAME = #{cardName, jdbcType=VARCHAR},
+		t.UPDATE_DATE = sysdate,
+		t.UPDATE_USER = #{updateUser, jdbcType=VARCHAR}
+		where t.ID = #{id}
+	</update>
+	
+	<update id="updateBindType" parameterType="MerUserCardBD">
+	  update MER_USER_CARD_BD t set
+		t.UPDATE_DATE = sysdate,
+		t.CREATE_DATE = sysdate,
+		t.UPDATE_USER = '',
+		t.BUNDLING_TYPE = '0',
+		t.CARD_NAME = #{cardName, jdbcType=VARCHAR},
+		t.REMARK = #{remark, jdbcType=VARCHAR},
+		t.unbundling_user = '',
+		t.UNBUNDLING_DATE = null,
+		t.CARD_TYPE=#{cardType, jdbcType=VARCHAR},
+		t.CARD_CITY_NAME = #{cardCityName, jdbcType=VARCHAR}
+		where 
+		t.MER_USER_NAME = #{merUserName}
+		and t.CARD_CODE = #{cardCode}	
+	</update>
+	
+	<select id="findMerUserCardBDByCardCode" resultType="MerUserCardBD" resultMap="merUserCardBDResultMap">
+	   select <include refid="merUserCardColumn" />
+            	meruser.MER_USER_NICKNAME as USER_NAME,
+				ossuser.NICK_NAME as UN_BDING_NAME
+		 from
+		MER_USER_CARD_BD usercard left join
+		 MERCHANT_USER  meruser on usercard.mer_user_name=meruser.mer_user_name left join V_USER_INFO ossuser on
+		ossuser.login_name = usercard.unbundling_user
+		where usercard.CARD_CODE = #{cardCode}
+	</select>
+	
+	<select id="getExportExcelMerUserCardList" resultType="MerUserCardBD" resultMap="merUserCardBDResultMap" 
+	parameterType="MerUserCardBDQuery">
+		select <include refid="merUserCardColumn" />
+            	meruser.MER_USER_NICKNAME as USER_NAME,
+				ossuser.NICK_NAME as UN_BDING_NAME
+		 from
+		MER_USER_CARD_BD usercard left join
+		 MERCHANT_USER  meruser on usercard.mer_user_name=meruser.mer_user_name left join V_USER_INFO ossuser on
+		ossuser.id = usercard.unbundling_user
+		<where>
+			<if test="merUserNameName !=null and merUserNameName !=''">   
+            	meruser.MER_USER_NICKNAME LIKE '%'||#{merUserNameName}||'%'
+        	</if>
+        	<if test="merUserName !=null and merUserName !=''">   
+             and usercard.MER_USER_NAME LIKE '%'||#{merUserName}||'%'
+        	</if>       	
+        	<if test="cardCode != null and cardCode !=''">   
+           	 AND usercard.CARD_CODE LIKE '%'||#{cardCode}||'%'
+       		</if>
+            <if test="bundLingType != null and bundLingType !=''">   
+           	 AND usercard.BUNDLING_TYPE = #{bundLingType}  
+       		</if>
+       		<if test="unBundLingDate != null and unBundLingDate !=''">   
+           	 AND usercard.UNBUNDLING_DATE =  #{unBundLingDate} 
+       		</if>
+       		<if test="unBundLingDateStart != null and unBundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.UNBUNDLING_DATE > #{unBundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="unBundLingDateEnd != null and unBundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND usercard.UNBUNDLING_DATE < #{unBundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		
+       		<if test="bundLingDateStart != null and bundLingDateStart !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE >= #{bundLingDateStart,jdbcType=DATE}
+           	 ]]>
+       		</if>
+       		<if test="bundLingDateEnd != null and bundLingDateEnd !=''">   
+           	  <![CDATA[
+           	 AND usercard.CREATE_DATE  < #{bundLingDateEnd,jdbcType=DATE}+1
+           	 ]]>
+       		</if>
+       		<if test="cardType != null and cardType !=''">   
+           	 AND CARD_TYPE = #{cardType, jdbcType=VARCHAR}
+       		</if>
+    	</where>  
+    	ORDER by usercard.id DESC 
+	</select>
+	
+	<select id="findUserCardRecordByPage" resultType="UserCardRecord" resultMap="UserCardRecordResultMap" parameterType="UserCardRecordQuery">
+		SELECT * FROM (
+				SELECT 	po.PRD_ORDER_DATE 		AS ORDER_DATE, 			po.TXN_AMT 			AS TXN_AMT, 
+						po.MER_NAME 			AS MER_NAME, 			po.BEFBAL 			AS BEFBAL, 
+						po.BLACK_AMT 			AS BLACK_AMT, 			po.CARD_FACENO 		AS CARD_FACENO, 
+						po.user_id 				AS user_id, 			'CZ' 				AS TYPE,
+						po.pro_order_num		AS ORDER_NUM, 			po.pro_order_states AS STATUS
+				FROM PRD_ORDER po
+				WHERE po.order_cardno in ( 
+						select card_code 
+						from MER_USER_CARD_BD muc 
+						where muc.mer_user_name = #{userName} 
+							and muc.bundling_type = '0'
+					)
+					and po.mer_user_type = '99'
+			UNION 
+				SELECT 	ppo.ORDER_DATE 		AS ORDER_DATE, 			ppo.received_price 		AS TXN_AMT, 
+						ppo.CUSTOMER_NAME 	AS MER_NAME, 			ppor.befbal 			AS BEFBAL, 
+						ppor.black_amt 		AS BLACK_AMT, 			ppor.card_faceno 		AS CARD_FACENO, 
+						ppo.user_id 		AS user_id, 			'XF' 					AS TYPE,
+						ppo.order_num		AS ORDER_NUM, 			ppo.states 				As STATUS
+				FROM PRD_PURCHASE_ORDER ppo, PRD_PURCHASE_ORDER_RECORD ppor
+				WHERE ppo.order_num = ppor.order_num
+					and ppor.CARD_FACENO in (
+						select card_code
+						from MER_USER_CARD_BD muc 
+						where muc.mer_user_name = #{userName} 
+						and muc.bundling_type = '0'
+					)
+					and ppo.customer_type = '99'
+		) T 
+		<where>
+			<if test="startDate != null and startDate !=''">   
+           	<![CDATA[
+           	AND to_char(T.ORDER_DATE, 'yyyy-MM-dd')  >= #{startDate}
+           	]]>
+       		</if>
+       		<if test="endDate != null and endDate !=''">   
+           	<![CDATA[
+           	AND to_char(T.ORDER_DATE, 'yyyy-MM-dd')  <= #{endDate}
+           	]]>
+       		</if>
+		</where>
+		ORDER BY T.ORDER_DATE DESC
+	</select>
+	
+	<select id="findCardCZRecordInfoByOrderNum" resultType="UserCardRecord" resultMap="UserCardRecordResultMap" >
+		SELECT 	po.PRD_ORDER_DATE 		AS ORDER_DATE, 			po.TXN_AMT 			AS TXN_AMT, 
+				po.MER_NAME 			AS MER_NAME, 			po.BEFBAL 			AS BEFBAL, 
+				po.BLACK_AMT 			AS BLACK_AMT, 			po.CARD_FACENO 		AS CARD_FACENO, 
+				po.user_id 				AS user_id, 			'CZ' 				AS TYPE,
+				po.pro_order_num		AS ORDER_NUM, 			po.pro_order_states AS STATUS
+		FROM PRD_ORDER PO, MER_USER_CARD_BD muc
+		WHERE muc.card_code = po.order_cardno
+			AND muc.bundling_type = 0
+			AND PO.PRO_ORDER_NUM = #{orderNum}
+		ORDER BY ORDER_DATE DESC
+	</select>
+	
+	<select id="findCardXFRecordInfoByOrderNum" resultType="UserCardRecord" resultMap="UserCardRecordResultMap" >
+		SELECT 	ppo.ORDER_DATE 		AS ORDER_DATE, 			ppo.received_price 		AS TXN_AMT, 
+				ppo.CUSTOMER_NAME 	AS MER_NAME, 			ppor.befbal 			AS BEFBAL, 
+				ppor.black_amt 		AS BLACK_AMT, 			ppor.card_faceno 		AS CARD_FACENO, 
+				ppo.user_id 		AS user_id, 			'XF' 					AS TYPE,
+				ppo.order_num		AS ORDER_NUM, 			ppo.states 				As STATUS
+		FROM PRD_PURCHASE_ORDER ppo, PRD_PURCHASE_ORDER_RECORD ppor,MER_USER_CARD_BD muc
+		WHERE ppo.order_num = ppor.order_num
+			AND muc.card_code = ppor.CARD_FACENO
+			AND muc.bundling_type = 0
+			AND PPO.PRO_ORDER_NUM = #{orderNum}
+		ORDER BY ORDER_DATE DESC
+	</select>
+	
+</mapper>

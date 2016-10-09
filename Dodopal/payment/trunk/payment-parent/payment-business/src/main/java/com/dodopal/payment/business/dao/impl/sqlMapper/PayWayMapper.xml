@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayWayMapper">
+	<select id="findPayWayExternal"  resultType="PayWay" resultMap="payWayResultMap"  parameterType="java.lang.String">
+		select t.ID,t.PAY_SERVICE_RATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.IMAGE_NAME 
+		from PAY_WAY_EXTERNAL t left join PAY_CONFIG p 
+		on p.id = t.PAY_CONFIG_ID 
+		where t.MER_CODE = #{merCode}
+		and t.ACTIVATE = '0'
+		order by t.sort asc
+   </select>
+   	<select id="findPayWayGeneral"  resultType="PayWay" resultMap="payWayResultMap" parameterType="java.lang.String">
+		select t.ID,t.PAY_SERVICE_RATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.IMAGE_NAME,p.Proce_Rate,p.bank_gateway_type
+		from PAY_WAY_GENERAL t inner join PAY_CONFIG p 
+		on p.id = t.PAY_CONFIG_ID 
+		and t.ACTIVATE = '0'
+		<if test="payType != null and payType !=''">
+		and	p.PAY_TYPE = #{payType}
+		</if>
+		order by t.sort asc
+   </select>
+   
+   <select id="findPayWayGeneralByPayType"  resultType="PayWay" resultMap="payWayResultMap" parameterType="java.lang.String">
+		select t.ID,t.PAY_SERVICE_RATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.BANK_GATEWAY_TYPE,p.BANK_GATEWAY_NAME,p.IMAGE_NAME 
+		from PAY_WAY_GENERAL t left join PAY_CONFIG p 
+		on p.id = t.PAY_CONFIG_ID and p.ACTIVATE = t.ACTIVATE where t.ACTIVATE='0' and p.PAY_TYPE=#{payType}
+   </select>
+   
+   <select id="findPayWayExternalByPayType"  resultType="PayWay" resultMap="payWayResultMap"  parameterType="java.lang.String">
+		select t.ID,t.PAY_SERVICE_RATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.BANK_GATEWAY_TYPE,p.BANK_GATEWAY_NAME,p.IMAGE_NAME 
+		from PAY_WAY_EXTERNAL t left join PAY_CONFIG p 
+		on p.id = t.PAY_CONFIG_ID and p.ACTIVATE = t.ACTIVATE
+		where t.MER_CODE = #{merCode} and t.ACTIVATE='0' and p.PAY_TYPE=#{payType}
+   </select>
+   
+   <select id="findCommonExternal" resultMap="payWayResultMap" resultType="PayWay" parameterType="java.lang.String">
+   		select distinct pc.id,pc.pay_service_rate,pc.pay_type,pc.pay_way_name,pc.image_name, pw.USER_TIME,pw.USER_CODE
+			from pay_way_common pw left join
+			(select t.MER_CODE,t.ID,t.ACTIVATE,t.PAY_SERVICE_RATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.IMAGE_NAME 
+			    from PAY_WAY_EXTERNAL t left join PAY_CONFIG p 
+			    on p.id = t.PAY_CONFIG_ID) pc
+			on pc.id = pw.pay_way_id
+			where pw.USER_CODE = #{merCode} and pc.ACTIVATE = '0' order by pw.USER_TIME desc
+   </select>
+   <select id="findCommonGeneral" resultMap="payWayResultMap" resultType="PayWay">
+	select distinct pc.id,pc.pay_service_rate,pc.pay_type,pc.pay_way_name,pc.image_name ,pw.USER_TIME
+      from pay_way_common pw left join
+      (select t.ID,t.PAY_SERVICE_RATE,t.ACTIVATE,p.PAY_TYPE,p.PAY_WAY_NAME,p.IMAGE_NAME 
+          from PAY_WAY_GENERAL t left join PAY_CONFIG p 
+          on p.id = t.PAY_CONFIG_ID) pc
+      on pc.id = pw.pay_way_id  and  pc.ACTIVATE = '0'   where  pw.user_code = #{userCode} 
+      order by pw.USER_TIME desc
+   </select>
+   
+   <select id="getPayTranCodeSeq" resultType="String">
+   		select PAY_TRAN_CODE_SEQ.NEXTVAL from dual
+   </select>
+</mapper>

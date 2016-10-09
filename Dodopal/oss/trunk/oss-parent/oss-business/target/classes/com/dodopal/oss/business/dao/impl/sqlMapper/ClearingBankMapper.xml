@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.ClearingBankMapper">
+	
+	<select id="findBankClearingResultByPage" resultType="ClearingBank" parameterType="BankClearingResultQuery">
+		select t.id 							as id,
+		       t.clearling_day 					as clearingDay,
+		       t.clearling_date 				as clearingDate,
+		       t.pay_gateway 					as payGateway,
+		       NVL(t.trade_count, 0) 			as tradeCount,
+		       NVL(t.trade_amount, 0)/100 		as tradeAmount,
+		       NVL(t.bank_fee, 0)/100 			as bankFee,
+		       NVL(t.transfer_amount, 0)/100 	as transferAmount,
+		       t.create_date 					as createDate
+		  from clearing_bank t
+		 <where>
+		 	<if test="clearingDayStart != null and clearingDayStart !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')>= TO_DATE(#{clearingDayStart},'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingDayEnd != null and clearingDayEnd !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')<= TO_DATE(#{clearingDayEnd},'yyyy-mm-dd')]]>
+			</if>
+		</where>
+		order by clearling_day desc
+	</select>
+
+	<select id="getBankClearingResultForExport" resultType="ClearingBank" parameterType="BankClearingResultQuery">
+		select t.id 							as id,
+		       t.clearling_day 					as clearingDay,
+		       t.clearling_date 				as clearingDate,
+		       t.pay_gateway 					as payGateway,
+		       NVL(t.trade_count, 0) 			as tradeCount,
+		       NVL(t.trade_amount, 0)/100 		as tradeAmount,
+		       NVL(t.bank_fee, 0)/100 			as bankFee,
+		       NVL(t.transfer_amount, 0)/100 	as transferAmount,
+		       t.create_date 					as createDate
+		  from clearing_bank t
+		 <where>
+		 	<if test="clearingDayStart != null and clearingDayStart !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')>= TO_DATE(#{clearingDayStart},'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingDayEnd != null and clearingDayEnd !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')<= TO_DATE(#{clearingDayEnd},'yyyy-mm-dd')]]>
+			</if>
+		</where>
+		order by clearling_day desc
+	</select>
+	
+	
+</mapper>

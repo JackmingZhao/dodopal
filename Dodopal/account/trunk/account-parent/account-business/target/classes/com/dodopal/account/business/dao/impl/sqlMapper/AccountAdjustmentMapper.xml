@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountAdjustmentMapper">
+
+	<!-- 根据调账申请号取得对应资金授信账户及调账申请单信息   add by shenxiang-->
+	<select id="getAccountFundInfoByAdjustCode" resultType="com.dodopal.account.business.bean.AccountFundAdjustInfoDTO" parameterType="java.lang.String">
+		select t2.FUND_ACCOUNT_CODE              as fundAccountCode,
+		       t2.FUND_TYPE                      as fundType,
+		       t2.ACCOUNT_CODE                   as accountCode,
+		       t2.SUM_TOTAL_AMOUNT               as sumTotalAmount,
+		       t2.TOTAL_BALANCE                  as totalBalance,
+		       t2.AVAILABLE_BALANCE              as availableBalance,
+		       t2.FROZEN_AMOUNT                  as frozenAmount,
+		       t2.LAST_CHANGE_AMOUNT             as lastChangeAmount,
+		       t2.STATE                          as state,
+		       t1.CUSTOMER_TYPE                  as customerType,
+		       t1.CUSTOMER_NO                    as customerNo,
+		       t1.ACCOUNT_ADJUST_TYPE            as accountAdjustType,
+		       t1.ACCOUNT_ADJUST_AMOUNT          as accountAdjustAmount
+		  from ACCOUNT_ADJUSTMENT t1
+		  left outer join ACCOUNT_FUND t2
+		    on t1.fund_account_code = t2.fund_account_code
+		 where t1.account_adjust_code = #{adjustCode}
+	</select>
+</mapper>

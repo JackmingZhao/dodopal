@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.MerJointQueryMapper">
+
+	<!-- 商户的充值订单查询 -->
+	<select id="findChargeOrderByPage" resultType="ChargeOrder" parameterType="ChargeOrderQuery">
+		select nvl(b.mchnitname,t.mchnitid) mchnitname,
+			   to_char(t.txnamt/100,'fm9999999990.00') as amt,
+			   t.status,
+			   t.posid as posid,
+			   t.cardno as cardno,
+			   nvl(s.username,t.userid) username,
+			   t.txntime as sendtime,
+               t.transaction_id,
+               to_char(t.paidamt/100,'fm9999999990.00') as paidamt,
+               to_char(t.rebatesamt/100,'fm9999999990.00') as rebatesamt,
+               t.termid
+			from icpay.v_mchnitcardadd t,icpay.bimchntinfotb b,icpay.sysuserstb s
+			where t.userid=s.userid(+)  
+			and  t.mchnitid=b.mchnitid(+)   
+		<if test="posid != null and posid !=''">
+		and t.posid like '%'||#{posid}||'%'
+   		</if>    
+   		<if test="mchnitid != null and mchnitid !=''">
+	   	and t.mchnitid = #{mchnitid}
+	   	</if> 
+   		<if test="transactionid != null and transactionid !=''">
+   		and t.transaction_id like '%'||#{transactionid}||'%'
+   		</if>
+   		<if test="cardno != null and cardno !=''">
+   		and t.cardno like '%'||#{cardno}||'%'
+   		</if>    
+   		<if test="startdate != null and startdate !=''">
+   			<![CDATA[and t.txndate>= to_char(#{startdate},'yyyy-mm-dd') ]]>
+   		</if>  
+   		<if test="enddate != null and enddate !=''">
+   		<![CDATA[and t.txndate <=  to_char(#{enddate},'yyyy-mm-dd') ]]>
+   		</if> 
+   		<if test="username != null and username !=''">   
+       	and nvl(s.username,t.userid) like '%'||#{username}||'%' 
+   		</if> 
+   		<if test="status != null and status !=''">   
+       	 and t.status in 
+       	 	<foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">  
+		 	${item}  
+			</foreach> 
+   		</if>
+   		and t.status != -3 and t.status != -2
+	</select>
+	
+	<!-- 商户的消费订单查询 -->
+	<select id="findConsumptionOrderByPage" resultType="ConsumptionOrder" parameterType="ConsumptionOrderQuery">
+		select a.orderid, a.mchnitid, m.mchnitname, a.userid, a.checkcardposid posid, 
+		decode(a.setsale,'','无折扣','100','无折扣',concat(to_char(a.setsale/10,'fm990.00'),'折')) as setsale, 
+		to_char(a.setamt / 100, 'fm9999990.0099') as setamt, 
+		to_char(a.setfee / 100, 'fm9999990.0099') as setfee, 
+		decode(a.sale,'','无折扣','100','无折扣',concat(to_char(a.sale/10,'fm990.00'),'折')) as sale,
+		to_char(a.facevalue / 100, 'fm9999990.0099') as facevalue,
+		decode(ui.userid,'','99999999',u.username) username, 
+		decode(a.orderstates, '1000000001', '订单记账', '1000000002', '失败订单', '1000000003', '失败订单', '1000000004', '失败订单', '1000000005', '可疑订单', '1000000006', '成功订单', '1000000007', '成功订单', '1000000008', '失败订单', '1000000009', '失败订单', '1000000010', '成功订单', '1000000011', '失败订单', '1000000012', '成功订单', '1000000013', '成功订单', '1000000014', '失败订单', '1000000015', '失败订单', '1000000016', '失败订单', '1000000017', '可疑订单', '1000000018', '可疑订单') status,
+		a.checkcardno cardno, 
+		to_char(a.proamt / 100, 'FM9999990.00') proamt, 
+		to_char(a.amt / 100, 'FM9999990.00') amt, 
+		to_char(a.blackamt / 100, 'FM9999990.00') blackamt,
+		to_char(to_date(a.checkcarddate || ' ' || to_char(a.checkcardtime, 'FM099999'),'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss')
+		checkcarddate from 
+		(select v.* from icpay.v_tlmchntorder v 
+		<where>
+			<if test="mchnitid != null and mchnitid !=''">
+	   			v.mchnitid = #{mchnitid}
+	   		</if> 
+	   		<if test="transactionid != null and transactionid !=''">
+	   			<![CDATA[and v.orderid like '%'||#{transactionid}||'%' ]]>
+	   		</if> 
+			<if test="startdate != null and startdate !=''">
+	   			<![CDATA[and v.checkcarddate>= to_char(#{startdate},'yyyymmdd') ]]>
+	   		</if>  
+	   		<if test="enddate != null and enddate !=''">
+	   		<![CDATA[and v.checkcarddate <=  to_char(#{enddate},'yyyymmdd') ]]>
+	   		</if> 
+	   		<if test="posid != null and posid !=''">
+				and v.checkcardposid  like '%'||#{posid}||'%'
+   			</if>    
+   			<if test="cardno != null and cardno !=''">
+	   			and v.checkcardno like '%'||#{cardno}||'%'
+	   		</if>    
+	   		<if test="status != null and status !=''">   
+       	 	and v.orderstates in 
+       	 	<foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">  
+		 	${item}  
+			</foreach> 
+   			</if>
+		</where>
+		) a left join icpay.biposinuserstb ui on(a.checkcardposid=ui.posid) 
+		left join icpay.sysuserstb u on(u.userid=decode(a.checkcardposid,'',a.userid,ui.userid)) 
+		left join icpay.bimchntinfotb m on a.mchnitid = m.mchnitid where 1=1
+		<if test="username != null and username !=''">
+   			and decode(ui.userid,'','99999999',u.username) like '%'||#{username}||'%'
+   		</if>    
+   	order by a.checkcarddate desc, a.checkcardtime desc
+	</select>
+	
+	<!-- 商户的消费订单统计 -->
+	<select id="findConsumptionOrderCountByPage" resultType="ConsumptionOrderCount" parameterType="ChargeOrderQuery">
+	<![CDATA[
+	select c.checkcardposid posid,c.username,to_char(c.jiaoyichenggongbishu,'fm9999999990.00') jiaoyichenggongbishu,
+	to_char(c.jiaoyichenggongzongjine,'fm9999999990.00') jiaoyichenggongzongjine,
+	to_char(c.shishouzongjine,'fm9999999990.00') shishouzongjine,
+	to_char(c.jiesuanzongjine,'fm9999999990.00') jiesuanzongjine,
+	to_char(c.jiesuanzongshouxufei,'fm9999999990.00') jiesuanzongshouxufei
+	 from (
+	]]>
+	<![CDATA[
+	select v.checkcardposid,decode(ui.userid,'','99999999',u.username) username,
+	 count(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',v.checkcardposid,v.checkcardposid) end) as jiaoyichenggongbishu,
+	 sum(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',decode(v.facevalue,'',v.amt,v.facevalue),decode(v.facevalue,'',v.amt,v.facevalue)) end)/100 as jiaoyichenggongzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.amt end)/100 as shishouzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setamt end)/100 as jiesuanzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setfee end)/100 as jiesuanzongshouxufei
+	 from icpay.v_tlmchntorder v 
+	 left join icpay.biposinuserstb ui on v.checkcardposid=ui.posid
+	 left join icpay.sysuserstb u on(u.userid=decode(v.checkcardposid,'',v.userid,ui.userid))
+	 left join icpay.bimchntinfotb m on v.mchnitid = m.mchnitid
+	]]>
+		<where>
+			<if test="mchnitid != null and mchnitid !=''">
+	   			v.mchnitid = #{mchnitid}
+	   		</if> 
+			<if test="startdate != null and startdate !=''">
+	   			<![CDATA[and v.checkcarddate >= to_char(#{startdate},'yyyymmdd') ]]>
+	   		</if>  
+	   		<if test="enddate != null and enddate !=''">
+	   		<![CDATA[and v.checkcarddate <=  to_char(#{enddate},'yyyymmdd') ]]>
+	   		</if> 
+		</where>
+		group by v.checkcardposid,u.username,ui.userid order by jiaoyichenggongbishu desc, v.checkcardposid desc ) c
+	</select>
+	
+	<!-- 商户的消费订单统计 -->
+	<select id="findConsumptionOrderCount" resultType="ConsumptionOrderCount" parameterType="ChargeOrderQuery">
+	<![CDATA[
+	select 
+	 count(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',v.checkcardposid,v.checkcardposid) end) as jiaoyichenggongbishu,
+	 sum(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',decode(v.facevalue,'',v.amt,v.facevalue),decode(v.facevalue,'',v.amt,v.facevalue)) end)/100 as jiaoyichenggongzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.amt end)/100 as shishouzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setamt end)/100 as jiesuanzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setfee end)/100 as jiesuanzongshouxufei
+	 from icpay.v_tlmchntorder v 
+	 left join icpay.biposinuserstb ui on v.checkcardposid=ui.posid
+	 left join icpay.sysuserstb u on(u.userid=decode(v.checkcardposid,'',v.userid,ui.userid))
+	 left join icpay.bimchntinfotb m on v.mchnitid = m.mchnitid
+	]]>
+		<where>
+			<if test="mchnitid != null and mchnitid !=''">
+	   			v.mchnitid = #{mchnitid}
+	   		</if> 
+			<if test="startdate != null and startdate !=''">
+	   			<![CDATA[and v.checkcarddate >= to_char(#{startdate},'yyyymmdd') ]]>
+	   		</if>  
+	   		<if test="enddate != null and enddate !=''">
+	   		<![CDATA[and v.checkcarddate <=  to_char(#{enddate},'yyyymmdd') ]]>
+	   		</if> 
+		</where>
+	</select>
+	<!-- 商户的充值订单导出 -->
+	<select id="exportChargeOrder" resultType="ChargeOrder" parameterType="ChargeOrderQuery">
+		select nvl(b.mchnitname,t.mchnitid) mchnitname,
+			   to_char(t.txnamt/100,'fm9999999990.00') as amt,
+			   t.status,
+			   t.posid as posid,
+			   t.cardno as cardno,
+			   nvl(s.username,t.userid) username,
+			   t.txntime as sendtime,
+               t.transaction_id,
+               to_char(t.paidamt/100,'fm9999999990.00') as paidamt,
+               to_char(t.rebatesamt/100,'fm9999999990.00') as rebatesamt,
+               t.termid
+			from icpay.v_mchnitcardadd t,icpay.bimchntinfotb b,icpay.sysuserstb s
+			where t.userid=s.userid(+)  
+			and  t.mchnitid=b.mchnitid(+)   
+		<if test="posid != null and posid !=''">
+		and t.posid like '%'||#{posid}||'%'
+   		</if>    
+   		<if test="mchnitid != null and mchnitid !=''">
+	   	and t.mchnitid = #{mchnitid}
+	   	</if> 
+   		<if test="transactionid != null and transactionid !=''">
+   		and t.transaction_id like '%'||#{transactionid}||'%'
+   		</if>
+   		<if test="cardno != null and cardno !=''">
+   		and t.cardno like '%'||#{cardno}||'%'
+   		</if>    
+   		<if test="startdate != null and startdate !=''">
+   			<![CDATA[and t.txndate>= to_char(#{startdate},'yyyy-mm-dd') ]]>
+   		</if>  
+   		<if test="enddate != null and enddate !=''">
+   		<![CDATA[and t.txndate <=  to_char(#{enddate},'yyyy-mm-dd') ]]>
+   		</if> 
+   		<if test="username != null and username !=''">   
+       	and nvl(s.username,t.userid) like '%'||#{username}||'%' 
+   		</if> 
+   		<if test="status != null and status !=''">   
+       	 and t.status in 
+       	 	<foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">  
+		 	${item}  
+			</foreach> 
+   		</if>
+   		and t.status != -3 and t.status != -2
+	</select>
+	
+	<!-- 商户的消费订单导出 -->
+	<select id="exportConsumptionOrder" resultType="ConsumptionOrder" parameterType="ConsumptionOrderQuery">
+		select a.orderid, a.mchnitid, m.mchnitname, a.userid, a.checkcardposid, 
+		decode(a.setsale,'','无折扣','100','无折扣',concat(to_char(a.setsale/10,'fm990.00'),'折')) as setsale, 
+		to_char(a.setamt / 100, 'fm9999990.0099') as setamt, 
+		to_char(a.setfee / 100, 'fm9999990.0099') as setfee, 
+		decode(a.sale,'','无折扣','100','无折扣',concat(to_char(a.sale/10,'fm990.00'),'折')) as sale,
+		to_char(a.facevalue / 100, 'fm9999990.0099') as facevalue,
+		decode(ui.userid,'','99999999',u.username) username, 
+		decode(a.orderstates, '1000000001', '订单记账', '1000000002', '失败订单', '1000000003', '失败订单', '1000000004', '失败订单', '1000000005', '可疑订单', '1000000006', '成功订单', '1000000007', '成功订单', '1000000008', '失败订单', '1000000009', '失败订单', '1000000010', '成功订单', '1000000011', '失败订单', '1000000012', '成功订单', '1000000013', '成功订单', '1000000014', '失败订单', '1000000015', '失败订单', '1000000016', '失败订单', '1000000017', '可疑订单', '1000000018', '可疑订单') status,
+		a.checkcardno,
+		 to_char(a.proamt / 100, 'FM9999990.00') proamt, 
+		to_char(a.amt / 100, 'FM9999990.00') amt, 
+		to_char(a.blackamt / 100, 'FM9999990.00') blackamt,
+		to_char(to_date(a.checkcarddate || ' ' || to_char(a.checkcardtime, 'FM099999'),'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss')
+		checkcarddate from 
+		(select v.* from icpay.v_tlmchntorder v 
+		<where>
+			<if test="mchnitid != null and mchnitid !=''">
+	   			v.mchnitid = #{mchnitid}
+	   		</if> 
+	   		<if test="transactionid != null and transactionid !=''">
+	   			<![CDATA[and v.orderid like '%'||#{transactionid}||'%' ]]>
+	   		</if> 
+			<if test="startdate != null and startdate !=''">
+	   			<![CDATA[and v.checkcarddate>= to_char(#{startdate},'yyyymmdd') ]]>
+	   		</if>  
+	   		<if test="enddate != null and enddate !=''">
+	   		<![CDATA[and v.checkcarddate <=  to_char(#{enddate},'yyyymmdd') ]]>
+	   		</if> 
+	   		<if test="posid != null and posid !=''">
+				and v.checkcardposid  like '%'||#{posid}||'%'
+   			</if>    
+   			<if test="cardno != null and cardno !=''">
+	   			and v.checkcardno like '%'||#{cardno}||'%'
+	   		</if>    
+	   		<if test="status != null and status !=''">   
+       	 	and t.orderstates in 
+       	 	<foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">  
+		 	${item}  
+			</foreach> 
+   			</if>
+		</where>
+		) a left join icpay.biposinuserstb ui on(a.checkcardposid=ui.posid) 
+		left join icpay.sysuserstb u on(u.userid=decode(a.checkcardposid,'',a.userid,ui.userid)) 
+		left join icpay.bimchntinfotb m on a.mchnitid = m.mchnitid where 1=1
+		<if test="username != null and username !=''">
+   			and decode(ui.userid,'','99999999',u.username) = #{username}
+   		</if>    
+   	order by a.checkcarddate desc, a.checkcardtime desc
+	</select>
+	
+	<!-- 商户的消费订单导出 -->
+	<select id="exportConsumptionOrderCount" resultType="ConsumptionOrderCount" parameterType="ChargeOrderQuery">
+	<![CDATA[
+	select c.checkcardposid posid,c.username,to_char(c.jiaoyichenggongbishu,'fm9999999990.00') jiaoyichenggongbishu,
+	to_char(c.jiaoyichenggongzongjine,'fm9999999990.00') jiaoyichenggongzongjine,
+	to_char(c.shishouzongjine,'fm9999999990.00') shishouzongjine,
+	to_char(c.jiesuanzongjine,'fm9999999990.00') jiesuanzongjine,
+	to_char(c.jiesuanzongshouxufei,'fm9999999990.00') jiesuanzongshouxufei
+	 from (
+	]]>
+	<![CDATA[
+	select v.checkcardposid,decode(ui.userid,'','99999999',u.username) username,
+	 count(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',v.checkcardposid,v.checkcardposid) end) as jiaoyichenggongbishu,
+	 sum(case when v.orderstates in('1000000006','1000000007') then decode(v.sale,'',decode(v.facevalue,'',v.amt,v.facevalue),decode(v.facevalue,'',v.amt,v.facevalue)) end)/100 as jiaoyichenggongzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.amt end)/100 as shishouzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setamt end)/100 as jiesuanzongjine,
+	 sum(case when v.orderstates in('1000000006','1000000007') then v.setfee end)/100 as jiesuanzongshouxufei
+	 from icpay.v_tlmchntorder v 
+	 left join icpay.biposinuserstb ui on v.checkcardposid=ui.posid
+	 left join icpay.sysuserstb u on(u.userid=decode(v.checkcardposid,'',v.userid,ui.userid))
+	 left join icpay.bimchntinfotb m on v.mchnitid = m.mchnitid
+	]]>
+		<where>
+			<if test="mchnitid != null and mchnitid !=''">
+	   			v.mchnitid = #{mchnitid}
+	   		</if> 
+			<if test="startdate != null and startdate !=''">
+	   			<![CDATA[and v.checkcarddate >= to_char(#{startdate},'yyyymmdd') ]]>
+	   		</if>  
+	   		<if test="enddate != null and enddate !=''">
+	   		<![CDATA[and v.checkcarddate <=  to_char(#{enddate},'yyyymmdd') ]]>
+	   		</if> 
+		</where>
+		group by v.checkcardposid,u.username,ui.userid order by jiaoyichenggongbishu desc, v.checkcardposid desc ) c
+	</select>
+	
+	<!-- 根据新平台商户号查询老平台商户id -->
+	<select id="findMchnitidByMerCode" resultType="java.lang.String" >
+		select t.old_merchant_id from MERCHANT_EXTEND t where t.mer_code = #{merCode}
+	</select>
+</mapper>

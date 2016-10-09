@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.DdicResMsgMapper">
+	<resultMap type="DdicResMsg" id="ddicResMsgResultMap">
+		<id property="id" column="ID" />
+		<result property="msgCode" column="MSG_CODE" />
+		<result property="msgType" column="MSG_TYPE" />
+		
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		
+		<result property="message" column="MESSAGE" />
+		
+	</resultMap>
+</mapper>

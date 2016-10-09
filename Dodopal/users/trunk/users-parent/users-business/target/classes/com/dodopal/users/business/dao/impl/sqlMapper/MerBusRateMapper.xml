@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerBusRateMapper">
+	<sql id="allColumns">
+		ID,ACTIVATE,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		MER_CODE,RATE_CODE,PROVIDER_CODE,RATE_TYPE,RATE
+	</sql>
+
+	<select id="findMerBusRateById" resultType="MerBusRate" resultMap="merBusRateResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_BUS_RATE where id = #{id}
+	</select>
+
+	<select id="findMerBusRateByMerCode" resultType="MerBusRate" resultMap="merBusRateResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_BUS_RATE
+		 where mer_code = #{merCode}
+		 order by provider_code, rate_code
+	</select>
+
+	<select id="batchFindMerBusRateByMerCodes" resultType="MerBusRate" resultMap="merBusRateResultMap" parameterType="java.lang.String">
+		select <include refid="allColumns" /> from MER_BUS_RATE where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  			#{item}
+ 		</foreach>
+	</select>
+
+	<select id="findChildMerProRateCodeType" resultType="MerBusRate" resultMap="merBusRateResultMap">
+		select provider_code,rate_code,rate_type from MER_BUS_RATE 
+		 where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  			#{item}
+ 		</foreach>
+		 group by provider_code,rate_code,rate_type
+	</select>
+
+	<!-- 商户开通充值城市 -->
+	<select id="findMerCitys" resultType="string">
+		select c.cityid from (select t.provider_code from MER_BUS_RATE t
+		where t.mer_code = #{merCode} and t.activate='0' and t.rate_code=#{rateCode}) a
+		left join PRD_YKT_INFO b on a.provider_code = b.ykt_code
+		left join PRD_YKT_CITY_INFO c on a.provider_code = c.ykt_code
+		where b.activate='0' and b.ykt_is_recharge='0'
+	</select>
+
+	<!-- 商户开通消费城市 -->
+	<select id="findMerCitysPayment" resultType="string">
+		select c.cityid from (select t.provider_code from MER_BUS_RATE t
+		where t.mer_code = #{merCode} and t.activate='0' and t.rate_code=#{rateCode}) a
+		left join PRD_YKT_INFO b on a.provider_code = b.ykt_code
+		left join PRD_YKT_CITY_INFO c on a.provider_code = c.ykt_code
+		where b.activate='0' and b.ykt_is_pay='0'
+	</select>
+
+	<!-- 个人开通充值城市 -->
+	<select id="findUserCitys" resultType="string">
+		select a.cityid from PRD_YKT_CITY_INFO a
+		  left join PRD_YKT_INFO b on a.ykt_code = b.ykt_code
+		  left join OSS_CITY_INFO c on a.cityid = c.citycode
+		 where b.activate='0' and b.ykt_is_recharge='0'
+		 order by c.cityabridge
+	</select>
+
+	<select id="findYktCodeByCityCode" resultType="string">
+		select t.ykt_code from PRD_YKT_CITY_INFO t
+		 where t.cityid = #{cityCode}
+	</select>
+
+	<insert id="addMerBusRateBatch" parameterType="java.util.List">
+		INSERT INTO MER_BUS_RATE(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,RATE_CODE,PROVIDER_CODE,RATE,RATE_TYPE,
+			ACTIVATE
+		)
+		select MER_BUS_RATE_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{item.merCode, jdbcType=VARCHAR},
+			#{item.rateCode, jdbcType=VARCHAR},
+			#{item.providerCode, jdbcType=VARCHAR},
+			#{item.rate, jdbcType=DOUBLE},
+			#{item.rateType, jdbcType=VARCHAR},
+			'0'
+			from dual
+		</foreach>
+		) a
+	</insert>
+
+	<update id="updateMerBusRate" parameterType="MerBusRate">
+		update MER_BUS_RATE
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="rate != null and rate !=''">
+				RATE=#{rate},
+			</if>
+			<if test="rateType != null and rateType !=''">
+				RATE_TYPE=#{rateType},
+			</if>
+			<if test="activate != null and activate !=''">
+				ACTIVATE=#{activate},
+			</if>
+		</trim>
+		where MER_CODE=#{merCode} and RATE_CODE=#{rateCode} and PROVIDER_CODE=#{providerCode}
+	</update>
+
+	<delete id="deleteMerBusRateById" parameterType="java.lang.String">
+		delete from MER_BUS_RATE where id = #{id}
+	</delete>
+	
+	<delete id="deleteMerBusRateByMerCode" parameterType="java.lang.String">
+		delete from MER_BUS_RATE where MER_CODE = #{merCode}
+	</delete>
+
+	<delete id="batchDelMerBusRateByMerCodes">
+		delete from MER_BUS_RATE where mer_code in
+		<foreach item="item" index="index" collection="merCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</delete>
+</mapper>

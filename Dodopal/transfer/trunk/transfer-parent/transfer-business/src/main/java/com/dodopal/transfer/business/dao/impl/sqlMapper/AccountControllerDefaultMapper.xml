@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.AccountControllerDefaultMapper">
+	<sql id="controlDefaultColumn">
+		ID,
+		CUSTOMER_TYPE,
+		DAY_CONSUME_SINGLE_LIMIT,
+		DAY_CONSUME_SUM_LIMIT,
+		DAY_RECHARGE_SINGLE_LIMIT,
+		DAY_RECHARGE_SUM_LIMIT,
+		DAY_TRANSFER_MAX,
+		DAY_TRANSFER_SINGLE_LIMIT,
+		DAY_TRANSFER_SUM_LIMIT,
+		CREATE_USER,
+		CREATE_DATE,
+		UPDATE_USER,
+		UPDATE_DATE
+	</sql>
+	
+	<!--根据客户类型merType查询默认的风控设置信息 -->
+	<select id="queryControlDefault" resultType="AccountControllerDefault"
+		resultMap="accountControllerDefaultResultMap" parameterType="java.lang.String">
+		select
+		<include refid="controlDefaultColumn" />
+		FROM ACCOUNT_CONTROLLER_DEFAULT WHERE CUSTOMER_TYPE= #{merType}
+	</select>
+</mapper>

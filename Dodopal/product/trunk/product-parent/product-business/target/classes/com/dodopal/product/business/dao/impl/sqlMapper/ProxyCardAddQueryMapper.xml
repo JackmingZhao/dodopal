@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProxyCardAddQueryMapper">
+
+	<!-- 定制查询 本网点的充卡记录信息 v_proxycardaddtb -->
+	<select id="cardTradeListByPage" resultType="ProxyCardAdd"
+		parameterType="ProxyCardAddQuery">
+		select * from (select a.* from (
+		select
+		t.yktid,
+		t.cityid,
+		c.proxyname as
+		proxyname,
+		t.proxyid,
+		t.proxyorderno,
+		t.cardno,
+		t.posid,
+		t.txndate,
+		t.txntime,
+		trim(t.befsurpluslimit/100) as befsurpluslimit,
+		trim(t.txnamt/100) as txnamt,
+		trim(t.aftsurpluslimit/100) as
+		aftsurpluslimit,
+		decode(t.proxyorderno, z.proxyorderno,
+		(select
+		replace(z.mobiltel, (substr(z.mobiltel, 4, 4)), '****') from dual)
+		)
+		mobiltel,
+		to_char(decode(t.proxyorderno,
+		z.proxyorderno,
+		trim(z.activerebate)/ 100),'FM99999999999990.09') activerebate,
+		decode(t.status,'0','记账成功','1','余额不足','2','扣款成功','3','充值成功','4','充值成功','5','充值失败,已处理','6','扣款成功','7',decode(t.yktid,'310000','充值成功','可疑交易扣额度'),'8','充值失败','9','充值成功','10','充值失败')
+		status,
+		t.remarks,
+		trim(t.paidamt/100) as paidamt,
+		trim(t.rebatesamt/100) as rebatesamt,
+		b.fullname as yktname,
+		t.couponamt/100 as sumamt,
+		v.proamt,
+		v.blackamt,
+		v.cardkfhao,
+		v.chargecardresult,
+		v.orderstates
+		from icpay.proxyinfotb c right join
+		icpay.v_proxycardaddtb t on t.proxyid=c.proxyid
+		left join
+		icpay.biyktinfotb b on
+		t.yktid=b.yktid left join icpay.SCOREUSER_CARD s
+		on s.cardno=t.cardno left
+		join icpay.SYSUSERSTB z on s.userid=z.userid
+		left join icpay.v_tlbankorder v on
+		t.proxyorderno=v.bankorderid
+		where
+		 t.proxyid=#{proxyid} 
+		<![CDATA[and  t.status<>0 and t.status<>1 ]]>
+		and t.yktid=b.yktid
+		and t.yktid=v.yktid
+		<if test="proxyorderno != null and proxyorderno !=''">
+			and t.proxyorderno like CONCAT('%',CONCAT(#{proxyorderno},'%'))
+		</if>
+		<if test="posid != null and posid !=''">
+			and t.posid like CONCAT('%', CONCAT(#{posid}, '%'))
+		</if>
+		<if test="cardno != null and cardno !=''">
+			and t.cardno like CONCAT('%', CONCAT(#{cardno}, '%'))
+		</if>
+		<if test="startdate != null and startdate !=''">
+        <!--   <![CDATA[ AND t.txntime  >= TO_DATE(#{startdate},'yyyy-mm-dd')]]> -->
+          <![CDATA[and t.txntime >=#{startdate}]]>
+		</if>
+		<if test="enddate != null and enddate !=''">
+        <!--   <![CDATA[ AND  t.txntime  <= TO_DATE(#{enddate},'yyyy-mm-dd') ]]> --> 
+          <![CDATA[and t.txntime <=#{enddate}]]>
+		</if>
+		<if test="status != null and status !=''">
+		    <if test="status==2">
+		     and t.status in (2,6)
+		    </if>
+		    <if test="status==3">
+		     and t.status in (3,4,9)
+		    </if>
+		    <if test="status==5">
+		     and t.status in (5,8,10)
+		    </if>
+		    <if test="status==7">
+		     and t.status = #{status}
+		    </if>
+			
+		</if>
+		<!-- <dynamic> <isNotEmpty prepend="and" property="proxyorderno"> <![CDATA[ 
+			t.proxyorderno =trim(#proxyorderno#)]]> </isNotEmpty> <isEmpty property="selectday"> 
+			<isEmpty prepend="and" property="txndatestart"> <![CDATA[ t.txntime >= #default_start_time#]]> 
+			</isEmpty> <isEmpty prepend="and" property="txndateend"> <![CDATA[ t.txntime 
+			<= #default_end_time#]]> </isEmpty> </isEmpty> <isNotEmpty prepend="and" 
+			property="txndatestart"> <![CDATA[ t.txntime >=#txndatestart#]]> </isNotEmpty> 
+			<isNotEmpty prepend="and" property="txndateend"> <![CDATA[ t.txntime <=#txndateend#]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="statusone"> <![CDATA[ ($statusone$) 
+			]]> </isNotEmpty> <isNotEmpty prepend="and" property="posid"> <![CDATA[ t.posid=#posid#]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="cardno"> <![CDATA[ t.cardno 
+			=trim(#cardno#)]]> </isNotEmpty> <isNotEmpty prepend="and" property="selectday"> 
+			<![CDATA[ t.txntime>to_char(sysdate-#selectday#,'yyyy-mm-dd')]]> </isNotEmpty> 
+			</dynamic> -->
+		order by t.txntime desc) a )
+	</select>
+
+	<!-- 定制查询 统计本网点的充卡数据 -->
+	<select id="findCardTradeListCount" resultType="ProxyCountAllByID"
+		parameterType="ProxyCardAddQuery">
+		select
+		count (t.proxyorderno) as total,
+		sum (trim((t.txnamt)/100))as
+		amount,
+		count(t.paidamt) as totalpen,
+		sum (trim((t.paidamt)/100)) as
+		incomeamount,
+		count(decode(t.proxyorderno,
+		z.proxyorderno,trim(z.activerebate))) as rebatenumber,
+		to_char(sum(decode(t.proxyorderno, z.proxyorderno,trim(z.activerebate)
+		/ 100)),'FM99999999999990.09') as rebateamount,
+		count(decode(sign(t.couponamt),0,'',-1,'',1,1)) as couponpennumber,
+		to_char(sum(trim(t.couponamt/100)),'FM99999999999990.09')as couponuse,
+		count(decode(sign(t.rebatesamt),0,'',-1,'',1,1))as allrebatesamt,
+		to_char(sum(trim(t.rebatesamt/100)),'FM99999999999990.09')as
+		totalamount
+		from icpay.proxyinfotb c
+		right join icpay.v_proxycardaddtb t
+		on t.proxyid = c.proxyid
+		left join icpay.biyktinfotb b
+		on t.yktid =
+		b.yktid
+		left join icpay.SCOREUSER_CARD s
+		on s.cardno = t.cardno
+		left join
+		icpay.SYSUSERSTB z
+		on s.userid = z.userid
+		left join icpay.v_tlbankorder
+		v
+		on t.proxyorderno = v.bankorderid
+		where
+		t.proxyid=#{proxyid} 
+		<![CDATA[and t.status<>0 and t.status<>1 ]]>
+		and t.yktid=b.yktid
+		and t.yktid = v.yktid
+		<if test="proxyorderno != null and proxyorderno !=''">
+			and t.proxyorderno like CONCAT('%',CONCAT(#{proxyorderno}, '%'))
+		</if>
+		<if test="posid != null and posid !=''">
+			and t.posid like CONCAT('%', CONCAT(#{posid}, '%'))
+		</if>
+		<if test="cardno != null and cardno !=''">
+			and t.cardno like CONCAT('%', CONCAT(#{cardno}, '%'))
+		</if>
+		<if test="startdate != null and startdate !=''">
+        <!--   <![CDATA[ AND t.txntime  >= TO_DATE(#{startdate},'yyyy-mm-dd')]]> -->
+          <![CDATA[and t.txntime >=#{startdate}]]>
+		</if>
+		<if test="enddate != null and enddate !=''">
+        <!--   <![CDATA[ AND  t.txntime  <= TO_DATE(#{enddate},'yyyy-mm-dd') ]]> --> 
+          <![CDATA[and t.txntime <=#{enddate}]]>
+		</if>
+		<if test="status != null and status !=''">
+			 <if test="status==2">
+		     and t.status in (2,6)
+		    </if>
+		    <if test="status==3">
+		     and t.status in (3,4,9)
+		    </if>
+		    <if test="status==5">
+		     and t.status in (5,8,10)
+		    </if>
+		    <if test="status==7">
+		     and t.status = #{status}
+		    </if>
+		</if>
+
+		<!-- <dynamic> <isNotEmpty prepend="and" property="proxyorderno"> <![CDATA[ 
+			t.proxyorderno =trim(#proxyorderno#)]]> </isNotEmpty> <isEmpty property="selectday"> 
+			<isEmpty prepend="and" property="txndatestart"> <![CDATA[ t.txntime >= #default_start_time#]]> 
+			</isEmpty> <isEmpty prepend="and" property="txndateend"> <![CDATA[ t.txntime 
+			<= #default_end_time#]]> </isEmpty> </isEmpty> <isNotEmpty prepend="and" 
+			property="txndatestart"> <![CDATA[ t.txntime >=#txndatestart#]]> </isNotEmpty> 
+			<isNotEmpty prepend="and" property="txndateend"> <![CDATA[ t.txntime <=#txndateend#]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="statusone"> <![CDATA[ ($statusone$) 
+			]]> </isNotEmpty> <isNotEmpty prepend="and" property="posid"> <![CDATA[ t.posid=#posid#]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="cardno"> <![CDATA[ t.cardno 
+			=trim(#cardno#)]]> </isNotEmpty> <isNotEmpty prepend="and" property="selectday"> 
+			<![CDATA[ t.txntime>to_char(sysdate-#selectday#,'yyyy-mm-dd')]]> </isNotEmpty> 
+			</dynamic> -->
+
+	</select>
+
+
+	<!-- 查询网点收单消费记录 -->
+	<select id="offLineTradeListByPage" resultType="ProxyOffLineOrderTb"
+		parameterType="ProxyOffLineOrderTbQuery">
+		select * from (select a.* from (
+		select
+		decode(grouping(z.mchnitorderid),'0',to_char(z.mchnitorderid),'1','总计')
+		as mchnitorderid,
+		z.orderstates,
+		z.checkcardposid,
+		z.yktid,
+		z.checkcardno,
+		z.cardkfhao,
+		z.ordertime,
+		z.sale,
+		z.proamt,
+		z.blackamt,
+		sum(z.amt) as amt,
+		sum(z.facevalue) as facevalue,
+		z.posremark
+		from (
+		select
+		t.mchnitorderid,
+		sum(to_char(trim(t.amt/100),'FM999999999990.09')) as amt,
+		decode(t.orderstates,'1000000001','未支付','1000000002','未支付','1000000003','未支付','1000000004','未支付','1000000005','支付可疑','1000000017','支付可疑','1000000018','支付可疑','1000000006','支付成功','1000000007','支付成功','1000000008','可以进行补充值','1000000009','补充值完成','1000000010','支付成功','1000000011','支付失败','1000000015','支付失败','1000000016','支付失败','1000000012','支付成功','1000000013','支付成功','1000000014','支付失败')
+		as orderstates,
+		t.checkcardposid,
+		t.yktid,
+		t.checkcardno,
+		t.cardkfhao,
+		decode(t.posremark,'KONGA','','',p.remarks,t.posremark) posremark,
+		to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss') as ordertime,
+		decode(trim(t.sale/10),'','无折扣','10','无折扣',to_char(trim(t.sale/10),'FM999999999990.09'))
+		as sale,
+		sum(to_char(trim(t.facevalue/100),'FM999999999990.09')) as
+		facevalue,
+		to_char(trim(t.proamt/100),'FM999999999990.09') as proamt,
+		to_char(trim(t.blackamt/100),'FM999999999990.09') as blackamt
+		from
+		icpay.v_tlmchntorder t,icpay.proxypostb p
+		where 1=1
+		and t.checkcardposid = p.posid(+)
+	    and t.proxyid=#{proxyid} 
+		<if test="posid != null and posid !=''">
+			AND t.checkcardposid like CONCAT('%',CONCAT(#{posid},'%'))
+		</if>
+		<if test="startdate != null and startdate !=''">
+	        <![CDATA[ and substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) >= #{startdate}]]> 
+            <!--	<![CDATA[ AND t.ordertime  >= TO_DATE(#{startdate},'yyyy-mm-dd')]]>  -->  
+		</if>
+		<if test="enddate != null and enddate !=''">
+        <!-- <![CDATA[ AND t.ordertime  <= TO_DATE(#{enddate},'yyyy-mm-dd') ]]>   -->  
+          	<![CDATA[ and substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) <= #{enddate}]]>
+		</if>
+		<if test="status != null and status !=''">
+			 <if test="status==1000000001">
+		     and t.orderstates in (1000000001,1000000002,1000000002,1000000004)
+		    </if>
+		    <if test="status==1000000007">
+		     and t.orderstates in (1000000006,1000000007,10000000010,1000000012,1000000013)
+		    </if>
+		    <if test="status==1000000011">
+		     and t.orderstates in (1000000011,1000000014,1000000015,1000000016)
+		    </if>
+		    <if test="status==1000000005 or status==1000000008 or status==1000000009 ">
+		     and t.orderstates = #{status}
+		    </if>
+		</if>
+		<!-- <dynamic> <isNotEmpty prepend="and" property="checkcardposid"> <![CDATA[ 
+			t.checkcardposid =trim(#checkcardposid#)]]> </isNotEmpty> <isEmpty property="selectday"> 
+			<isEmpty prepend="and" property="txndatestart"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd 
+			HH24:mi:ss'),0,10) >= #default_start_date#]]> </isEmpty> <isEmpty prepend="and" 
+			property="txndateend"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) 
+			<= #default_end_date#]]> </isEmpty> </isEmpty> <isNotEmpty prepend="and" 
+			property="txndatestart"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd 
+			HH24:mi:ss'),0,10) >=#txndatestart#]]> </isNotEmpty> <isNotEmpty prepend="and" 
+			property="txndateend"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) 
+			<=#txndateend#]]> </isNotEmpty> <isNotEmpty prepend="and" property="selectday"> 
+			<![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) > to_char(sysdate-#selectday#,'yyyy-mm-dd')]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="orderstates"> <![CDATA[ 
+			($orderstates$) ]]> </isNotEmpty> </dynamic> -->
+		group by
+		(t.mchnitorderid,t.orderstates,t.checkcardposid,t.yktid,t.checkcardno,t.cardkfhao,t.ordertime,t.sale,t.proamt,t.blackamt,t.posremark,p.remarks)
+		)z
+		group by
+		rollup((z.mchnitorderid,z.orderstates,z.checkcardposid,z.yktid,z.checkcardno,z.cardkfhao,z.ordertime,z.sale,z.proamt,z.blackamt,z.posremark))
+		order by z.ordertime desc nulls last
+
+		) a )
+	</select>
+
+
+	<select id="findoffLineTradeListCount" resultType="ProxyCountAllByID"
+		parameterType="ProxyOffLineOrderTbQuery">
+		select
+		count (t.amt) as countamt,
+		count(t.facevalue) as countfacevalue,
+		decode(sum(to_char(trim(t.amt/100),'FM999999999990.09')),'','0',null,'0',sum(to_char(trim(t.amt/100),'FM999999999990.09')))
+		as amt,
+		decode(sum(to_char(trim(t.facevalue/100),'FM999999999990.09')),'','0',null,'0',sum(to_char(trim(t.facevalue/100),'FM999999999990.09')))
+		as facevalue
+		from icpay.v_tlmchntorder t,icpay.proxypostb p
+		where 1=1
+		and t.checkcardposid = p.posid(+)
+	    and t.proxyid=#{proxyid}
+		<if test="posid != null and posid !=''">
+			AND t.checkcardposid like CONCAT('%',CONCAT(#{posid},'%'))
+		</if>
+		<if test="startdate != null and startdate !=''">
+	        <![CDATA[ and substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) >= #{startdate}]]> 
+            <!--	<![CDATA[ AND t.ordertime  >= TO_DATE(#{startdate},'yyyy-mm-dd')]]>  -->  
+		</if>
+		<if test="enddate != null and enddate !=''">
+        <!-- <![CDATA[ AND t.ordertime  <= TO_DATE(#{enddate},'yyyy-mm-dd') ]]>   -->  
+          	<![CDATA[ and substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) <= #{enddate}]]>
+		</if>
+		<if test="status != null and status !=''">
+			 <if test="status==1000000001">
+		     and t.orderstates in (1000000001,1000000002,1000000002,1000000004)
+		    </if>
+		    <if test="status==1000000007">
+		     and t.orderstates in (1000000006,1000000007,10000000010,1000000012,1000000013)
+		    </if>
+		    <if test="status==1000000011">
+		     and t.orderstates in (1000000011,1000000014,1000000015,1000000016)
+		    </if>
+		    <if test="status==1000000005 or status==1000000008 or status==1000000009 ">
+		     and t.orderstates = #{status}
+		    </if>
+		</if>
+		<!-- <dynamic> <isNotEmpty prepend="and" property="checkcardposid"> <![CDATA[ 
+			t.checkcardposid =trim(#checkcardposid#)]]> </isNotEmpty> <isEmpty property="selectday"> 
+			<isEmpty prepend="and" property="txndatestart"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd 
+			HH24:mi:ss'),0,10) >= #default_start_date#]]> </isEmpty> <isEmpty prepend="and" 
+			property="txndateend"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) 
+			<= #default_end_date#]]> </isEmpty> </isEmpty> <isNotEmpty prepend="and" 
+			property="txndatestart"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd 
+			HH24:mi:ss'),0,10) >=#txndatestart#]]> </isNotEmpty> <isNotEmpty prepend="and" 
+			property="txndateend"> <![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) 
+			<=#txndateend#]]> </isNotEmpty> <isNotEmpty prepend="and" property="selectday"> 
+			<![CDATA[ substr(to_char(t.ordertime,'yyyy-MM-dd HH24:mi:ss'),0,10) > to_char(sysdate-#selectday#,'yyyy-mm-dd')]]> 
+			</isNotEmpty> <isNotEmpty prepend="and" property="orderstates"> <![CDATA[ 
+			($orderstates$) ]]> </isNotEmpty> </dynamic> -->
+	</select>
+</mapper>

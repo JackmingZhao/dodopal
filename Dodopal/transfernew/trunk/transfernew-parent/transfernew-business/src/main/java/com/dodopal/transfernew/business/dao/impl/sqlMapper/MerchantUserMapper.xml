@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.MerchantUserMapper">
+
+<!-- 生成商户用户号 -->
+<select id="getMerUserCodeSeq" resultType="String">
+		select MER_USER_CODE_GENERATE_SEQ.NEXTVAL from dual
+	</select>
+	
+	<!-- 检查用户名是否存在 -->
+<select id="checkExist" resultType="boolean">
+		select count(1) from MERCHANT_USER
+		<where>
+        	<if test="merUserName!=null and merUserName!=''">   
+           	 MER_USER_NAME = #{merUserName}
+        	</if>   
+    	</where>  
+	</select>
+	
+	<!-- 保存用户 -->
+	<insert id="addMerchantUser" parameterType="MerchantUser">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_USER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MERCHANT_USER 
+			(MER_USER_FLG, 
+			MER_USER_TYPE, 
+			MER_USER_NAME, 
+			MER_USER_PWD,
+			MER_USER_IDENTITY_TYPE,
+			MER_USER_IDENTITY_NUM, 
+			MER_USER_NICKNAME, 
+			MER_USER_SEX,
+			MER_USER_MOBILE,
+			MER_USER_TELEPHONE,
+			MER_USER_ADDS,
+			MER_USER_BIRTHDAY, 
+			MER_USER_EMALL,
+			MER_USER_EMPLOYEE_DATE,
+			MER_USER_LAST_LOGIN_DATE,
+			MER_USER_LAST_LOGIN_IP,
+			MER_USER_LOGIN_FAI_COUNT, 
+			MER_USER_LOCKED_DATE, 
+			MER_USER_REMARK,
+			ACTIVATE,
+			DEL_FLG, 
+			CREATE_USER,
+			CREATE_DATE,
+			ID,
+			USER_CODE,
+			SOURCE, 
+			CITY_CODE, 
+			MER_CODE, 
+			PAYINFO_FLG, 
+			MER_USER_STATE,
+			EDUCATION,
+			INCOME,
+			BIRTHDAY,
+			IS_MARRIED,
+			TRADE_AREA,
+			MER_USER_PRO,
+			MER_USER_CITY
+			)
+		values (
+			#{merUserFlg, jdbcType=VARCHAR}, 
+		 	#{merUserType, jdbcType=VARCHAR}, 
+			#{merUserName, jdbcType=VARCHAR}, 
+			#{merUserPwd, jdbcType=VARCHAR}, 
+			#{merUserIdentityType, jdbcType=VARCHAR}, 
+			#{merUserIdentityNum, jdbcType=VARCHAR}, 
+			#{merUserNickname, jdbcType=VARCHAR}, 
+			#{merUserSex, jdbcType=VARCHAR}, 
+			#{merUserMobile, jdbcType=VARCHAR}, 
+			#{merUserTelephone, jdbcType=VARCHAR}, 
+			#{merUserAdds, jdbcType=VARCHAR}, 
+			#{merUserBirthday,jdbcType=DATE},
+			#{merUserEmall,jdbcType=VARCHAR},
+			#{merUserEmployeeDate,jdbcType=DATE}, 
+			#{merUserLastLoginDate,jdbcType=DATE},
+			#{merUserLastLoginIp,jdbcType=VARCHAR},
+			#{merUserLoginFaiCount,jdbcType=INTEGER}, 
+			#{merUserLockedDate,jdbcType=DATE}, 
+			#{merUserRemark, jdbcType=VARCHAR}, 
+			#{activate, jdbcType=VARCHAR}, 
+			#{delFlg, jdbcType=VARCHAR}, 
+			#{id},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{id, jdbcType=VARCHAR}, 
+			#{userCode, jdbcType=VARCHAR}, 
+			#{source, jdbcType=VARCHAR},
+			#{cityCode, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR},
+			#{payinfoFlg, jdbcType=VARCHAR},
+			#{merUserState},
+			#{education, jdbcType=VARCHAR},
+			#{income, jdbcType=INTEGER},
+			#{birthday, jdbcType=VARCHAR},
+			#{isMarried, jdbcType=VARCHAR},
+			#{tradeArea, jdbcType=VARCHAR},
+			#{merUserPro, jdbcType=VARCHAR},
+			#{merUserCity, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 保存用户 -->
+	<insert id="insertMerchantUser" parameterType="MerchantUser"><!-- Mikaelyan 增加 -->
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_USER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MERCHANT_USER 
+			(
+			ID,				USER_CODE,		MER_USER_FLG, 			MER_USER_STATE,
+			MER_USER_NAME, 	MER_USER_PWD, 	MER_USER_IDENTITY_TYPE, MER_USER_IDENTITY_NUM, 	MER_USER_NICKNAME, 
+			MER_USER_SEX, 	MER_USER_EMALL,	MER_USER_MOBILE,		MER_USER_TELEPHONE,		MER_USER_PRO,
+			MER_USER_CITY,	MER_USER_ADDS,	MER_CODE, 				MER_USER_TYPE, 			MER_USER_REMARK,
+			CITY_CODE,		SOURCE
+			)
+		values (
+			#{id},
+			#{userCode, jdbcType=VARCHAR}, 
+			#{merUserFlg, jdbcType=VARCHAR}, 
+			#{merUserState},
+			
+			#{merUserName, jdbcType=VARCHAR}, 
+			#{merUserPwd, jdbcType=VARCHAR}, 
+			#{merUserIdentityType, jdbcType=VARCHAR}, 
+			#{merUserIdentityNum, jdbcType=VARCHAR}, 
+			#{merUserNickname, jdbcType=VARCHAR}, 
+			
+			#{merUserSex, jdbcType=VARCHAR}, 
+			#{merUserEmall,jdbcType=VARCHAR},
+			#{merUserMobile, jdbcType=VARCHAR}, 
+			#{merUserTelephone, jdbcType=VARCHAR}, 
+			#{merUserPro, jdbcType=VARCHAR},
+		
+			#{merUserCity, jdbcType=VARCHAR},
+			#{merUserAdds, jdbcType=VARCHAR}, 
+			#{merCode, jdbcType=VARCHAR},
+		 	#{merUserType, jdbcType=VARCHAR}, 
+			#{merUserRemark, jdbcType=VARCHAR}, 
+			
+			#{cityCode, jdbcType=VARCHAR},
+			#{source, jdbcType=VARCHAR}
+		
+		)
+	</insert>
+</mapper>

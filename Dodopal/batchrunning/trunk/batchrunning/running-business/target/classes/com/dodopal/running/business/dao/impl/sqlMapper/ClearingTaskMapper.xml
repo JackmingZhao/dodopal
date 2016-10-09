@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.ClearingTaskMapper">
+    <sql id="clearingColumn">
+        cbd.ID,cbd.ORDER_NO,cbd.ORDER_DATE,cbd.ORDER_DAY,cbd.CUSTOMER_NO,cbd.CUSTOMER_NAME,cbd.CUSTOMER_TYPE,
+        cbd.BUSINESS_TYPE,cbd.CUSTOMER_RATE_TYPE,cbd.CUSTOMER_RATE,cbd.ORDER_AMOUNT,cbd.CUSTOER_REAL_PAY_AMOUNT,
+        cbd.CUSTOMER_SHOULD_PROFIT,cbd.CUSTOMER_REAL_PROFIT,cbd.CUSTOMER_ACCOUNT_SHOULD_AMOUNT,
+        cbd.CUSTOMER_ACCOUNT_REAL_AMOUNT,cbd.CUSTOMER_CLEARING_FLAG,cbd.CUSTOMER_CLEARING_TIME,
+        cbd.CUSTOMER_SETTLEMENT_FLAG,cbd.CUSTOMER_SETTLEMENT_TIME,cbd.DDP_GET_MERCHANT_PAY_FEE,
+        cbd.DDP_TO_CUSTOMER_REAL_FEE,cbd.SUB_MERCHANT_CODE,cbd.SUB_MERCHANT_NAME,cbd.SUB_MERCHANT_SHOULD_PROFIT,
+        cbd.PAY_GATEWAY,cbd.PAY_TYPE,cbd.PAY_WAY,cbd.SERVICE_RATE_TYPE,cbd.SERVICE_RATE,cbd.DDP_BANK_RATE,
+        cbd.DDP_TO_BANK_FEE,cbd.DDP_FROM_BANK_SHOULD_FEE,cbd.DDP_FROM_BANK_REAL_FEE,cbd.BANK_CLEARING_FLAG,
+        cbd.BANK_CLEARING_TIME,cbd.BANK_SETTLEMENT_FLAG,cbd.BANK_SETTLEMENT_TIME,cbd.SUPPLIER_CODE,cbd.SUPPLIER_NAME,
+        cbd.CITY_CODE,cbd.CITY_NAME,cbd.DDP_TO_SUPPLIER_SHOULD_AMOUNT,cbd.DDP_TO_SUPPLIER_REAL_AMOUNT,cbd.DDP_SUPPLIER_RATE,
+        cbd.SUPPLIER_TO_DDP_SHOULD_REBATE,cbd.SUPPLIER_TO_DDP_REAL_REBATE,cbd.SUPPLIER_CLEARING_FLAG,cbd.SUPPLIER_CLEARING_TIME,
+        cbd.SUPPLIER_SETTLEMENT_FLAG,cbd.SUPPLIER_SETTLEMENT_TIME,cbd.ORDER_FROM,cbd.ORDER_CIRCLE,cbd.TOP_MERCHANT_PROFIT_FLAG
+    </sql>
+    <!--获取前一天-->
+    <select id="getYestoday" resultType="java.lang.String" parameterType="java.lang.String">
+      select to_char(sysdate-1,'yyyy-MM-dd') from dual
+    </select>
+    <!--一卡通查询需要清分的数据信息-->
+    <!--If( ol.pay_type==0  &&  (ol.status=”充值失败” && ol.inner_status==” 卡片充值失败” )  || (ol.status=”充值失败” && ol.inner_status==” 资金冻结失败”)  || (ol.status=”充值失败” && ol.inner_status==” 申请充值密钥失败”)  充值中” && ol.inner_status==” 冻结资金成功”)  ) 忽略o1-->
+    <select id="queryYKTRchargeClearingData" resultType="ProductOrder" parameterType="java.lang.String">
+                select po.ID             as id,
+                po.PRO_ORDER_NUM          as proOrderNum,
+                po.PRO_CODE               as proCode,
+                po.PRO_NAME               as proName,
+                po.TXN_AMT                as txnAmt,
+                po.CITY_CODE              as cityCode,
+                po.YKT_CODE               as yktCode,
+                po.CITY_NAME              as cityName,
+                po.YKT_NAME               as yktName,
+                po.RECEIVED_PRICE         as receivedPrice,
+                po.MER_RATE               as merRate,
+                po.MER_PURCHAASE_PRICE    as merPurchaasePrice,
+                po.PRD_ORDER_DATE         as proOrderDate,
+                po.PRD_ORDER_DAY          as proOrderDay,
+                po.ORDER_CARDNO           as orderCardno,
+                po.POS_CODE               as posCode,
+                po.MER_GAIN               as merGain,
+                po.BEFBAL                 as befbal,
+                po.BLACK_AMT              as blackAmt,
+                po.PAY_TYPE               as payType,
+                po.PAY_WAY                as payWay,
+                po.PRO_ORDER_STATES       as proOrderState,
+                po.PRO_INNER_STATES       as proInnerState,
+                po.PRO_BEFOREINNER_STATES as proBeforInnerState,
+                po.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+                po.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+                po.MER_CODE               as merCode,
+                po.MER_NAME               as merName,
+                po.MER_USER_TYPE          as merUserType,
+                po.LOAD_FLAG              as loadFlag,
+                po.MER_ORDER_NUM          as merOrderNum,
+                po.LOAD_ORDER_NUM         as loadOrderNum,
+                po.SOURCE                 as source,
+                po.CLEARING_MARK          as clearingMark,
+                po.USER_ID                as userId,
+                po.USER_NAME              as userName,
+                po.COMMENTS               as comments,
+                po.PAGE_CALLBACK_URL      as pageCallBackURL,
+                po.SERVICE_NOTICE_URL     as serviceNoticeURL,
+                po.FUND_PROCESS_RESULT    as fundProcessResult,
+                po.USER_CODE              as userCode,
+                po.DEP_ID                 as depId,
+                po.EXT_USER_CODE          as extUserCode,
+                /*CREATE_USER            as createUser,
+                UPDATE_USER            as updateUser,
+                CREATE_DATE            as createDate,
+                UPDATE_DATE            as updateDate,*/
+                po.CREATE_DATE           as createDate,
+                po.MER_RATE_TYPE          as merRateType,
+                po.PAY_SERVICE_TYPE       as payServiceType,
+                po.PAY_SERVICE_RATE       as payServiceRate,
+                po.YKT_RECHARGE_RATE      as yktRechargeRate
+                from PRD_ORDER po
+        <![CDATA[
+                where to_char(po.create_date,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+                and po.clearing_mark='0'
+                and po.pro_order_states<>'0'
+                /*and (po.pay_type <> '0' or((po.pro_order_states<>'2' or po.pro_inner_states not in('20','21','22')) and (po.pro_order_states<>'3' or po.pro_inner_states<>'23')))*/
+                AND (po.pay_type <> '0' OR ((po.pro_order_states<>'2'OR po.pro_inner_states  NOT in('20','21','22')) AND (po.pro_order_states<>'3'OR po.pro_inner_states <>'30') AND ( po.pro_inner_states NOT IN('23','24'))))
+        ]]>
+    </select>
+    <!--新增清分基础表信息-->
+    <insert id="addClearingData" parameterType="ClearingDataModel">
+        <selectKey resultType="String" keyProperty="id" order="BEFORE">
+            select CLEARING_BASIC_DATA_ID_SEQ.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO CLEARING_BASIC_DATA(ID,ORDER_NO,ORDER_DATE,ORDER_DAY,CUSTOMER_NO,CUSTOMER_NAME,CUSTOMER_TYPE,
+        BUSINESS_TYPE,CUSTOMER_RATE_TYPE,CUSTOMER_RATE,ORDER_AMOUNT,CUSTOER_REAL_PAY_AMOUNT,CUSTOMER_SHOULD_PROFIT,
+        CUSTOMER_REAL_PROFIT,CUSTOMER_ACCOUNT_SHOULD_AMOUNT,CUSTOMER_ACCOUNT_REAL_AMOUNT,CUSTOMER_CLEARING_FLAG,
+        CUSTOMER_CLEARING_TIME,CUSTOMER_SETTLEMENT_FLAG,CUSTOMER_SETTLEMENT_TIME,DDP_GET_MERCHANT_PAY_FEE,
+        DDP_TO_CUSTOMER_REAL_FEE,SUB_MERCHANT_CODE,SUB_MERCHANT_NAME,SUB_MERCHANT_SHOULD_PROFIT,PAY_GATEWAY,PAY_TYPE,
+        PAY_WAY,SERVICE_RATE_TYPE,SERVICE_RATE,DDP_BANK_RATE,DDP_TO_BANK_FEE,DDP_FROM_BANK_SHOULD_FEE,
+        DDP_FROM_BANK_REAL_FEE,BANK_CLEARING_FLAG,BANK_CLEARING_TIME,BANK_SETTLEMENT_FLAG,BANK_SETTLEMENT_TIME,
+        SUPPLIER_CODE,SUPPLIER_NAME,CITY_CODE,CITY_NAME,DDP_TO_SUPPLIER_SHOULD_AMOUNT,DDP_TO_SUPPLIER_REAL_AMOUNT,
+        DDP_SUPPLIER_RATE,SUPPLIER_TO_DDP_SHOULD_REBATE,SUPPLIER_TO_DDP_REAL_REBATE,SUPPLIER_CLEARING_FLAG,
+        SUPPLIER_CLEARING_TIME,SUPPLIER_SETTLEMENT_FLAG,SUPPLIER_SETTLEMENT_TIME,ORDER_FROM,ORDER_CIRCLE,
+        TOP_MERCHANT_PROFIT_FLAG, PAY_WAY_NAME,DATA_FLAG)
+        VALUES
+        (#{id,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR},#{orderDate},TO_CHAR(#{orderDate,jdbcType=DATE},'yyyyMMdd'),
+        #{customerNo,jdbcType=VARCHAR},#{customerName,jdbcType=VARCHAR},#{customerType,jdbcType=VARCHAR},
+        #{businessType,jdbcType=VARCHAR},#{customerRateType,jdbcType=VARCHAR},#{customerRate,jdbcType=DOUBLE},
+        #{orderAmount,jdbcType=BIGINT},#{customerRealPayAmount,jdbcType=BIGINT},#{customerShouldProfit,jdbcType=BIGINT},
+        #{customerRealProfit,jdbcType=BIGINT},#{customerAccountShouldAmount,jdbcType=BIGINT},
+        #{customerAccountRealAmount,jdbcType=BIGINT},#{customerClearingFlag,jdbcType=VARCHAR},
+        TO_DATE(#{customerClearingTime,jdbcType=VARCHAR},'yyyy-MM-dd'),#{customerSettlementFlag,jdbcType=VARCHAR},
+        #{customerSettlementTime,jdbcType=VARCHAR},#{ddpGetMerchantPayFee,jdbcType=BIGINT},#{ddpToCustomerRealFee,jdbcType=BIGINT},
+        #{subMerchantCode,jdbcType=VARCHAR},#{subMerchantName,jdbcType=VARCHAR},#{subMerchantShouldProfit,jdbcType=BIGINT},
+        #{payGateway,jdbcType=VARCHAR},#{payType,jdbcType=VARCHAR},#{payWay,jdbcType=VARCHAR},#{serviceRateType,jdbcType=VARCHAR},
+        #{serviceRate,jdbcType=DOUBLE},#{ddpBankRate,jdbcType=DOUBLE},#{ddpToBankFee,jdbcType=BIGINT},#{ddpFromBankShouldFee,jdbcType=BIGINT},
+        #{ddpFromBankRealFee,jdbcType=BIGINT},#{bankClearingFlag,jdbcType=VARCHAR},TO_DATE(#{bankClearingTime,jdbcType=VARCHAR},'yyyy-MM-dd'),
+        #{bankSettlementFlag,jdbcType=VARCHAR},#{bankSettlementTime,jdbcType=VARCHAR},#{supplierCode,jdbcType=VARCHAR},
+        #{supplierName,jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{cityName,jdbcType=VARCHAR},#{ddpToSupplierShouldAmount,jdbcType=BIGINT},
+        #{ddpToSupplierRealAmount,jdbcType=BIGINT},#{ddpSupplierRate,jdbcType=DOUBLE},#{supplierToDdpShouldRebate,jdbcType=BIGINT},
+        #{supplierToDdpRealRebate,jdbcType=BIGINT},#{supplierClearingFlag,jdbcType=VARCHAR},
+        TO_DATE(#{supplierClearingTime,jdbcType=VARCHAR},'yyyy-MM-dd'),#{supplierSettlementFlag,jdbcType=VARCHAR},
+        #{supplierSettlementTime,jdbcType=VARCHAR},#{orderFrom,jdbcType=VARCHAR},#{orderCircle,jdbcType=VARCHAR},
+        #{topMerchantProfitFlag,jdbcType=VARCHAR},#{payWayName,jdbcType=VARCHAR},#{dataFlag,jdbcType=VARCHAR})
+    </insert>
+    <!--根据产品库订单号更改订单的清分状态，此处没法拿到更改人，由于跑批，所以值标识状态和更改时间-->
+    <update id="updateProductOrderClearingFlag" parameterType="java.lang.String">
+                update PRD_ORDER
+                set CLEARING_MARK = #{clearingFlag,jdbcType=VARCHAR},
+                UPDATE_DATE = sysdate
+                where PRO_ORDER_NUM = #{orderNo}
+        </update>
+    <!--根据paywayid查询支付网关(关联通用表)-->
+    <select id="getGateWayByGeneral" resultType="PayWay" parameterType="java.lang.String">
+        select BANK_GATEWAY_TYPE AS  bankGatewayType, PAY_WAY_NAME AS payWayName
+        from pay_way_general pwg ,pay_config pc where pwg.pay_config_id=pc.id and pwg.id=#{payWayId}
+    </select>
+    <!--根据paywayid查询支付网关(关联外接表)-->
+    <select id="getGateWayByExternal" resultType="PayWay" parameterType="java.lang.String">
+        select BANK_GATEWAY_TYPE AS  bankGatewayType, PAY_WAY_NAME AS payWayName
+        from pay_way_external pwe ,pay_config pc where pwe.pay_config_id=pc.id and pwe.id=#{payWayId}
+    </select>
+    <!--根据一卡通code查询一卡通name-->
+    <select id="getSupplierName" resultType="java.lang.String" parameterType="java.lang.String">
+        select YKT_NAME from PRD_YKT_INFO where YKT_CODE=#{supplierCode}
+    </select>
+    <!--根据客户号(如果是商户，传商户号，如果是个人，传入个人用户号) 订单号和交易类型查询费率-->
+    <select id="getPayRate" resultType="java.lang.String" parameterType="java.lang.String">
+        Select pay.PAY_PROCE_RATE From PAY_TRATRANSACTION pay Where pay.MER_OR_USER_CODE = #{userCode}
+        and pay.ORDER_NUMBER = #{orderNo} and pay.TRAN_TYPE = #{tranType}
+    </select>
+    <!--账户充值查询需要清分的数据-->
+    <select id="queryAccountRechargeClearingData" resultType="PayTransaction">
+    SELECT
+         tranCode as tranCode,
+         tranName as tranName,
+         tranOutStatus as tranOutStatus,
+         tranInStatus as tranInStatus,
+         amountMoney as amountMoney,
+         tranType as tranType,
+         userType as userType,
+         merOrUserCode as merOrUserCode,
+         orderNumber as orderNumber,
+         commodity as commodity,
+         businessType as businessType,
+         source as source,
+         orderDate as orderDate,
+         payType as payType,
+         payWay as payWay,
+         payServiceRate as payServiceRate,
+         payServiceFee as payServiceFee,
+         payProceRate as payProceRate,
+         payProceFee as payProceFee,
+         realTranMoney as realTranMoney,
+         turnOutMerCode as turnOutMerCode,
+         turnIntoMerCode as turnIntoMerCode,
+         oldTranCode as oldTranCode,
+         clearFlag as clearFlag,
+         acceptCiphertext as acceptCiphertext,
+         sendCiphertext as sendCiphertext,
+         finishDate as finishDate,
+         comments as comments,
+         createDate as createDate,
+         payGateway as payGateway,
+         payWayName as payWayName,
+         payServiceType as payServiceType,
+         merUserType as merUserType,
+         merUserName as merUserName
+    FROM
+    (SELECT
+         pt.TRAN_CODE AS tranCode,
+         pt.TRAN_NAME AS tranName,
+         pt.TRAN_OUT_STATUS AS tranOutStatus,
+         pt.TRAN_IN_STATUS AS tranInStatus,
+         pt.AMOUNT_MONEY AS amountMoney,
+         pt.TRAN_TYPE AS tranType,
+         pt.USER_TYPE AS userType,
+         pt.MER_OR_USER_CODE AS merOrUserCode,
+         pt.ORDER_NUMBER AS orderNumber,
+         pt.COMMODITY AS commodity,
+         pt.BUSINESS_TYPE AS businessType,
+         pt.SOURCE AS source,
+         pt.ORDER_DATE AS orderDate,
+         pt.PAY_TYPE AS payType,
+         pt.PAY_WAY AS payWay,
+         pt.PAY_SERVICE_RATE AS payServiceRate,
+         pt.PAY_SERVICE_FEE AS payServiceFee,
+         pt.PAY_PROCE_RATE AS payProceRate,
+         pt.PAY_PROCE_FEE AS payProceFee,
+         pt.REAL_TRAN_MONEY AS realTranMoney,
+         pt.TURN_OUT_MER_CODE AS turnOutMerCode,
+         pt.TURN_INTO_MER_CODE AS turnIntoMerCode,
+         pt.OLD_TRAN_CODE AS oldTranCode,
+         pt.CLEAR_FLAG AS clearFlag,
+         pt.ACCEPT_CIPHERTEXT AS acceptCiphertext,
+         pt.SEND_CIPHERTEXT AS sendCiphertext,
+         pt.FINISH_DATE AS finishDate,
+         pt.COMMENTS AS comments,
+         pt.CREATE_DATE AS createDate,
+         pt.PAY_GATEWAY AS payGateway,
+         pt.PAY_WAY_NAME AS payWayName,
+         pt.PAY_SERVICE_TYPE AS payServiceType,
+         '99' AS merUserType,
+         mu.mer_user_nickname AS merUserName
+         from PAY_TRATRANSACTION pt,MERCHANT_USER mu
+         where to_char(pt.create_date,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+          AND pt.clear_flag='0' and pt.business_type='99' and pt.tran_type='1'
+          AND pt.TRAN_OUT_STATUS = '3'
+          AND pt.user_type = '0'
+          AND  pt.mer_or_user_code = mu.user_code
+UNION
+     SELECT
+         pt.TRAN_CODE AS tranCode,
+         pt.TRAN_NAME AS tranName,
+         pt.TRAN_OUT_STATUS AS tranOutStatus,
+         pt.TRAN_IN_STATUS AS tranInStatus,
+         pt.AMOUNT_MONEY AS amountMoney,
+         pt.TRAN_TYPE AS tranType,
+         pt.USER_TYPE AS userType,
+         pt.MER_OR_USER_CODE AS merOrUserCode,
+         pt.ORDER_NUMBER AS orderNumber,
+         pt.COMMODITY AS commodity,
+         pt.BUSINESS_TYPE AS businessType,
+         pt.SOURCE AS source,
+         pt.ORDER_DATE AS orderDate,
+         pt.PAY_TYPE AS payType,
+         pt.PAY_WAY AS payWay,
+         pt.PAY_SERVICE_RATE AS payServiceRate,
+         pt.PAY_SERVICE_FEE AS payServiceFee,
+         pt.PAY_PROCE_RATE AS payProceRate,
+         pt.PAY_PROCE_FEE AS payProceFee,
+         pt.REAL_TRAN_MONEY AS realTranMoney,
+         pt.TURN_OUT_MER_CODE AS turnOutMerCode,
+         pt.TURN_INTO_MER_CODE AS turnIntoMerCode,
+         pt.OLD_TRAN_CODE AS oldTranCode,
+         pt.CLEAR_FLAG AS clearFlag,
+         pt.ACCEPT_CIPHERTEXT AS acceptCiphertext,
+         pt.SEND_CIPHERTEXT AS sendCiphertext,
+         pt.FINISH_DATE AS finishDate,
+         pt.COMMENTS AS comments,
+         pt.CREATE_DATE AS createDate,
+         pt.PAY_GATEWAY AS payGateway,
+         pt.PAY_WAY_NAME AS payWayName,
+         pt.PAY_SERVICE_TYPE AS payServiceType,
+         mu.MER_TYPE AS merUserType,
+         mu.MER_NAME AS merUserName
+         from PAY_TRATRANSACTION pt,MERCHANT mu
+         where to_char(pt.create_date,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+          AND pt.clear_flag='0' and pt.business_type='99' and pt.tran_type='1'
+          AND pt.user_type = '1'
+          AND pt.TRAN_OUT_STATUS = '3'
+          AND  pt.mer_or_user_code = mu.mer_code)
+    </select>
+    <!--根据产品库订单号更改订单的清分状态，此处没法拿到更改人，由于跑批，所以值标识状态和更改时间-->
+    <update id="updateTransactionClearingFlag" parameterType="java.lang.String">
+        update PAY_TRATRANSACTION
+        set CLEAR_FLAG = #{clearingFlag,jdbcType=VARCHAR},
+        UPDATE_DATE = sysdate
+        where TRAN_CODE = #{orderNo}
+    </update>
+    <select id="queryYKTPurchaseClearingData" resultType="Purchase">
+   select ppor.ORDER_NUM AS orderNum,
+           ppor.CITY_CODE AS cityCode,
+           ppor.CITY_NAME AS cityName,
+           ppor.YKT_CODE AS yktCode,
+           ppor.YKT_NAME AS yktName,
+           ppor.ORDER_DATE AS orderDate,
+           ppor.ORDER_DAY AS orderDay,
+           ppor.YKT_PAY_RATE AS yktPayRate,
+           ppor.CARD_NUM AS cardNum,
+           ppor.POS_CODE AS posCode,
+           ppor.BEFBAL AS befbal,
+           ppor.BLACK_AMT AS blackAmt,
+           ppor.MER_DISCOUNT AS merDiscount,
+           ppor.INNER_STATES AS innerStates,
+           ppor.BEFOREINNER_STATES AS beforeinnerStates,
+           ppor.SUSPICIOUS_STATES AS suspiciousStates,
+           ppor.SUSPICIOUS_EXPLAIN AS suspiciousExplain,
+           ppo.ORIGINAL_PRICE AS originalPrice,
+           ppo.RECEIVED_PRICE AS receivedPrice,
+           ppo.CUSTOMER_TYPE AS customerType,
+           ppo.CUSTOMER_CODE AS customerCode,
+           ppo.CUSTOMER_NAME AS customerName,
+           ppo.BUSINESS_TYPE AS businessType,
+           ppo.MER_RATE_TYPE AS merRateType,
+           ppo.MER_RATE AS merRate,
+           ppo.SERVICE_RATE_TYPE AS serviceRateType,
+           ppo.SERVICE_RATE AS serviceRate,
+           ppo.MER_GAIN AS merGain,
+           ppo.ORDER_DATE AS orderDate,
+           ppo.ORDER_DAY AS orderDay,
+           ppo.PAY_GATEWAY AS payGateway,
+           ppo.PAY_TYPE AS payType,
+           ppo.PAY_WAY AS payWay,
+           ppo.STATES AS states,
+           ppo.SOURCE AS source,
+           ppo.CREATE_DATE AS createDate,
+           ppo.CLEARING_MARK AS clearingMark,
+           ppo.USER_ID AS userId,
+           ppo.COMMENTS AS comments,
+           ppo.FUND_PROCESS_RESULT AS fundProcessResult
+         from prd_purchase_order_record ppor,prd_purchase_order ppo where ppor.order_num=ppo.order_num
+         and to_char(ppor.create_date,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd') and ppo.clearing_mark='0'
+   </select>
+    <!--根据订单号更改消费流水的清分状态，此处没法拿到更改人，由于跑批，所以值标识状态和更改时间-->
+    <update id="updatePurchaseOrderClearingFlag" parameterType="java.lang.String">
+        update PRD_PURCHASE_ORDER
+        set CLEARING_MARK = #{clearingFlag,jdbcType=VARCHAR},
+        UPDATE_DATE = sysdate
+        where ORDER_NUM = #{orderNo}
+    </update>
+    <!--查询需要进行分润的数据-->
+    <!--ol.业务类型==“一卡通充值” &&  ol.商户类型 in (代理商自有网点，连锁商户加盟网点，连锁商户直营网点) &&  ol.与客户清分状态==1 &&  o1.分润计算状态==1 -->
+    <select id="queryProfitData" resultType="ClearingDataModel" resultMap="clearingDataModelResultMap"
+            parameterType="java.lang.String">
+        select
+        <include refid="clearingColumn"/>
+        FROM CLEARING_BASIC_DATA cbd WHERE cbd.BUSINESS_TYPE='01' AND cbd.CUSTOMER_TYPE IN('11','14','13')
+        AND cbd.CUSTOMER_CLEARING_FLAG ='1' AND cbd.TOP_MERCHANT_PROFIT_FLAG = '1'
+    </select>
+    <!--根据mercode查询出所有的上级商户-->
+    <select id="queryMerchant" resultType="MerChant" parameterType="java.lang.String">
+        SELECT DISTINCT t.MER_CODE AS merCode,
+        t.MER_PARENT_CODE AS merParentCode,
+        r.RATE_TYPE AS merRateType,
+        r.RATE AS merRate
+        FROM MERCHANT t,mer_bus_rate r where t.mer_code=r.mer_code and r.RATE_CODE=#{bussinessType} and r.PROVIDER_CODE=#{YKTCode}START WITH t.mer_code=#{merCode}
+        CONNECT BY PRIOR t.MER_PARENT_CODE = t.MER_CODE
+    </select>
+    <!--根据mercode查询出商户的信息-->
+    <select id="queryMerchantUserInfo" resultType="MerchantUserInfo" parameterType="java.lang.String">
+        SELECT DISTINCT t.MER_CODE AS merCode,
+        t.MER_PARENT_CODE AS merParentCode,
+        t.MER_TYPE AS merUserType,
+        t.MER_NAME AS merName,
+        r.RATE_TYPE AS merRateType,
+        r.RATE AS merRate
+        FROM MERCHANT t,mer_bus_rate r where t.mer_code=r.mer_code and t.mer_code=#{merCode} and r.RATE_CODE=#{bussinessType} and r.PROVIDER_CODE=#{YKTCode}
+    </select>
+    <!--查询子商户信息-->
+    <select id="querySubMerchantUserInfo" resultType="MerchantUserInfo" parameterType="java.lang.String">
+        SELECT DISTINCT t.MER_CODE AS merCode,
+        t.MER_PARENT_CODE AS merParentCode,
+        t.MER_PARENT_CODE AS merParentCode,
+        t.MER_NAME AS merName,
+        r.RATE_TYPE AS merRateType,
+        r.RATE AS merRate
+        FROM MERCHANT t,mer_bus_rate r where t.mer_code=r.mer_code and t.mer_parent_code=#{merCode}
+    </select>
+    <!--新增清分基础表信息-->
+    <insert id="addProfitData" parameterType="ProfitModel">
+        <selectKey resultType="String" keyProperty="id" order="BEFORE">
+            select PROFIT_DETAILS_ID_SEQ.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO PROFIT_DETAILS(ID,ORDER_NO,ORDER_TIME,CUSTOMER_CODE,CUSTOMER_NAME,BUSSINESS_TYPE,CUSTOMER_TYPE,
+        SOURCE,ISCIRCLE,CUSTOMER_RATE_TYPE,CUSTOMER_RATE,ORDER_AMOUNT,CUSTOMER_SHOULD_PROFIT,CUSTOMER_REAL_PROFIT,
+        SUB_CUSTOMER_CODE,SUB_CUSTOMER_NAME,SUB_CUSTOMER_SHOULD_PROFIT,CUSTOMER_SETTLEMENT_TIME,PROFIT_DATE)
+        VALUES (#{id,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR},#{orderTime,jdbcType=VARCHAR},
+        #{customerCode,jdbcType=VARCHAR},#{customerName,jdbcType=VARCHAR},#{bussinessType,jdbcType=VARCHAR},
+        #{customerType,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR},#{iscircle,jdbcType=VARCHAR},
+        #{customerRateType,jdbcType=VARCHAR},#{customerRate,jdbcType=DOUBLE},#{orderAmount,jdbcType=BIGINT},
+        #{customerShouldProfit,jdbcType=BIGINT},#{customerRealProfit,jdbcType=BIGINT},#{subCustomerCode,jdbcType=VARCHAR},
+        #{subCustomerName,jdbcType=VARCHAR},#{subCustomerShouldProfit,jdbcType=BIGINT},#{customerSettlementTime,jdbcType=DATE},
+        #{profitDate,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateClearingFlage" parameterType="java.lang.String">
+        update CLEARING_BASIC_DATA
+        set TOP_MERCHANT_PROFIT_FLAG = #{clearingFlag,jdbcType=VARCHAR}
+        where ORDER_NO = #{orderNo}
+    </update>
+    <!--根据customerCode查询parentCode-->
+    <select id="queryParentCode" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT MER_PARENT_CODE FROM MERCHANT WHERE MER_CODE=#{customerCode}
+    </select>
+    <!--根据客户号，查询客户信息
+    <select id="serarchMerchant" resultType="MerChant" parameterType="java.lang.String">
+        SELECT DISTINCT t.MER_CODE AS merCode,
+        t.MER_PARENT_CODE AS merParentCode
+        FROM MERCHANT t where t.mer_code=#{merCode}
+    </select>-->
+</mapper>

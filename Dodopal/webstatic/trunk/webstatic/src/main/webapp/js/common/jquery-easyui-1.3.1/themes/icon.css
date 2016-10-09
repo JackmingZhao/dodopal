@@ -1,0 +1,171 @@
+.icon-blank{
+	background:url('icons/blank.gif') no-repeat;
+}
+.icon-add{
+	background:url('icons/edit_add.png') no-repeat;
+}
+.icon-edit{
+	background:url('icons/pencil.png') no-repeat;
+}
+.icon-remove{
+	background:url('icons/edit_remove.png') no-repeat;
+}
+.icon-save{
+	background:url('icons/filesave.png') no-repeat;
+}
+.icon-cut{
+	background:url('icons/cut.png') no-repeat;
+}
+.icon-ok{
+	background:url('icons/ok.png') no-repeat;
+}
+.icon-no{
+	background:url('icons/no.png') no-repeat;
+}
+.icon-cancel{
+	background:url('icons/cancel.png') no-repeat;
+}
+.icon-reload{
+	background:url('icons/reload.png') no-repeat;
+}
+.icon-copy{
+	background:url('icons/document-copy.png') no-repeat;
+}
+.icon-search{
+	background:url('icons/search.png') no-repeat;
+}
+.icon-print{
+	background:url('icons/print.png') no-repeat;
+}
+.icon-help{
+	background:url('icons/help.png') no-repeat;
+}
+.icon-undo{
+	background:url('icons/undo.png') no-repeat;
+}
+.icon-redo{
+	background:url('icons/redo.png') no-repeat;
+}
+.icon-back{
+	background:url('icons/back.png') no-repeat;
+}
+.icon-sum{
+	background:url('icons/sum.png') no-repeat;
+}
+.icon-tip{
+	background:url('icons/tip.png') no-repeat;
+}
+
+.icon-mini-add{
+	background:url('icons/mini_add.png') no-repeat 2px 2px;
+}
+.icon-mini-edit{
+	background:url('icons/mini_edit.png') no-repeat 2px 2px;
+}
+.icon-mini-refresh{
+	background:url('icons/mini_refresh.png') no-repeat 3px 2px;
+}
+
+.icon-order2{
+	background: url('icons/order.png') no-repeat;
+}
+
+.icon-next{
+	background: url('icons/next.png') no-repeat;
+}
+
+.icon-calculator{
+	background: url('icons/calculator.png') no-repeat;
+}
+
+.icon-export {
+	background: url('icons/export.png') no-repeat;
+}
+
+.icon-export-excel {
+	background : url('icons/export-excel.png') no-repeat;
+}
+
+.icon-approval {
+	background : url('icons/approval.png') no-repeat;
+}
+
+.icon-apply {
+	background : url('icons/apply.png') no-repeat;
+}
+.icon-send {
+	background:url('icons/redo.png') no-repeat;
+}
+.icon-eraser {
+	background: url('icons/eraser.png') no-repeat;
+}
+
+.icon-download {
+	background: url('icons/download.png') no-repeat;
+}
+
+.icon-upload {
+	background: url('icons/upload.png') no-repeat;
+	padding: 3px 10px;
+	font-size: 0.85em;
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.icon-del {
+	background: url('icons/del.jpg') no-repeat;
+	padding: 3px 10px;
+	font-size: 0.85em;
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.icon-del-right {
+	background: url('icons/del.jpg') no-repeat;
+	padding: 3px 10px;
+	font-size: 0.85em;
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.icon-folder {
+	background: url('icons/folder.png') no-repeat;
+}
+
+.icon-createProject{
+	background: url('icons/briefcase--arrow.png') no-repeat;
+}
+
+.icon-view{
+	background: url('icons/open-share-document.png') no-repeat;
+}
+
+.icon-visitCustomer{
+	background: url('icons/user--arrow.png') no-repeat;
+}
+.icon-activate{
+	background: url('icons/tick-button.png') no-repeat;
+}
+.icon-submit{
+	background: url('icons/tick-octagon-frame.png') no-repeat;
+}
+.icon-maintenanceRecord {
+	background: url('icons/wrench-screwdriver.png') no-repeat !important;	
+}
+
+.icon-deliverService{
+	background: url('icons/truck--plus.png') no-repeat !important;
+}
+
+.icon-detail{
+	background: url('icons/document--pencil.png') no-repeat !important;
+}
+
+.icon-question{
+	background: url('icons/question-frame.png') no-repeat !important;
+}

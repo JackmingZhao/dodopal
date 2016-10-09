@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.BicostdisdetailMapper">
+<sql id="allColumns">
+  SALEID,
+  MCHNITID,
+  SALEDATE,
+  STARTTIME,
+  ENDTIME,
+  SALE,
+  SETSALE,
+  POSID
+</sql>
+<!-- 数据迁移连锁商户 -->
+<select id="findBicostdisdetailByPosId" resultType="Bicostdisdetail" resultMap="bicostdisdetailResultMap">
+select <include refid="allColumns" /> 
+from icpay.bicostdisdetail t
+where t.posid=#{posid}
+</select>
+</mapper>

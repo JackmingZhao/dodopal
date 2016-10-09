@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductOrderForMobileVCMapper">
+	
+	<!--3.6  公交卡充值订单查询(移动端、VC端接口)-->
+	<select id="queryProductOrder" resultType="QueryProductOrderResult" parameterType="QueryProductOrderRequest">
+		select PRO_ORDER_STATES       as orderstates,
+		       PRO_ORDER_NUM          as ordernum,
+		       CITY_NAME              as cityname,
+		       TXN_AMT                as txnamt,
+		       RECEIVED_PRICE         as receivedprice,
+		       BEFBAL                 as befbal,
+		       BLACK_AMT              as blackamt,
+		       ORDER_CARDNO           as cardnum,
+		       to_char(PRD_ORDER_DATE,'yyyy-mm-dd hh24:mi:ss')         as orderdate
+		  from PRD_ORDER
+		<where>
+			<if test="custtype == 0">
+		         MER_USER_TYPE = '99'
+		    </if>
+			<if test="custtype ==1">
+		        <![CDATA[ MER_USER_TYPE <> '99']]>
+		    </if>
+		    <if test="custcode != null and custcode !=''">
+		     and (MER_CODE = #{custcode} or USER_CODE = #{custcode})
+		     </if>
+		     <if test="userid != null and userid !=''">
+		     and USER_ID = #{userid}
+		     </if>
+			<if test="orderstates != null and orderstates !=''">
+				and PRO_ORDER_STATES =  #{orderstates}
+			</if>
+			<if test="stratdate != null and stratdate !=''">
+				<![CDATA[ and PRD_ORDER_DATE >=  to_date(#{stratdate},'yyyy/mm/dd hh24:mi:ss') ]]>
+			</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[ and PRD_ORDER_DATE <=  to_date(#{enddate},'yyyy/mm/dd hh24:mi:ss') ]]>
+			</if>
+			<if test="stratamt != null and stratamt !=''">
+				<![CDATA[ and TXN_AMT >=  #{stratamt} ]]>
+			</if>
+			<if test="endamt != null and endamt !=''">
+				<![CDATA[ and TXN_AMT <=  #{endamt} ]]>
+			</if>
+			<if test="ordernum != null and ordernum !=''">
+				and PRO_ORDER_NUM = #{ordernum}
+			</if>
+		</where>
+		order by CREATE_DATE desc
+	</select>
+	
+	<!-- 3.12  订单状态查询(移动端、VC端接口) -->
+	<select id="queryProductOrderStates" resultType="QueryProductOrderStatesResult" parameterType="QueryProductOrderStatesRequest">
+		select PRO_ORDER_STATES       as proorderstates,
+		       PRO_INNER_STATES       as proinnerstates
+		  from PRD_ORDER
+		 where PRO_ORDER_NUM = #{ordernum} 
+		   and (MER_CODE = #{custcode} or USER_CODE = #{custcode})
+	</select>
+</mapper>

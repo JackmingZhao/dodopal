@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.CcOrderMapper">
+	<!-- 商户的消费订单统计 -->
+	<select id="findMchnitidByMerCode" resultType="java.lang.String">
+		select t.old_merchant_id from MERCHANT_EXTEND t where t.mer_code =
+		#{merCode}
+	</select>
+	<!--4.2.2.4 手持pos机充值订单查询 -->
+	<select id="findAllCcOrderByPage" resultType="CcOrderForm"
+		parameterType="QueryCcOrderForm">
+		select a.orderid as orderid,
+		c.mchnitname as mchnitname,
+		nvl(e.username, a.userid)
+		as userid,
+		decode(a.orderstates,
+		'1000000001',
+		'记账成功,未扣款',
+		'1000000005',
+		'可疑交易',
+		'1000000004',
+		'可疑交易',
+		'1000000025',
+		'可疑交易',
+		'1000000030',
+		'可疑交易',
+		'1000000002',
+		'充值失败',
+		'1000000006',
+		'充值成功',
+		'1000000007',
+		'充值成功',
+		'1000000024',
+		'充值失败',
+		'1000000022',
+		'充值失败',
+		'1000000023',
+		'充值成功',
+		'1000000008',
+		'补充值审批通过',
+		'1000000009',
+		'补充值成功',
+		'1000000010',
+		'补充值失败') as
+		status,
+		a.checkcardno as cardno,
+		a.checkcardposid as posid,
+		to_char(a.amt / 100, 'fm999999990.09') as
+		amt,
+		decode(a.senddate,
+		'0',
+		'',
+		'',
+		'',
+		(substr(a.senddate, 0, 4) || '-' ||
+		substr(a.senddate, 5, 2)
+		|| '-' ||
+		substr(a.senddate, 7, 2))) as
+		senddate,
+		decode(a.sendtime,
+		'0',
+		'',
+		(substr(to_char(a.sendtime,
+		'099999'), -6, 2) || ':' ||
+		substr(to_char(a.sendtime, '099999'), -4,
+		2) || ':' ||
+		substr(to_char(a.sendtime, '099999'), -2, 2))) as
+		sendtime,
+		a.bankorderid as bankorderid,
+		to_char(a.paidamt / 100,
+		'fm999999990.09') as paidamt,
+		to_char((a.amt - a.paidamt) / 100,
+		'fm999999990.09') as flamt
+		from icpay.v_tlbankorder a,
+		(select b.posid,
+		f.mchnitname
+		from icpay.mchntposinfo b, icpay.bimchntinfotb f
+		where
+		b.mchnitid = f.mchnitid
+		and b.mchnitid = #{mchnitid}) c,
+		(select
+		name, code from icpay.dictmgmtb
+		where typeid = 'charges')
+		d,
+		icpay.sysuserstb e
+		<where>
+			1 = 1
+			and a.orderstates = d.code(+)
+			and a.userid = e.userid(+)
+			and
+			a.checkcardposid = c.posid
+			<if test="bankorderid != null and bankorderid !=''">
+				and a.bankorderid = trim(#{bankorderid})
+			</if>
+			<if test="startdate != null and startdate !=''">
+			<![CDATA[
+				and a.senddate >=#{startdate}
+				]]>
+			</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[
+			    and a.senddate <=#{enddate}
+				]]>
+			</if>
+			<if test="status != null and status !=''">
+				 and (${status}) 
+			</if>
+			<if test="posid != null and posid !=''">
+				and a.checkcardposid = #{posid}
+			</if>
+			<if test="cardno != null and cardno !=''">
+				and a.checkcardno = #{cardno}
+			</if>
+			<if test="username != null and username !=''">
+				and nvl(e.username, a.userid) like '%'||#{username}||'%'
+			</if>
+		</where>
+		order by concat(a.senddate,
+		decode(a.sendtime,
+		'0',
+		'',
+		(substr(to_char(a.sendtime, '099999'), -6, 2) || '' ||
+		substr(to_char(a.sendtime, '099999'), -4, 2) || '' ||
+		substr(to_char(a.sendtime, '099999'), -2, 2)))) desc
+	</select>
+	
+	<!-- 导出 -->
+	<select id="findAllCcOrderExcel" resultType="CcOrderForm"
+		parameterType="QueryCcOrderForm">
+		select a.orderid as orderid,
+		c.mchnitname as mchnitname,
+		nvl(e.username, a.userid)
+		as userid,
+		decode(a.orderstates,
+		'1000000001',
+		'记账成功,未扣款',
+		'1000000005',
+		'可疑交易',
+		'1000000004',
+		'可疑交易',
+		'1000000025',
+		'可疑交易',
+		'1000000030',
+		'可疑交易',
+		'1000000002',
+		'充值失败',
+		'1000000006',
+		'充值成功',
+		'1000000007',
+		'充值成功',
+		'1000000024',
+		'充值失败',
+		'1000000022',
+		'充值失败',
+		'1000000023',
+		'充值成功',
+		'1000000008',
+		'补充值审批通过',
+		'1000000009',
+		'补充值成功',
+		'1000000010',
+		'补充值失败') as
+		status,
+		a.checkcardno as cardno,
+		a.checkcardposid as posid,
+		to_char(a.amt / 100, 'fm999999990.09') as
+		amt,
+		decode(a.senddate,
+		'0',
+		'',
+		'',
+		'',
+		(substr(a.senddate, 0, 4) || '-' ||
+		substr(a.senddate, 5, 2)
+		|| '-' ||
+		substr(a.senddate, 7, 2))) as
+		senddate,
+		decode(a.sendtime,
+		'0',
+		'',
+		(substr(to_char(a.sendtime,
+		'099999'), -6, 2) || ':' ||
+		substr(to_char(a.sendtime, '099999'), -4,
+		2) || ':' ||
+		substr(to_char(a.sendtime, '099999'), -2, 2))) as
+		sendtime,
+		a.bankorderid as bankorderid,
+		to_char(a.paidamt / 100,
+		'fm999999990.09') as paidamt,
+		to_char((a.amt - a.paidamt) / 100,
+		'fm999999990.09') as flamt
+		from icpay.v_tlbankorder a,
+		(select b.posid,
+		f.mchnitname
+		from icpay.mchntposinfo b, icpay.bimchntinfotb f
+		where
+		b.mchnitid = f.mchnitid
+		and b.mchnitid = #{mchnitid}) c,
+		(select
+		name, code from icpay.dictmgmtb
+		where typeid = 'charges')
+		d,
+		icpay.sysuserstb e
+		<where>
+			1 = 1
+			and a.orderstates = d.code(+)
+			and a.userid = e.userid(+)
+			and
+			a.checkcardposid = c.posid
+			<if test="bankorderid != null and bankorderid !=''">
+				and a.bankorderid = trim(#{bankorderid})
+			</if>
+			<if test="startdate != null and startdate !=''">
+			<![CDATA[
+				and a.senddate >=#{startdate}
+				]]>
+			</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[
+			    and a.senddate <=#{enddate}
+				]]>
+			</if>
+			<if test="status != null and status !=''">
+				 and (${status}) 
+			</if>
+			<if test="posid != null and posid !=''">
+				and a.checkcardposid = trim(#{posid})
+			</if>
+			<if test="cardno != null and cardno !=''">
+				and a.checkcardno = trim(#{cardno})
+			</if>
+			<if test="username != null and username !=''">
+				and nvl(e.username, a.userid) like '%' ||
+				trim(#{username}) || '%'
+			</if>
+		</where>
+		order by concat(a.senddate,
+		decode(a.sendtime,
+		'0',
+		'',
+		(substr(to_char(a.sendtime, '099999'), -6, 2) || '' ||
+		substr(to_char(a.sendtime, '099999'), -4, 2) || '' ||
+		substr(to_char(a.sendtime, '099999'), -2, 2)))) desc
+	</select>
+	
+	
+	<!--4.2.2.5 手持pos机充值订单统计 -->
+	<select id="findCzOrderByPosCountByPage" resultType="CzOrderByPosCount"
+		parameterType="QueryCzOrderByPosCount">
+		select a.checkcardposid as checkcardposid,
+		decode(ui.userid, '',
+		'99999999', u.username)
+		as username,
+		count(case
+		when a.orderstates in
+		('1000000006',
+		'1000000007',
+		'1000000017',
+		'1000000023',
+		'1000000026',
+		'1000000031') then
+		1
+		end) as jiaoyichenggongbishu,
+		sum(case
+		when
+		a.orderstates in
+		('1000000006',
+		'1000000007',
+		'1000000017',
+		'10000000023',
+		'10000000026',
+		'1000000031') then
+		decode(a.amt, '', '0',
+		a.amt)
+		end) / 100 as
+		jiaoyichenggongjine,
+		count(case
+		when a.orderstates in
+		('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		1
+		end) as jiaoyishibaibishu,
+		sum(case
+		when
+		a.orderstates in ('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100 as jiaoyishibaijine,
+		count(case
+		when a.orderstates in
+		('1000000004', '1000000005',
+		'1000000025', '1000000030') then
+		1
+		end) as jiaoyikeyibishu,
+		sum(case
+		when
+		a.orderstates in
+		('1000000004', '1000000005', '1000000025',
+		'1000000030') then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100 as
+		jiaoyikeyijine
+		from icpay.v_tlbankorder a
+		left join icpay.biposinuserstb
+		ui
+		on ui.posid = a.checkcardposid
+		left join icpay.sysuserstb u
+		on
+		(u.userid = decode(a.checkcardposid, '', a.userid, ui.userid))
+		<where>
+			1=1
+				and a.checkcardposid in
+				(select b.posid
+				from
+				icpay.mchntposinfo b, icpay.bimchntinfotb f
+				where b.mchnitid = f.mchnitid
+				and b.mchnitid = #{mchnitid}
+				)
+			<if test="startdate != null and startdate !=''">
+				<![CDATA[
+				and  a.senddate >= #{startdate}
+				]]>
+				</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[
+				 and  a.senddate <= #{enddate}
+				]]>
+			</if>
+		</where>
+		group by a.checkcardposid, u.username, ui.userid
+		order by (jiaoyichenggongbishu + jiaoyishibaibishu + jiaoyikeyibishu) desc,
+		a.checkcardposid desc
+	</select>
+
+	<select id="findCzOrderByPosCountAll" resultType="CzOrderByPosCountAll"
+		parameterType="QueryCzOrderByPosCount">
+
+		select count(case
+		when a.orderstates in ('1000000006',
+		'1000000007',
+		'1000000017',
+		'1000000023',
+		'1000000026',
+		'1000000031') then
+		1
+		end) as
+		jiaoyichenggongbishu,
+		sum(case
+		when a.orderstates in ('1000000006',
+		'1000000007',
+		'1000000017',
+		'10000000023',
+		'10000000026',
+		'1000000031')
+		then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100 as jiaoyichenggongjine,
+		count(case
+		when a.orderstates in ('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		1
+		end) as jiaoyishibaibishu,
+		sum(case
+		when a.orderstates in
+		('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100
+		as jiaoyishibaijine,
+		count(case
+		when a.orderstates in
+		('1000000004',
+		'1000000005', '1000000025', '1000000030') then
+		1
+		end) as
+		jiaoyikeyibishu,
+		sum(case
+		when a.orderstates in
+		('1000000004',
+		'1000000005', '1000000025', '1000000030') then
+		decode(a.amt, '', '0',
+		a.amt)
+		end) / 100 as jiaoyikeyijine
+		from icpay.v_tlbankorder a
+		left join
+		icpay.biposinuserstb ui
+		on ui.posid = a.checkcardposid
+		left join
+		icpay.sysuserstb u
+		on (u.userid = decode(a.checkcardposid, '',
+		a.userid, ui.userid))
+		<where>
+			1=1
+				and a.checkcardposid in
+				(select b.posid
+				from
+				icpay.mchntposinfo b, icpay.bimchntinfotb f
+				where b.mchnitid =
+				f.mchnitid
+				and b.mchnitid = #{mchnitid}
+				)
+			<if test="startdate != null and startdate !=''">
+				<![CDATA[
+				and a.senddate >= #{startdate}
+				]]>
+			</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[
+				and  a.senddate <= #{enddate}
+				]]>
+			</if>
+
+		</where>
+	</select>
+	
+	<select id="findCzOrderByPosCountExcel" resultType="CzOrderByPosCount"
+		parameterType="QueryCzOrderByPosCount">
+		select a.checkcardposid as checkcardposid,
+		decode(ui.userid, '',
+		'99999999', u.username)
+		as username,
+		count(case
+		when a.orderstates in
+		('1000000006',
+		'1000000007',
+		'1000000017',
+		'1000000023',
+		'1000000026',
+		'1000000031') then
+		1
+		end) as jiaoyichenggongbishu,
+		sum(case
+		when
+		a.orderstates in
+		('1000000006',
+		'1000000007',
+		'1000000017',
+		'10000000023',
+		'10000000026',
+		'1000000031') then
+		decode(a.amt, '', '0',
+		a.amt)
+		end) / 100 as
+		jiaoyichenggongjine,
+		count(case
+		when a.orderstates in
+		('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		1
+		end) as jiaoyishibaibishu,
+		sum(case
+		when
+		a.orderstates in ('1000000002',
+		'1000000003',
+		'1000000016',
+		'1000000018',
+		'1000000022',
+		'1000000024',
+		'1000000027') then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100 as jiaoyishibaijine,
+		count(case
+		when a.orderstates in
+		('1000000004', '1000000005',
+		'1000000025', '1000000030') then
+		1
+		end) as jiaoyikeyibishu,
+		sum(case
+		when
+		a.orderstates in
+		('1000000004', '1000000005', '1000000025',
+		'1000000030') then
+		decode(a.amt, '', '0', a.amt)
+		end) / 100 as
+		jiaoyikeyijine
+		from icpay.v_tlbankorder a
+		left join icpay.biposinuserstb
+		ui
+		on ui.posid = a.checkcardposid
+		left join icpay.sysuserstb u
+		on
+		(u.userid = decode(a.checkcardposid, '', a.userid, ui.userid))
+		<where>
+			1=1
+				and a.checkcardposid in
+				(select b.posid
+				from
+				icpay.mchntposinfo b, icpay.bimchntinfotb f
+				where b.mchnitid = f.mchnitid
+				 and b.mchnitid = #{mchnitid}
+				)
+			<if test="startdate != null and startdate !=''">
+				<![CDATA[
+				and  a.senddate >= #{startdate}
+				]]>
+				</if>
+			<if test="enddate != null and enddate !=''">
+				<![CDATA[
+				 and  a.senddate <= #{enddate}
+				]]>
+			</if>
+		</where>
+		group by a.checkcardposid, u.username, ui.userid
+		order by (jiaoyichenggongbishu + jiaoyishibaibishu + jiaoyikeyibishu) desc,
+		a.checkcardposid desc
+	</select>
+</mapper>

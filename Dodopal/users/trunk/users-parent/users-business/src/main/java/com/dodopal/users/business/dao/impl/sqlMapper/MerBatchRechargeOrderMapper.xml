@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerBatchRechargeOrderMapper">
+	<sql id="allColumns">
+		t.ID,t.CREATE_USER,t.CREATE_DATE,t.UPDATE_USER,t.UPDATE_DATE,
+		t.MER_CODE,t.STATUS,t.REMARK
+	</sql>
+
+	<select id="findMerOrdersByPage" resultType="MerBatchRechargeOrder" resultMap="merBatchRechargeOrderResultMap" parameterType="MerBatchRcgOrderQuery">
+		select <include refid="allColumns" /> from MER_BATCH_RECHARGE_ORDER t
+		<where>
+			t.mer_code = #{merCode} and (t.create_user = #{userId} or t.status != '0')
+			<if test="sDate != null and sDate !=''">
+				<![CDATA[ and t.CREATE_DATE >=  #{sDate} ]]>
+			</if>
+			<if test="eDate != null and eDate !=''">
+				<![CDATA[ and t.CREATE_DATE <=  #{eDate} ]]>
+			</if>
+		</where>
+		order by t.id desc
+	</select>
+
+	<select id="findCommonUserOrdersByPage" resultType="MerBatchRechargeOrder" resultMap="merBatchRechargeOrderResultMap" parameterType="MerBatchRcgOrderQuery">
+		select * from MER_BATCH_RECHARGE_ORDER t
+		<where>
+		 t.mer_code = #{merCode}
+		   and (t.create_user = #{userId} or exists
+		        (select 1
+		           from (select a.batch_order_id
+		                   from MER_BATCH_RECHARGE_ITEM a
+		                  where exists (select 1
+		                           from (select id
+		                                   from MER_GROUP_USER
+		                                  where dep_id in
+		                                        (select mer_grp_dep_id
+		                                           from MER_GROUP_DEPT_CHARGED_BY_USER
+		                                          where mer_user_name = #{merUserName})) b
+		                          where a.group_user_id = b.id)) w
+		          where t.id = w.batch_order_id))
+			<if test="sDate != null and sDate !=''">
+				<![CDATA[ and t.CREATE_DATE >=  #{sDate} ]]>
+			</if>
+			<if test="eDate != null and eDate !=''">
+				<![CDATA[ and t.CREATE_DATE <=  #{eDate} ]]>
+			</if>
+		</where>
+	</select>
+
+	<insert id="saveBatchRcgOrder" parameterType="MerBatchRechargeOrder">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MER_BATCH_RCG_ORDER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+   		INSERT INTO MER_BATCH_RECHARGE_ORDER(
+			ID,CREATE_USER,CREATE_DATE,
+			MER_CODE,STATUS,REMARK
+		)
+		VALUES (
+			#{id},
+			#{createUser, jdbcType=VARCHAR},
+			sysdate,
+			#{merCode},
+			#{status},
+			#{remark, jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

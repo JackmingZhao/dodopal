@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.PrdRateMapper">
+	<select id="findPrdRate" resultType="PrdRate" resultMap="prdRateResultMap">
+		select 
+		ID,				
+		CREATE_USER,				
+		CREATE_DATE,				
+		UPDATE_USER,				
+		UPDATE_DATE	,			
+		RATE_CODE,				
+		RATE_NAME,				
+		COMMENTS				
+		 from PRD_RATE
+	</select>
+</mapper>

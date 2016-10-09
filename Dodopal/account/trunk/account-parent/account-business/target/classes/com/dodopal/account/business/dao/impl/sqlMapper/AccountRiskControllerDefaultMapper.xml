@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountRiskControllerDefaultMapper">
+
+	<sql id="sqlColumn">
+				P.ID as id,
+				p.CREATE_DATE as createDate,
+				p.UPDATE_DATE as updateDate,
+				p.CREATE_USER as createUser,
+				p.UPDATE_USER as updateUser,
+				
+				p.CUSTOMER_TYPE as customerType,
+				p.DAY_CONSUME_SINGLE_LIMIT as dayConsumeSingleLimit,
+				p.DAY_CONSUME_SUM_LIMIT as dayConsumeSumLimit,
+				p.DAY_RECHARGE_SINGLE_LIMIT as dayRechargeSingleLimit,
+				p.DAY_RECHARGE_SUM_LIMIT as dayRechargeSumLimit,
+				p.DAY_TRANSFER_MAX as dayTransferMax,
+				p.DAY_TRANSFER_SINGLE_LIMIT as dayTransferSingleLimit,
+				p.DAY_TRANSFER_SUM_LIMIT as dayTransferSumLimit,
+				p.credit_amt as creditAmt 
+	</sql>
+	<select id="findAccountRiskControllerDefaultItemList" resultMap="accountRiskControllerDefaultResultMap">
+		select  <include refid="sqlColumn" /> from ACCOUNT_CONTROLLER_DEFAULT p
+	</select>
+	
+	<select id="findAccountRiskControllerDefaultById" resultMap="accountRiskControllerDefaultResultMap">
+		select  <include refid="sqlColumn" /> from ACCOUNT_CONTROLLER_DEFAULT p where p.id = #{id}
+	</select>
+	
+	
+	<update id="updateAccountRiskControllerDefaultItem" parameterType="AccountControllerDefault">
+		update ACCOUNT_CONTROLLER_DEFAULT
+		<trim prefix="SET" suffixOverrides=",">
+				DAY_CONSUME_SINGLE_LIMIT = #{dayConsumeSingleLimit,jdbcType=NUMERIC},
+				DAY_CONSUME_SUM_LIMIT = #{dayConsumeSumLimit,jdbcType=NUMERIC},
+				DAY_RECHARGE_SINGLE_LIMIT = #{dayRechargeSingleLimit,jdbcType=NUMERIC},
+				DAY_RECHARGE_SUM_LIMIT = #{dayRechargeSumLimit,jdbcType=NUMERIC},
+				DAY_TRANSFER_MAX = #{dayTransferMax,jdbcType=NUMERIC},
+				DAY_TRANSFER_SINGLE_LIMIT = #{dayTransferSingleLimit,jdbcType=NUMERIC},
+				DAY_TRANSFER_SUM_LIMIT = #{dayTransferSumLimit,jdbcType=NUMERIC}, 
+				CREDIT_AMT  = #{creditAmt,jdbcType=NUMERIC}, 
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.AccountMapper">
+
+    <!--根据客户类型和客户号查询主账户-->
+    <select id="getAccountInfo" resultType="Account" parameterType="java.lang.String">
+		select ID            as id,
+		       ACCOUNT_CODE  as accountCode,
+		       FUND_TYPE     as fundType,
+		       CUSTOMER_TYPE as customerType,
+		       CUSTOMER_NO   as customerNo,
+		       CREATE_USER   as createUser,
+		       CREATE_DATE   as createDate,
+		       UPDATE_USER   as updateUser,
+		       UPDATE_DATE   as updateDate
+		  from ACCOUNT
+         where CUSTOMER_TYPE=#{customerType} AND CUSTOMER_NO =#{customerNo}
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MerUserCardBdMapper">
+
+	<insert id="addMerUserCardBd" parameterType="MerUserCardBd">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_USER_CD_BD_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into MER_USER_CARD_BD 
+			(ID,
+			MER_USER_NAME,
+			CARD_OUTER_CODE,
+			YKT_CODE,
+			CREATE_DATE,
+			BUNDLING_TYPE,
+			UNBUNDLING_DATE,
+			CARD_CODE
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+			#{merUserName, jdbcType=VARCHAR},
+			#{cardOuterCode, jdbcType=VARCHAR},
+			#{yktCode, jdbcType=VARCHAR},
+			#{createDate},
+			#{bundLingType, jdbcType=VARCHAR}, 
+			#{unbundlingDate,jdbcType=DATE},
+			#{cardCode, jdbcType=VARCHAR} 
+			)
+	</insert>
+</mapper>

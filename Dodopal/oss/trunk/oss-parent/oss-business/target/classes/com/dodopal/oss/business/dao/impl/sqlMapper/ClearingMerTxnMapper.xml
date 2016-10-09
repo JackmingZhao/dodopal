@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.ClearingMerTxnMapper">
+	
+	<select id="getMerTxnClearingResult" resultType="ClearingMerTxn" parameterType="MerClearingResultQuery">
+		select t.id 							as id,
+		       t.clearling_day 					as clearingDay,
+		       t.clearling_date 				as clearingDate,
+		       t.mer_code 						as merCode,
+		       t.mer_name 						as merName,
+		       t.txn_type 						as txnType,
+		       NVL(t.trade_count, 0) 			as tradeCount,
+		       NVL(t.trade_amount, 0)/100 		as tradeAmount,
+		       NVL(t.service_fee, 0)/100 		as serviceFee,
+		       NVL(t.mer_profit, 0)/100 		as merProfit,
+		       NVL(t.real_fee, 0)/100 			as realFee,
+		       NVL(t.transfer_amount, 0)/100 	as transferAmount,
+		       t.create_date	 				as createDate
+		  from clearing_mer_txn t
+		 <where>
+		 	<if test="merCode != null and merCode !=''">
+				mer_code = #{merCode}
+			</if>
+		 	<if test="clearingDayStart != null and clearingDayStart !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')>= TO_DATE(#{clearingDayStart},'yyyy-mm-dd')]]>
+			</if>
+			<if test="clearingDayEnd != null and clearingDayEnd !=''">
+				<![CDATA[ and TO_DATE(clearling_day,'yyyy-mm-dd')<= TO_DATE(#{clearingDayEnd},'yyyy-mm-dd')]]>
+			</if>
+		</where>
+	</select>
+	
+</mapper>

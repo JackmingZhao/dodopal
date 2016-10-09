@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.portal.business.dao.TestMapper">
+
+	<select id="findTest" resultType="com.dodopal.portal.business.model.Test" resultMap="testResultMap"
+		parameterType="com.dodopal.portal.business.model.Test">
+		select * from APP_TEST 
+	</select>
+
+	<select id="findTestById" resultType="Test" resultMap="testResultMap"
+		parameterType="java.lang.String">
+		select * from APP_TEST where id = #{id}
+
+	</select>
+
+	<insert id="insertTest" parameterType="Test">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select APP_TEST_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO APP_TEST(ID, NAME, DESCRIPTION, APP_NAME, CREATE_USER,
+		CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+		VALUES (#{id, jdbcType=INTEGER}, #{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{appName, jdbcType=VARCHAR}, #{createUser, jdbcType=INTEGER},
+		#{createDate, jdbcType=DATE}, #{updateUser, jdbcType=INTEGER}, #{updateDate, jdbcType=DATE})
+	</insert>
+
+	<update id="updateTest" parameterType="Test">
+		update APP_TEST
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="name != null and name !=''">
+				name=#{name},
+			</if>
+			<if test="description != null and description !=''">
+				description=#{description},
+			</if>
+			<if test="appName != null and appName !=''">
+				app_name=#{appName},
+			</if>
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteTest" parameterType="java.lang.String">
+		delete from APP_TEST where id = #{id}
+	</delete>
+</mapper>

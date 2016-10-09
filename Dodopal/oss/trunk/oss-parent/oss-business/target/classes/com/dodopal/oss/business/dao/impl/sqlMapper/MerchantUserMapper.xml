@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.MerchantUserMapper">
+	<select id="findMerchantUsers" resultType="MerchantUser" resultMap="merchantUserResultMap"
+		parameterType="MerchantUser">
+		select ID,USER_CODE,MER_CODE,MER_USER_FLG,MER_USER_TYPE from merchant_user
+		<where>
+			<if test="userCode != null and userCode !=''">
+				user_code like CONCAT('%', CONCAT(#{userCode}, '%'))
+			</if>
+			<if test="merCode != null and merCode !=''">
+				mer_code like CONCAT('%', CONCAT(#{merCode}, '%'))
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.AcctReChargeClearingMapper">
+	<resultMap type="AcctReChargeClearing" id="acctReChargeClearingResultMap">
+		<id property="id" column="ID" />  
+		
+	    <result property="orderNo" column="ORDER_NO" />
+	    <result property="orderDate" column="ORDER_DATE" />
+	    <result property="customerNo" column="CUSTOMER_NO" />
+	    <result property="customerName" column="CUSTOMER_NAME" />
+	    <result property="orderFrom" column="ORDER_FROM" />
+	    <result property="customerType" column="CUSTOMER_TYPE" />
+	    <result property="orderAmount" column="ORDER_AMOUNT" />
+	   	<result property="customerRealPayAmount" column="CUSTOER_REAL_PAY_AMOUNT" />
+	    <result property="customerShouldPayAmount" column="CUSTOMER_ACCOUNT_SHOULD_AMOUNT" />
+	    <result property="customerAccountRealAmount" column="CUSTOMER_ACCOUNT_REAL_AMOUNT" />
+	    <result property="dDPGetMerchantPayFee" column="DDP_GET_MERCHANT_PAY_FEE" />
+	    <result property="payGateWay" column="PAY_GATEWAY" />
+	    <result property="payType" column="PAY_TYPE" />
+	    <result property="payWay" column="PAY_WAY" />
+	    <result property="serviceRateType" column="SERVICE_RATE_TYPE" />
+	    <result property="serviceFee" column="SERVICE_RATE" />
+   	    <result property="dDPBankRate" column="DDP_BANK_RATE" />
+	    <result property="dDPToBankFee" column="DDP_TO_BANK_FEE" />
+	    <result property="dDPFromBankShouldFee" column="DDP_FROM_BANK_SHOULD_FEE" />
+	   	<result property="dDPFromBankRealFee" column="DDP_FROM_BANK_REAL_FEE" />
+	    <result property="bankClearingFlag" column="BANK_CLEARING_FLAG" />
+	    <result property="bankClearingTime" column="BANK_CLEARING_TIME" />
+	    <result property="customerClearingFlag" column="CUSTOMER_CLEARING_FLAG" />
+	    <result property="customerClearingTime" column="CUSTOMER_CLEARING_TIME" />
+	    <result property="bankSettlementFlag" column="BANK_SETTLEMENT_FLAG" />
+	    <result property="bankSettlementTime" column="BANK_SETTLEMENT_TIME" />
+	    <result property="supplierSettlementFlag" column="SUPPLIER_SETTLEMENT_FLAG" />
+	    <result property="supplierSettlementTime" column="SUPPLIER_SETTLEMENT_TIME" />
+	    <result property="tranOutStatus" column="TRAN_OUT_STATUS" />
+	    <result property="tranInStatus" column="TRAN_IN_STATUS" />
+	    <result property="payWay" column="PAY_WAY" />
+		<result property="payWayName" column="PAY_WAY_NAME" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+	</resultMap>
+</mapper>

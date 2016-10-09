@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.AccountAdjustmentMapper">
+	<resultMap type="AccountAdjustment" id="accountAdjustmentResultMap">
+		<id property="id" column="ID" />  
+		
+	    <result property="accountAdjustCode" column="ACCOUNT_ADJUST_CODE" />
+	    <result property="accountAdjustType" column="ACCOUNT_ADJUST_TYPE" />
+	    <result property="customerType" column="CUSTOMER_TYPE" />
+	    <result property="customerNo" column="CUSTOMER_NO" />
+	    <result property="customerName" column="CUSTOMER_NAME" />
+	    <result property="fundType" column="FUND_TYPE" />
+	    <result property="fundAccountCode" column="FUND_ACCOUNT_CODE" />
+	   	<result property="accountAdjustAmount" column="ACCOUNT_ADJUST_AMOUNT" />
+	    <result property="accountAdjustReason" column="ACCOUNT_ADJUST_REASON" />
+	    <result property="accountAdjustState" column="ACCOUNT_ADJUST_STATE" />
+	    <result property="accountAdjustApplyUser" column="ACCOUNT_ADJUST_APPLY_USER" />
+	    <result property="accountAdjustApplyDate" column="ACCOUNT_ADJUST_APPLY_DATE" />
+	    <result property="accountAdjustAuditUser" column="ACCOUNT_ADJUST_AUDIT_USER" />
+	    <result property="accountAdjustAuditExplain" column="ACCOUNT_ADJUST_AUDIT_EXPLAIN" />
+	    <result property="accountAdjustAuditDate" column="ACCOUNT_ADJUST_AUDIT_DATE" />
+	    <result property="completeDate" column="COMPLETE_DATE" />
+	
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+	</resultMap>
+</mapper>

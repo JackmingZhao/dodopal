@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.payment.business.dao.PayWayExternalMapper">
+		<!-- 商户名称、支付类型、支付名称、银行网关类型、服务费率、排序号、网关号、启用标示，图标名称、备注 -->
+	<sql id="payWayExternalPageColumn">
+		t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,
+		t.MER_CODE,t.PAY_CONFIG_ID,t.PAY_SERVICE_RATE,t.SORT,t.ACTIVATE,t.COMMENTS
+	</sql>
+	<select id="findPayWayExternalByPage" resultType="PayWayExternal"
+		resultMap="payWayExternalResultMap" parameterType="PayWayQuery">
+		select
+		<include refid="payWayExternalPageColumn" />, p.merName, c.payType, c.payWayName, c.imageName, c.gateWayNum,c.bankGateWayType from PAY_WAY_EXTERNAL t
+		left join(select * from(select tempmer.mer_code merCode, tempmer.mer_name merName,
+		tempmer.mer_type merType, tempmer.mer_state merState
+		from merchant tempmer)
+		) p on 
+		     p.merCode = t.MER_CODE
+		left join(select * from(select temcon.image_name imageName, temcon.id id,
+		temcon.gateway_number gateWayNum, temcon.bank_gateway_type
+		bankGateWayType, temcon.pay_type payType ,temcon.pay_way_name payWayName 
+		from PAY_CONFIG temcon)
+		) c
+		on t.PAY_CONFIG_ID = c.id
+		and p.merType = '18'
+		and p.merState = '1'
+			<where>
+			<if test="merCode != null and merCode !=''">
+				and p.merCode like CONCAT('%', CONCAT(#{merCode}, '%'))
+			</if>
+			<if test="activate != null and activate !=''">
+				and t.ACTIVATE = #{activate}
+			</if>
+			<if test="merName != null and merName !=''">
+				and p.merName like CONCAT('%', CONCAT(#{merName}, '%'))
+			</if>
+		
+			<if test="payWayName != null and payWayName !=''">
+				and c.payWayName like CONCAT('%', CONCAT(#{payWayName}, '%'))
+			</if>
+			<if test="payType != null and payType !=''">
+				and c.payType = #{payType}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+    <insert id="savePayWayExternal" parameterType="PayWayExternal">
+	<selectKey resultType="String" keyProperty="id" order="BEFORE">
+		select PAY_WAY_EXTERNAL_ID_SEQ.NEXTVAL from dual
+	</selectKey>
+	INSERT INTO PAY_WAY_EXTERNAL(ID, MER_CODE,PAY_SERVICE_RATE,SORT,PAY_CONFIG_ID, COMMENTS,ACTIVATE, CREATE_DATE,
+	 CREATE_USER)
+	VALUES (#{id,jdbcType=VARCHAR}, #{merCode,jdbcType=VARCHAR},
+	#{payServiceRate,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR},#{payConfigId,jdbcType=VARCHAR},
+	#{comments,jdbcType=VARCHAR},#{activate},
+	sysdate,#{createUser,jdbcType=VARCHAR})
+   </insert>
+
+ <select id="findPayExternalById" resultType="PayWayExternal" resultMap="payWayExternalResultMap" parameterType="java.lang.String">
+		select <include refid="payWayExternalPageColumn" /> from PAY_WAY_EXTERNAL t where t.id=#{id}
+  </select>
+
+   <select id="countBymerCodeAndPayConfigId" resultType="java.lang.Integer">
+		select count(*) from PAY_WAY_EXTERNAL t where t.MER_CODE = #{merCode} and t.PAY_CONFIG_ID = #{payConfigId}
+	</select>
+
+
+	<update id="updatePayWayExternal" parameterType="PayWayExternal">
+		update PAY_WAY_EXTERNAL p SET
+		p.SORT = #{sort,jdbcType=VARCHAR},
+		
+		p.PAY_SERVICE_RATE = #{payServiceRate,jdbcType=DOUBLE},
+		p.ACTIVATE = #{activate,jdbcType=VARCHAR},
+		p.COMMENTS = #{comments,jdbcType=VARCHAR},
+		p.UPDATE_DATE=sysdate,
+		p.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where id=#{id}
+	</update>
+  
+	<delete id="batchDelPayWayExternalByIds">
+		delete from PAY_WAY_EXTERNAL
+		where id in
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+	  		#{item}
+	 		</foreach>
+	</delete>
+	<update id="disableByPayConfigId" parameterType="java.util.Map">
+		update PAY_WAY_EXTERNAL t set
+		t.activate = '1',t.UPDATE_DATE=sysdate,t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where t.PAY_CONFIG_ID in
+		<foreach collection="list" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+	<!-- 批量启用或停用商户操作员 -->
+	<update id="batchActivateOperator">
+	update PAY_WAY_EXTERNAL t set
+		t.activate = #{activate},t.UPDATE_DATE=sysdate,t.update_user=#{updateUser, jdbcType=VARCHAR}
+		where t.id in
+    	<foreach collection="ids" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+<!--根据payWayId查询pay_config_id-->
+	<select id="queryPayConfigId" resultType="PayWayExternal" resultMap="payWayExternalResultMap" parameterType="java.lang.String">
+		select <include refid="payWayExternalPageColumn" /> from PAY_WAY_EXTERNAL t  where t.ID=#{payWayId}
+	</select>
+</mapper>

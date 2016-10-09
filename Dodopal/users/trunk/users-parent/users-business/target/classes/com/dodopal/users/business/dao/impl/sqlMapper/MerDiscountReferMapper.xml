@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerDiscountReferMapper">
+	<sql id="allColumns">
+		r.ID ,r.MER_DISCOUNT_ID,r.MER_CODE, d.CREATE_DATE,d.UPDATE_DATE,
+		d.DISCOUNT,d.SORT,d.ACTIVATE
+	</sql>
+
+	<select id="findMerDiscountRefer" resultType="MerDiscountRefer"
+		resultMap="merDiscountReferResultMap" parameterType="MerDiscountQuery">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT_REFER r , MER_DISCOUNT d
+		<where>
+		  r.MER_DISCOUNT_ID = d.ID
+		 <if test="merCode != null and merCode !=''">
+				and r.MER_CODE = #{merCode}
+		</if>
+		<if test="activate != null and activate !=''">
+				and d.ACTIVATE = #{activate}
+		</if>
+		</where>
+		order by d.sort asc
+	</select>
+	
+	<select id="findMerDiscountReferByList" resultType="MerDiscountRefer"
+		resultMap="merDiscountReferResultMap" parameterType="java.lang.String">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT_REFER r , MER_DISCOUNT d
+		<where>
+		  r.MER_DISCOUNT_ID = d.ID
+		<if test="merDiscountId != null and merDiscountId !=''">
+				and r.MER_DISCOUNT_ID = #{merDiscountId}
+		</if>
+		</where>
+	</select>
+	
+
+
+	<insert id="insertMerDiscountRefer" parameterType="MerDiscountRefer">
+		<selectKey resultType="java.lang.String" keyProperty="id"
+			order="BEFORE">
+			select MER_DISCOUNT_REFER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO MER_DISCOUNT_REFER 
+		(ID, MER_CODE,MER_DISCOUNT_ID)
+		values 
+		(
+		 #{id, jdbcType=VARCHAR},
+		 #{merCode, jdbcType=VARCHAR},
+		 #{merDiscountId, jdbcType=VARCHAR}
+		 )
+	</insert>
+	
+	<delete id="deleteMerDiscountRefer" parameterType="java.lang.String">
+		delete from MER_DISCOUNT_REFER where MER_DISCOUNT_ID = #{merDiscountId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,362 @@
+.icon {
+	background: url(icons/tabicons.png) no-repeat;
+	width: 18px;
+	line-height: 18px;
+	display: inline-block;
+}
+
+.icon-windows {
+	background:url('icons/windows.png') no-repeat;
+}
+/*
+.icon-system {
+	background-position: -20px -100px;
+}
+*/
+.icon-system.personalize {
+	background:url('icons/key.png') no-repeat;
+}
+
+.icon-system-user {
+	background:url('icons/users.png') no-repeat;
+}
+
+.icon-system-user-findPasswd {
+	background:url('icons/lock.png') no-repeat;
+}
+
+.icon-system-module {
+	background:url('icons/block.png') no-repeat;
+}
+
+.icon-system-log {
+	background:url('icons/monitor-wallpaper.png') no-repeat;
+}
+
+.icon-system-module-delete {
+	background: url('icons/layers-stack-arrange-back.png') no-repeat;
+}
+
+.icon-system-department {
+	background: url('icons/sitemap-application-blue.png') no-repeat;
+}
+
+.icon-user {
+	background: url('icons/user-business.png') no-repeat;
+}
+
+.icon-dataBackup {
+	background: url('icons/databases-relation.png') no-repeat;
+}
+
+
+
+
+
+
+.icon-configuration {
+	background-position: -380px -200px;
+}
+
+.icon-salesSettings {
+	background-position: -240px -300px;
+}
+
+.icon-serviceSettings {
+	background-position: -360px -300px;
+}
+
+.icon-dataMaintain {
+	background-position: -40px -100px;
+}
+
+.icon-dealer {
+	background-position: -160px -480px;
+}
+
+.icon-employee {
+	background-position: -80px -420px;
+}
+/*
+.icon-employee.add {
+	background-position: -380px -200px;
+}
+
+.icon-employee.modify {
+	background-position: -380px -200px;
+}
+
+.icon-employee.delete {
+	background-position: -380px -200px;
+}
+
+.icon-employee.activate {
+	background-position: -380px -200px;
+}
+*/
+.icon-hiearchy {
+	background-position: -60px -380px;
+}
+
+.icon-customer {
+	background-position: -260px -480px;
+}
+/*
+.icon-customer.add {
+	background-position: -380px -200px;
+}
+
+.icon-customer.modify {
+	background-position: -380px -200px;
+}
+
+.icon-customer.delete {
+	background-position: -380px -200px;
+}
+
+.icon-customer.activate {
+	background-position: -380px -200px;
+}
+
+.icon-reassign {
+	background-position: -380px -200px;
+}
+*/
+
+.icon-dataTool {
+	background-position: 0px -220px;
+}
+
+.icon-productCategory {
+	background-position: -100px -60px;
+}
+/*
+.icon-product {
+	background-position: -360px -40px;
+}
+*/
+.icon-sales {
+	background-position: -200px -80px;
+}
+
+.icon-project {
+	background-position: -200px -160px;
+}
+/*
+.icon-project.add {
+	background-position: -20px 0px;
+}
+
+.icon-project.modify {
+	background-position: -20px 0px;
+}
+*/
+
+
+.icon-visit {
+	background-position: -20px -300px;
+}
+/*
+.icon-visit.add {
+	background-position: -20px 0px;
+}
+
+.icon-visit.modify {
+	background-position: -20px 0px;
+}
+
+.icon-visit.delete {
+	background-position: -20px 0px;
+}
+*/
+.icon-quote {
+	background-position: -380px -80px;
+}
+/*
+.icon-quote.add {
+	background-position: -20px 0px;
+}
+
+.icon-quote.modify {
+	background-position: -20px 0px;
+}
+
+.icon-quote.delete {
+	background-position: -20px 0px;
+}
+
+.icon-quote.export {
+	background-position: -20px 0px;
+}
+*/
+.icon-order {
+	background-position: -140px -340px;
+}
+/*
+.icon-order.add {
+	background-position: -20px 0px;
+}
+
+.icon-order.modify {
+	background-position: -20px 0px;
+}
+
+.icon-order.delete {
+	background-position: -20px 0px;
+}
+
+.icon-order.submit {
+	background-position: -20px 0px;
+}
+*/
+
+.icon-service {
+	background-position: -240px -80px;
+}
+
+.icon-serviceArea {
+	background-position: -380px -360px;
+}
+
+.icon-serviceMachine {
+	background-position: -180px -360px;
+}
+
+.icon-startingUp {
+	background-position: -220px 0px;
+}
+
+.icon-e5Warranty {
+	background-position: -300px 0px;
+}
+
+.icon-warranty {
+	background-position: -20px -220px;
+}
+
+
+.icon-e5WarrantyAgreement {
+	background-position: -120px -360px;
+}
+
+.icon-warrantyCard {
+	background-position: -220px -320px;
+}
+
+.icon-sparePart {
+	background-position: -240px -60px;
+}
+
+
+.icon-serviceCommunication {
+	background-position: -320px -80px;
+}
+
+.icon-serviceAnnouncementType {
+	background-position: -60px -240px;
+}
+
+.icon-serviceAnnouncementSubject {
+	background-position: -160px -240px;
+}
+
+.icon-serviceAnnouncement {
+	background-position: -180px -240px;
+}
+
+.icon-feedbackType {
+	background-position: -40px -20px;
+}
+
+.icon-feedbackSubject {
+	background-position: -60px -20px;
+}
+
+.icon-feedback {
+	background : url('images/out.png') no-repeat;
+}
+
+.icon-internalFeedback {
+	background : url('images/internal.png') no-repeat;
+}
+
+.icon-serviceEndUser {
+	background: url('images/endUser.png') no-repeat;
+}
+
+.icon-newMachineSN {
+	background: url('images/sparePart_search-sn.png') no-repeat;
+}
+
+.icon-newMachineVague {
+	background: url('images/sparePart-vague-search.png') no-repeat;
+}
+
+.icon-oldMachine {
+	background: url('images/old-sparePart-search.png') no-repeat;
+}
+
+.icon-parts {
+	background: url('images/node-sparePart-search.png') no-repeat;
+}
+
+.icon-home {
+	background:url('icons/home.png') no-repeat;
+}
+
+.icon-logout {
+	background:url('icons/power.png') no-repeat;
+}
+
+.icon-position {
+	background : url('icons/hand-point.png') no-repeat;
+}
+
+.icon-controlPanel {
+	background: url('icons/palette.png') no-repeat;
+}
+
+.icon-power {
+	background: url('icons/control-power.png') no-repeat;
+}
+
+.icon-about {
+	background: url('icons/leaf.png') no-repeat;
+}
+
+.icon-close {
+	
+}
+
+.icon-import {
+	background: url('icons/import.png') no-repeat;
+}
+
+.icon-export {
+	background: url('icons/export.png') no-repeat;
+}
+
+.icon-bind {
+	background: url('icons/bind.png') no-repeat;
+}
+
+.icon-unbind {
+	background: url('icons/unbind.png') no-repeat;
+}
+
+.icon-inactivate {
+	background: url('icons/inactivate.png') no-repeat;
+}
+
+.icon-version {
+	background: url('icons/version.png') no-repeat;
+}
+
+.icon-count {
+	background: url('icons/count.png') no-repeat;
+}
+
+.icon-city {
+	background: url('icons/city.png') no-repeat;
+}
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerGroupUserMapper">
+	<resultMap type="MerGroupUser" id="merGroupUserResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="activate" column="ACTIVATE" />
+		
+		<!--商户编码-->
+	    <result property="merCode" column="MER_CODE"  />	    
+	    <!--商户名称-->
+	    <result property="merName" column="MER_NAME"  />	    
+	    <!--员工姓名-->
+	    <result property="gpUserName" column="GP_USER_NAME"  />	    
+	    <!--所在部门ID-->
+	    <result property="depId" column="DEP_ID"  />	    
+	    <!--所在部门名称-->
+	    <result property="depName" column="DEP_NAME"  />	    
+	    <!--身份证号-->
+	    <result property="identityNum" column="IDENTITY_NUM"  />	    
+	    <!--入职时间-->
+	    <result property="employeeDate" column="EMPLOYEE_DATE" jdbcType="TIMESTAMP" />	    
+	    <!--公交卡号-->
+	    <result property="cardCode" column="CARD_CODE"  />	    
+	    <!--卡类型-->
+	    <result property="cardType" column="CARD_TYPE"  />	    
+	    <!--充值金额-->
+	    <result property="rechargeAmount" column="RECHARGE_AMOUNT"  />	    
+	    <!--充值方式-->
+	    <result property="rechargeWay" column="RECHARGE_WAY"  />	    
+	    <!--手机号-->
+	    <result property="mobiltle" column="MOBILTEL"  />	    
+	    <!--固定电话-->
+	    <result property="phone" column="PHONE"  />	    
+	    <!--备注-->
+	    <result property="remark" column="REMARK"  />	    
+	    <!-- 在职状态: 0:在职，1：离职-->
+	    <result property="empType" column="EMP_TYPE"  />	    
+	</resultMap>
+</mapper>

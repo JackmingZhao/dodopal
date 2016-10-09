@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.PosMerTbMapper">
+
+	<insert id="addPosMerTb" parameterType="PosMerTb">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select POS_MER_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO POS_MER_TB T
+		(T.ID,
+		T.CODE,
+		T.MER_CODE,
+		T.COMMENTS
+		)
+		VALUES (
+		#{id, jdbcType=VARCHAR},
+		#{code, jdbcType=VARCHAR},
+		#{merCode, jdbcType=VARCHAR},
+		#{comments, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="batchAddPosMerTb" parameterType="java.util.List">
+		INSERT INTO POS_MER_TB T
+		(T.ID,
+		T.CODE,
+		T.MER_CODE,
+		T.COMMENTS
+		)
+		select POS_MER_ID_SEQ.NEXTVAL,a.* from(
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select 
+			#{item.code, jdbcType=VARCHAR},
+			#{item.merCode, jdbcType=VARCHAR},
+			#{item.comments, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+		) a
+	</insert>
+</mapper>

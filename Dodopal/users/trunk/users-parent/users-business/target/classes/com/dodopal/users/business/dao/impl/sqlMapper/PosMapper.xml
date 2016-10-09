@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.PosMapper">
+
+    <sql id="sqlColumn">
+		      t.ID,
+			  t.CODE,
+			  t.STATUS,
+			  t.MER_CODE,
+			  t.MER_NAME,
+			  t.CITY_CODE,
+			  t.BUNDLING_DATE,
+			  t.COMMENTS,
+			  t.BIND
+			 
+	</sql>
+	<!-- 按条件查询用户列表'%'||#{supplierID}||'%' -->
+	<select id="findPosList" resultType="Pos" resultMap="posResultMap" parameterType="java.lang.String">
+		select  <include refid="sqlColumn" /> from POS t
+	    <where>	
+	    <if test="bind != null and bind !=''">
+	    	 t.BIND  =#{bind}      
+	    </if>
+	    <if test="array != null">
+	      and t.code in	
+	    	<foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+            </foreach>  
+	    </if>
+	    </where>
+	    <!--	
+		where t.code in		
+		     <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+            </foreach>
+         -->
+	</select>
+	
+	<!-- 按条件'%'||#{supplierID}||'%' 
+	<select id="findPosListPage" resultType="Pos" resultMap="posResultMap" parameterType="PosQuery">
+		select  <include refid="sqlColumn" /> from POS t  		
+		    <where>	
+		     <if test="code!=null and code !=''">   
+              t.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merchantCode!=null and merchantCode !=''">   
+             AND t.MER_CODE =#{merchantCode}     
+        	</if>   
+        	<if test="comments != null and comments !=''">   
+             AND t.COMMENTS LIKE '%'||#{comments}||'%'   
+        	</if> 	      		     		
+    	</where>  
+    	ORDER by t.CREATE_DATE DESC 
+	</select>
+	-->
+	<!-- 按条件'%'||#{supplierID}||'%' -->
+	<select id="findPosListPage" resultType="Pos" resultMap="posResultMap" parameterType="PosQuery">
+		 select  
+			  P.ID,
+			  P.CODE,
+			  P.BIND,
+			  P.STATUS,
+			  PM.MER_CODE,
+			  M.MER_NAME,
+			  P.CITY_CODE,
+			  P.BUNDLING_DATE,
+			  P.COMMENTS 
+		  FROM POS P
+		  LEFT JOIN   POS_MER_TB PM
+		  ON P.CODE = PM.CODE
+		  LEFT JOIN  MERCHANT M
+		  ON PM.MER_CODE = M.MER_CODE 		
+		  <where>	
+		     <if test="code!=null and code !=''">   
+              P.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merchantCode!=null and merchantCode !=''">   
+             AND PM.MER_CODE =#{merchantCode}     
+        	</if>   
+        	<if test="comments != null and comments !=''">   
+             AND PM.COMMENTS LIKE '%'||#{comments}||'%'   
+        	</if> 	      		     		
+    	</where>  
+    	ORDER BY PM.id DESC
+	</select>
+	
+	<!-- 查询子商户POS -->
+	<!-- 按条件'%'||#{supplierID}||'%' -->
+	<select id="findChildrenMerPosListPage" resultType="Pos" resultMap="posResultMap" parameterType="PosQuery">
+		 select  
+			  P.ID,
+			  P.CODE,
+			  P.BIND,
+			  P.STATUS,
+			  PM.MER_CODE,
+			  M.MER_NAME,
+			  P.CITY_CODE,
+			  P.BUNDLING_DATE,
+			  P.COMMENTS 
+		  FROM POS P
+		  LEFT JOIN   POS_MER_TB PM
+		  ON P.CODE = PM.CODE
+		  LEFT JOIN  MERCHANT M
+		  ON PM.MER_CODE = M.MER_CODE 		
+		  <where>	
+		     <if test="code!=null and code !=''">   
+              P.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merchantCode!=null and merchantCode !=''">   
+             AND PM.MER_CODE in (select mer.mer_code from MERCHANT mer where mer.mer_parent_code = #{merchantCode})    
+        	</if>  
+        	 <if test="merchantName!=null and merchantName !=''">   
+             AND M.MER_NAME LIKE '%'||#{merchantName}||'%'      
+        	</if> 
+        	<if test="comments != null and comments !=''">   
+             AND P.COMMENTS LIKE '%'||#{comments}||'%'   
+        	</if> 	      		     		
+    	</where>  
+    	ORDER BY PM.id DESC
+	</select>
+	
+	<select id="getPosCount" resultType="java.lang.Integer">
+		select Count(*) from POS  t
+		<where>
+           	<if test="code!=null and code!=''">   
+              AND t.CODE = #{code}       
+        	</if> 
+    	</where>  
+	</select>
+	
+	<select id="getPosBindedCountByCodes"  resultType="java.lang.Integer" parameterType="java.lang.String">
+		select Count(*) from POS t
+		 where 
+		         t.BIND = '0'	
+		     AND t.code in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach> 
+	</select>
+	
+	<select id="getPosBindedCountByCodesAndMerCode"  resultType="java.lang.Integer" parameterType="java.lang.String">
+		select Count(*) from POS t
+		 where 
+		         t.BIND = '0' and t.mer_code=#{merCode}	
+		     AND t.code in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach> 
+        
+        
+	</select>
+
+	<select id="findPosByCode" resultType="Pos" resultMap="posResultMap" parameterType="java.lang.String">
+		select <include refid="sqlColumn" /> from POS t where t.code=#{code}
+	</select>
+
+	<select id="findMerchantCodeByPosCode" resultType="Pos" parameterType="java.lang.String">
+		select t.MER_CODE as merchantCode from POS_MER_TB t where t.code=#{code}
+	</select>
+	
+	<update id="updatePosBundling">
+		 update POS 
+		 set BIND ='0',
+		 MER_CODE=#{pos.merchantCode, jdbcType=VARCHAR},
+	     MER_NAME=#{pos.merchantName, jdbcType=VARCHAR},
+		 UPDATE_USER =#{pos.updateUser, jdbcType=VARCHAR},
+		 BUNDLING_DATE = sysdate,
+	     UPDATE_DATE = sysdate	    
+		<if test="list != null">
+		 where CODE in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		  			#{item}
+		 	</foreach>
+		</if>
+	</update>
+	<update id="updatePosUnBundling">
+		 update POS 
+		 set BIND ='1',
+		 MER_CODE='',
+	     MER_NAME='',
+		 UPDATE_USER =#{updateUserId, jdbcType=VARCHAR},
+		 BUNDLING_DATE = null,
+	     UPDATE_DATE = sysdate	    
+		<if test="list != null">
+		 where CODE in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		  			#{item.code}
+		 	</foreach>
+		</if>
+	</update>
+	
+	<update id="updatePosDisable"  >
+                update POS 
+                <set>
+                  STATUS ='1',
+                  UPDATE_USER =#{updateUserId, jdbcType=VARCHAR},
+                  UPDATE_DATE = sysdate
+                </set>
+                where code in 
+                 <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+       </foreach>
+	</update>
+	
+	<update id="updatePosEnable" >
+                update POS 
+                <set>
+                  STATUS ='0',
+                  UPDATE_USER =#{updateUserId, jdbcType=VARCHAR},
+                  UPDATE_DATE = sysdate
+                </set>
+                where code in 
+                 <foreach item="item" index="index" collection="array"  open="(" separator="," close=")">
+                #{item}
+       </foreach>
+	</update>
+	
+	<insert id="insertPosMerTb" parameterType="PosMerTb" >
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select POS_MER_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO POS_MER_TB T
+		      (T.ID,
+			  T.CODE,
+			  T.MER_CODE,
+			  T.COMMENTS
+			  )
+		VALUES (
+			#{id, jdbcType=VARCHAR},
+			#{code, jdbcType=VARCHAR},
+			#{merCode, jdbcType=VARCHAR},
+			#{comments, jdbcType=VARCHAR}
+		    )
+	</insert>
+	
+	<delete id="deletePosMerTb" parameterType="PosMerTb">
+		delete from POS_MER_TB
+		where CODE = #{code, jdbcType=VARCHAR} and MER_CODE =#{merCode, jdbcType=VARCHAR}
+	</delete>
+	
+	
+	<delete id="deletePos" parameterType="java.lang.String">
+		delete from POS where code in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	
+	<!--  -->
+	<select id="findPosinfoByPage" resultType="Pos" resultMap="posResultMap" parameterType="PosQuery">
+		 select  
+			  P.ID,
+			  P.CODE,
+			  P.BIND,
+			  P.STATUS,
+			  PM.MER_CODE,
+			  M.MER_NAME,
+			  P.CITY_CODE,
+			  P.BUNDLING_DATE,
+			  P.COMMENTS 
+		  FROM POS P
+		  LEFT JOIN   POS_MER_TB PM
+		  ON P.CODE = PM.CODE
+		  LEFT JOIN  MERCHANT M
+		  ON PM.MER_CODE = M.MER_CODE 		
+		  <where>	
+		     <if test="code and code !=''">   
+              P.CODE  LIKE '%'||#{code}||'%'      
+        	</if> 	     
+		     <if test="merchantName !=null and merchantName !=''">   
+             AND P.MER_NAME =#{merchantName}     
+        	</if>   
+        	<if test="merchantCode != null and merchantCode !=''">   
+             AND P.MER_CODE = #{merchantCode}
+        	</if>       		     		
+    	</where>  
+    	ORDER BY PM.id DESC
+	</select>
+	
+	<select id="posCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+	      select Count(*) from POS t  where   t.mer_code=#{merCode}	
+	</select>
+	
+	<select id="findPosInfoByCode" resultMap="posResultMap" parameterType="String">
+		select t.ID,
+			  t.CODE,
+        t.STATUS,
+        t.MER_CODE,
+        t.MER_NAME,
+        t.CITY_CODE,
+        t.BUNDLING_DATE,
+        t.COMMENTS,
+        t.BIND from POS t where t.code = #{posCode}
+	</select>
+	
+	<update id="updatePosInfo" parameterType="String">
+		${sql}
+	</update>
+</mapper>

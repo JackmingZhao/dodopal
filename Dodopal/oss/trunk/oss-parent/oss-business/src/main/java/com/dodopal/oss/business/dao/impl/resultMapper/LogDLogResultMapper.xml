@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.LogDLogMapper">
+    <resultMap type="LogDLog" id="logDLogResultMap">
+        <result property ="id" column="ID"/><!--自增id-->
+        <result property ="dlogStage" column="DLOG_STAGE"/><!--日志所处阶段-->
+       	<result property ="dlogSystemDateTime" column="DLOG_SYSTEMDATETIME"/><!--时间-->
+       	<result property ="dlogCode" column="DLOG_CODE"/><!--错误码-->
+        <result property ="dlogMessage" column="DLOG_MESSAGE"/><!--错误信息-->
+     	<result property ="dlogPrdorderNum" column="DLOG_PRDORDERNUM"/><!--产品库主订单号-->
+        <result property ="dlogTradeCard" column="DLOG_TRADECARD"/><!--卡号-->
+       	<result property ="dlogApdu" column="DLOG_APDU"/><!--城市前置返回APDU指令 -->
+       	<result property ="dlogApduData" column="DLOG_APDUDATA"/><!--执行APDU指令响应数据-->
+      	<result property ="dlogStateCode" column="DLOG_STATECODE"/><!--执行APDU指令响应码-->
+      	<result property="createDate" column="CREATE_DATE" /><!--创建时间-->
+    </resultMap>
+</mapper>

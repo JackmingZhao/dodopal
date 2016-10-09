@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.BimchnitfeetbMapper">
+	<resultMap type="Bimchnitfeetb" id="bimchnitfeetbResultMap">
+		<result property="mchnitid" column="MCHNITID" />
+		<result property="yktid" column="YKTID" />
+		<result property="txncode" column="TXNCODE" />
+		<result property="feetype" column="FEETYPE" />
+		<result property="amtfee" column="AMTFEE" />
+		<result property="mchretnfee" column="MCHRETNFEE" />
+		<result property="setpara" column="SETPARA" />
+		<result property="setcycle" column="SETCYCLE" />
+		<result property="cycletype" column="CYCLETYPE" />
+		<result property="lastsetdate" column="LASTSETDATE" />
+		<result property="modifyflag" column="MODIFYFLAG" />
+		<result property="setflag" column="SETFLAG" />
+		<result property="resv" column="RESV" />
+		<result property="eachbill" column="EACHBILL" />
+	</resultMap>
+</mapper>

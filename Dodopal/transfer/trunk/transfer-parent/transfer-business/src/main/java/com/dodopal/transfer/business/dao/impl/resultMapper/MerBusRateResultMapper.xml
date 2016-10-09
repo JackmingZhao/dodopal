@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.transfer.business.dao.MerBusRateMapper">
+	<resultMap type="MerBusRate" id="merBusRateResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="rateCode" column="RATE_CODE" />
+		<result property="providerCode" column="PROVIDER_CODE" />
+		<result property="rate" column="RATE" />
+		<result property="rateType" column="RATE_TYPE" />
+		<result property="activate" column="ACTIVATE" />
+	</resultMap>
+</mapper>

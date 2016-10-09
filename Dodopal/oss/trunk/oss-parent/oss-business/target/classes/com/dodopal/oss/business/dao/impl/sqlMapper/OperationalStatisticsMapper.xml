@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.OperationalStatisticsMapper">
+
+
+	<select id="findCityCusRepStasByPage" resultType="CityCusReport" resultMap="cityCusReportResultMap" parameterType="CityCusReportQuery">
+		SELECT 	AA.CITY_CODE AS CITY_CODE, AA.city_name AS city_name, AA.Y_M_STR AS YEAR_MONTH_STR,
+       			AA.isCreate AS ORDER_NUM, bb.posNum AS ACTIVE_POS_NUM, bb.cardNum AS ACTIVE_CARD_NUM, round(bb.cardNum/bb.posNum, 0) AS AVG_CARD_NUM_PER_POS, 
+       			AA.txn_amt/BB.posNum AS AMOUNT_PER_POS, AA.txn_amt AS ORDER_AMOUNT
+		FROM (
+    		SELECT 	A.city_code as city_code, A.city_name AS city_name, substr(A.prd_order_day, 0, 6) AS Y_M_STR,
+            		sum(CASE WHEN A.pro_inner_states = '00' THEN 0 ELSE 1 END) AS isCreate,
+            		sum(CASE WHEN A.pro_inner_states = '00' THEN 0 ELSE A.txn_amt END) AS txn_amt
+     		FROM PRD_ORDER A
+     		<where> 1 = 1 
+     			<if test="queryDate != null and queryDate != '' ">
+     				AND substr(A.PRD_ORDER_DAY, 0, 4) = #{queryDate}
+     			</if>
+     			<if test="cityCode != null and cityCode != ''">
+     				AND A.city_code = #{cityCode}
+     			</if>
+     		</where>
+     		GROUP BY city_code, substr(a.prd_order_day, 0, 6), city_name) AA,
+    		(
+    		SELECT 	count(distinct(B.pos_code)) AS posNum, count(distinct(b.order_cardno)) AS cardNum, 
+    				B.CITY_CODE AS CITY_CODE, substr(B.PRD_ORDER_DAY, 0, 6) AS Y_M_STR
+     		FROM PRD_ORDER B 
+     		<where> 1 = 1 
+     			<if test="queryDate != null and queryDate != '' ">
+     				AND substr(B.PRD_ORDER_DAY, 0, 4) = #{queryDate}
+     			</if>
+     			<if test="cityCode != null and cityCode != '' ">
+     				AND B.city_code = #{cityCode}
+     			</if>
+     		</where>
+     		GROUP BY B.CITY_CODE, substr(b.PRD_ORDER_DAY, 0, 6)) BB
+		WHERE AA.CITY_CODE = BB.CITY_CODE AND AA.Y_M_STR = BB.Y_M_STR
+		ORDER BY CITY_CODE, YEAR_MONTH_STR
+	</select>
+	
+	<select id="getCityInfo" resultType="CityInfo" resultMap="cityInfoResultMap" >
+		select distinct(t.city_code) city_code, t.city_name city_name 
+		from PRD_ORDER t
+		<where>
+		<![CDATA[
+			t.pro_inner_states <> '00'
+		]]>
+		</where>
+	</select>
+
+
+</mapper>

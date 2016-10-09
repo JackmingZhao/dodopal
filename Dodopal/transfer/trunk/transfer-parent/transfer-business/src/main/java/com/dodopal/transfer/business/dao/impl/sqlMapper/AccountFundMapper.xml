@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.AccountFundMapper">
+	<!--新增资金授信账户信息-->
+	<insert id="addAccountFund" parameterType="AccountFund">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+	    		select ACCOUNT_FUND_ID_SEQ.NEXTVAL from dual
+	   	</selectKey>
+         INSERT INTO ACCOUNT_FUND(ID,FUND_ACCOUNT_CODE,FUND_TYPE,ACCOUNT_CODE,SUM_TOTAL_AMOUNT,TOTAL_BALANCE,
+         AVAILABLE_BALANCE,FROZEN_AMOUNT,LAST_CHANGE_AMOUNT,BEFORE_CHANGE_TOTAL_AMOUNT,BEFORE_CHANGE_AVAILABLE_AMOUNT,
+         BEFORE_CHANGE_FROZEN_AMOUNT,STATE,PAY_PASSWORD,USEABLE,CIPHERTEXT,CREATE_USER,CREATE_DATE)
+         VALUES (#{id,jdbcType=VARCHAR},#{fundAccountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},
+         #{accountCode,jdbcType=VARCHAR},#{sumTotalAmount,jdbcType=VARCHAR},#{totalBalance,jdbcType=BIGINT},
+         #{availableBalance,jdbcType=BIGINT},#{frozenAmount,jdbcType=BIGINT},#{lastChangeAmount,jdbcType=BIGINT},
+         #{beforeChangeTotalAmount,jdbcType=BIGINT},#{beforeChangeAvailableAmount,jdbcType=BIGINT},
+         #{beforeChangeFrozenAmount,jdbcType=BIGINT},#{state,jdbcType=VARCHAR},#{payPassword,jdbcType=VARCHAR},
+         #{useable,jdbcType=VARCHAR},#{ciphertext,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+    </insert>
+</mapper>

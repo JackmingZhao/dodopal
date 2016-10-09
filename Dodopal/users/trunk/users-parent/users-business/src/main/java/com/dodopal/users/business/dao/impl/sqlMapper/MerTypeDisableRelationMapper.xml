@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerTypeDisableRelationMapper">
+	<select id="findAllRelationType" resultType="MerTypeDisableRelation" resultMap="merTypeDisableRelationResultMap">
+		select MER_TYPE,DISABLE_RELATION_TYPE from MER_TYPE_DISABLE_RELATION
+	</select>
+</mapper>

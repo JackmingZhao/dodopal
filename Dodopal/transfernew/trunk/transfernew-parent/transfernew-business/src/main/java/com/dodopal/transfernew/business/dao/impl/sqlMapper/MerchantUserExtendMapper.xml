@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.MerchantUserExtendMapper">
+
+	<insert id="addMerchantUserExtend" parameterType="MerchantUserExtend">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select MERCHANT_USER_EXTEND_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO
+		MERCHANT_USER_EXTEND(ID,USER_CODE,OLD_USER_ID,OLD_USER_TYPE,USERTYPE1,ACTIVEID,WECHATID,WECHATICON,OCCUPATION)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{userCode,jdbcType=VARCHAR},#{oldUserId,jdbcType=VARCHAR},#{oldUserType,jdbcType=VARCHAR},
+		#{userType1,jdbcType=VARCHAR},
+		#{activateId,jdbcType=VARCHAR},
+		#{wechatId,jdbcType=VARCHAR},
+		#{wechatIcon,jdbcType=VARCHAR},
+		#{occupation,jdbcType=VARCHAR}
+		)
+
+	</insert>
+</mapper>

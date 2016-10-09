@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MerKeyTypeMapper">
+	<sql id="allColumns">
+  ID,
+  MER_CODE,
+  MER_KEY_TYPE,
+  MER_MD5_PAYPWD,
+  MER_MD5_BACKPAYPWD,
+  INNER_PAYPWD,
+  INNER_BACKPAYPWD,
+  MER_RSA_PRI,
+  MER_RSA_PUB,
+  MER_DSA_PRI,
+  MER_DSA_PUB,
+  ACTIVATE,
+  CREATE_USER,
+  CREATE_DATE,
+  UPDATE_USER,
+  UPDATE_DATE
+	</sql>
+	
+	<insert id="addMerKeyType" parameterType="MerKeyType">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select MER_KEY_TYPE_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+   		INSERT INTO MER_KEY_TYPE 
+   			(ID,CREATE_DATE,UPDATE_DATE,CREATE_USER,UPDATE_USER,MER_CODE,MER_KEY_TYPE,
+   			MER_MD5_PAYPWD,MER_MD5_BACKPAYPWD,MER_RSA_PRI,MER_RSA_PUB,MER_DSA_PRI,
+   			MER_DSA_PUB,INNER_PAYPWD,INNER_BACKPAYPWD,ACTIVATE) VALUES (
+   			#{id,jdbcType=VARCHAR},
+   			sysdate,
+   			#{updateDate,jdbcType=DATE},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR},
+			#{merCode,jdbcType=VARCHAR},
+			#{merKeyType,jdbcType=VARCHAR},
+			#{merMd5Paypwd,jdbcType=VARCHAR},
+			#{merMd5Backpaypwd,jdbcType=VARCHAR},
+			#{merRsaPri,jdbcType=VARCHAR},
+			#{merRsaPub,jdbcType=VARCHAR},
+			#{merDsaPri,jdbcType=VARCHAR},
+			#{merDsaPub,jdbcType=VARCHAR},
+			#{innerPaypwd,jdbcType=VARCHAR},
+			#{innerBackpaypwd,jdbcType=VARCHAR},
+			'0')
+   	</insert>
+</mapper>

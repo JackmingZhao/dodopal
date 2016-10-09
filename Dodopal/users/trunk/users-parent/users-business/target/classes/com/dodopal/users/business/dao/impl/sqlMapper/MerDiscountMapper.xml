@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerDiscountMapper">
+	<sql id="allColumns">
+		ID,CREATE_DATE,UPDATE_DATE,
+		MER_CODE,DISCOUNT,SORT,ACTIVATE
+	</sql>
+
+	<select id="findMerDiscountByPage" resultType="MerDiscount"
+		resultMap="merDiscountResultMap" parameterType="MerDiscountQuery">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT 
+		<where>
+		 <if test="merCode != null and merCode !=''">
+				and MER_CODE = #{merCode}
+		</if>
+		<if test="activate != null and activate !=''">
+				and ACTIVATE = #{activate}
+		</if>
+		</where>
+		order by id desc
+	</select>
+	
+	
+	<select id="findMerDiscountByList" resultType="MerDiscount"
+		resultMap="merDiscountResultMap" parameterType="MerDiscountQuery">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT 
+		<where>
+		 <if test="merCode != null and merCode !=''">
+				and MER_CODE = #{merCode}
+		</if>
+		<if test="activate != null and activate !=''">
+				and ACTIVATE = #{activate}
+		</if>
+		</where>
+		order by sort asc
+	</select>
+
+	<select id="findMerDiscountById" resultType="MerDiscount"
+		resultMap="merDiscountResultMap" parameterType="java.lang.String">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT 
+		where ID=#{id}
+	</select>
+
+
+
+	<insert id="saveMerDiscount" parameterType="MerDiscount">
+		<selectKey resultType="java.lang.String" keyProperty="id"
+			order="BEFORE">
+			select MER_DISCOUNT_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO MER_DISCOUNT 
+		(ID, MER_CODE, DISCOUNT, SORT, ACTIVATE, CREATE_DATE, UPDATE_DATE)
+		values 
+		(
+		 #{id, jdbcType=VARCHAR},
+		 #{merCode, jdbcType=VARCHAR},
+		 #{discount, jdbcType=VARCHAR},
+		 #{sort, jdbcType=VARCHAR},
+		 #{activate, jdbcType=VARCHAR},
+		 sysdate,
+		 #{updateDate, jdbcType=DATE}
+		 )
+	</insert>
+	
+	<update id="updateMerDiscount" parameterType="MerDiscount">
+		update MER_DISCOUNT SET
+		       SORT= #{sort,jdbcType=VARCHAR},
+			   DISCOUNT= #{discount,jdbcType=VARCHAR},
+			   UPDATE_DATE=sysdate
+		where id=#{id}
+	</update>
+	
+	
+	
+	<update id="startOrStopMerDiscount">
+	 update MER_DISCOUNT  set
+		ACTIVATE = #{activate, jdbcType=VARCHAR},
+		UPDATE_DATE=sysdate
+		where ID in
+    	<foreach collection="ids" item= "id" index ="index"  open= "(" close =")" separator=",">
+			#{id}
+	    </foreach>
+	</update>
+
+
+	<select id="findMerDiscountNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT COUNT(1) from MER_DISCOUNT T WHERE T.MER_CODE=#{merCode} and T.DISCOUNT = #{discount}
+	</select>
+	
+	
+	<select id="findMerDiscountByCode" resultType="MerDiscount"
+		resultMap="merDiscountResultMap" parameterType="java.lang.String">
+		select
+		<include refid="allColumns" />
+		from MER_DISCOUNT 
+		where MER_CODE=#{merCode}
+		and DISCOUNT = #{discount}
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.ProfitDetailsMapper">
+	<resultMap type="ProfitDetails" id="profitDetailsResultMap">
+		<result property="id" column="ID" />
+		<result property="orderNo" column="ORDER_NO" />
+		<result property="orderTime" column="ORDER_TIME" />
+		<result property="customerCode" column="CUSTOMER_CODE" />
+		<result property="customerName" column="CUSTOMER_NAME" />
+		<result property="bussinessType" column="BUSSINESS_TYPE" />
+		<result property="customerType" column="CUSTOMER_TYPE" />
+		<result property="source" column="SOURCE" />
+		<result property="iscircle" column="ISCIRCLE" />
+		<result property="customerRateType" column="CUSTOMER_RATE_TYPE" />
+		<result property="customerRate" column="CUSTOMER_RATE" />
+		<result property="orderAmount" column="ORDER_AMOUNT" />		
+		<result property="customerShouldProfit" column="CUSTOMER_SHOULD_PROFIT" />
+		<result property="customerRealProfit" column="CUSTOMER_REAL_PROFIT" />
+        <result property="subCustomerCode" column="SUB_CUSTOMER_CODE" />
+		<result property="subCustomerName" column="SUB_CUSTOMER_NAME" />		
+		<result property="subCustomerShouldProfit" column="SUB_CUSTOMER_SHOULD_PROFIT" />
+		<result property="customerSettlementTime" column="CUSTOMER_SETTLEMENT_TIME" />
+        <result property="profitDate" column="PROFIT_DATE" />
+	</resultMap>
+</mapper>

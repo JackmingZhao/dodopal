@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MobileCodeCheckMapper">
+	<resultMap type="MobileCodeCheck" id="moblieCodeCheckResultMap">
+		<result property="id" column="ID" />
+		<result property="mobilTel" column="MOBILTEL" />
+		<result property="dypwd" column="DYPWD" />
+		<result property="expirationTime" column="EXPIRATION_TIME" />
+		<result property="serialNumber" column="SERIAL_NUMBER" />
+		
+	</resultMap>
+</mapper>

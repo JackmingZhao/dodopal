@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.TranDiscountTimeMapper">
+	<resultMap type="TranDiscountTime" id="tranDiscountTimeResultMap">
+		<result property="id" column="ID" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="dateId" column="DATE_ID" />
+		<result property="beginTime" column="BEGIN_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="week" column="WEEK" />
+		<result property="discountThreshold" column="DISCOUNT_THRESHOLD" />
+	</resultMap>
+</mapper>

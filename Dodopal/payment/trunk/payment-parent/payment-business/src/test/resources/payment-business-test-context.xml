@@ -1,0 +1,57 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+               http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                 http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@sh.dodopal.com:1512:icdcpay</value>
+		</property>
+		<property name="username">
+			<value>icdcpay</value>
+		</property>
+		<property name="password">
+			<value>icdcpay</value>
+		</property>
+	</bean>
+
+<!-- 不同的数据源要声明不同的 sqlSessionFactory -->
+	<bean id="paymentSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/dodopal/payment/business/dao/impl/sqlMapper/*Mapper.xml
+				</value>
+				<value>classpath:com/dodopal/payment/business/dao/impl/resultMapper/*ResultMapper.xml
+				</value>
+			</list>
+		</property>
+		<property name="typeAliasesPackage" value="com.dodopal.payment.business.model" />
+	</bean>
+
+	<bean id="paymentMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.dodopal.payment.business.dao" />
+		<property name="sqlSessionFactoryBeanName" value="paymentSqlSessionFactory" />
+	</bean>
+	
+	<!-- 启用注解事务 -->
+	 <tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<context:component-scan base-package="com.dodopal.payment" />
+	
+	
+</beans>

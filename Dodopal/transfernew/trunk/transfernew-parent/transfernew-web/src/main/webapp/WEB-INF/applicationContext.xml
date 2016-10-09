@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!-- 缓存AOP配置 -->
+	<context:component-scan base-package="com.dodopal.transfernew" />
+	
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">  
+        <property name="config">  
+            <bean class="com.google.code.kaptcha.util.Config">  
+                <constructor-arg>  
+                   <props>  
+                        <prop key="kaptcha.image.width">200</prop>  
+                        <prop key="kaptcha.image.height">50</prop>
+                        <prop key="kaptcha.textproducer.font.color">red</prop>
+                        <prop key="kaptcha.textproducer.font.size">40</prop>    
+                        <prop key="kaptcha.session.key">code</prop>  
+                        <prop key="kaptcha.textproducer.char.length">4</prop>  
+                    </props> 
+                </constructor-arg>  
+            </bean>  
+        </property>  
+    </bean>  
+	
+	<context:property-placeholder ignore-resource-not-found="false" location="classpath*:config/*.properties" />
+	<import resource="classpath:META-INF/spring/db/applicationContext_dataSource.xml" />
+	<import resource="classpath:META-INF/spring/db/applicationContext_transaction.xml" />
+	<import resource="classpath:META-INF/spring/transfernew_mybatis.xml" />
+	<import resource="classpath:META-INF/spring/javamelody.xml"/>
+	<aop:aspectj-autoproxy/>
+</beans>

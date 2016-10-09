@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.running.business.dao.UserMapper">
+	<resultMap type="User" id="userResultMap">
+		<id property="id" column="ID" />  
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="name" column="NAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="passwordExpiredDate" column="PASSWORD_EXPIRED_DATE" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="roleIds" column="ROLE_IDS" />
+		<result property="departmentCode" column="DEPARTMENT_CODE" />
+		<!-- BUG编号116修改新增 -->
+		
+		<result property="loginDate" column="LOGIN_DATE" />
+		<result property="loginIp" column="LOGIN_IP" />
+		<result property="zipCode" column="ZIP_CODE" />
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="cityId" column="CITY_ID" />
+		<result property="tel" column="TEL" />
+		<result property="sexId" column="SEX_ID" />
+		<result property="mobile" column="MOBILE" />
+		<result property="identityType" column="IDENTITY_TYPE" />
+		<result property="identityId" column="IDENTITY_ID" />
+		<result property="address" column="ADDRESS" />
+		<result property="nickName" column="NICKNAME" />
+		<result property="comments" column="COMMENTS" />
+		<result property="email" column="EMAIL" />
+		<result property="deptName" column="DEPTNAME" />
+		
+		<!-- BUG编号116修改新增 END-->
+		
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductYKTMapper">
+
+	<select id="findProductYktByPage" resultType="ProductYKT" parameterType="ProductYKTQuery">
+		select 
+			   	t1.id                as id,
+		       	t1.ykt_code          as yktCode,
+		       	t1.ykt_name          as yktName,
+		       	t1.provinceid        as provinceId,
+		       	t1.cityid            as cityId,
+		       	t2.cityname          as cityName,
+		       	t3.cityname          as provinceName,
+		       	t1.activate          as activate,
+		       	t1.ykt_is_recharge   as yktIsRecharge,
+		       	t1.ykt_recharge_rate as yktRechargeRate,
+		       	t1.ykt_is_pay        as yktIsPay,
+		       	t1.ykt_pay_rate      as yktPayRate
+          from 	prd_ykt_info t1
+     left join 	oss_city_info t2
+            on 	t1.cityid = t2.citycode
+     left join 	oss_city_info t3
+            on 	t3.citycode = t2.parentcode
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t1.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="activate != null and activate !=''">
+				and t1.activate = #{activate}
+			</if>
+		</where>
+		order by t1.id desc
+	</select>
+	
+	<select id="getCountForProductYktExportExcel" resultType="Integer" parameterType="ProductYKTQuery">
+		select count(*)
+          from 	prd_ykt_info t1
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t1.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="activate != null and activate !=''">
+				and t1.activate = #{activate}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getListForProductYktExportExcel" resultType="ProductYKT" parameterType="ProductYKTQuery">
+		select t1.ykt_code                      as yktCode,
+		       t1.ykt_name                      as yktName,
+		       t3.cityname                      as provinceName,
+		       t2.cityname                      as cityName,
+		       t1.ykt_address                   as yktAddress,
+		       t1.ykt_pay_flag                  as yktPayFlag,
+		       t1.activate                      as activate,
+		       t1.ykt_is_recharge               as yktIsRecharge,
+		       t1.ykt_recharge_rate             as yktRechargeRate,
+		       t1.ykt_recharge_settype          as yktRechargeSettype,
+		       t1.ykt_recharge_setpara          as yktRechargeSetpara,
+		       t1.ykt_recharge_limit_start_time as yktRechargeLimitStartTime,
+		       t1.ykt_recharge_limit_end_time   as yktRechargeLimitEndTime,
+		       t1.ykt_is_pay                    as yktIsPay,
+		       t1.ykt_pay_rate                  as yktPayRate,
+		       t1.ykt_pay_settype               as yktPaySettype,
+		       t1.ykt_pay_setpara               as yktPaySetpara,
+		       t1.ykt_consume_limit_start_time  as yktConsumeLimitStartTime,
+		       t1.ykt_consume_limit_end_time    as yktConsumeLimitEndTime,
+		       t1.ykt_ipaddress                 as yktIpaddress,
+		       t1.ykt_port                      as yktPort,
+		       t1.ykt_card_max_limit            as yktCardMaxLimit,
+		       t1.ykt_telephone                 as yktTel,
+		       t1.ykt_link_user                 as yktLinkUser,
+		       t1.ykt_mobilphone                as yktMobile,
+		       t1.remark                        as remark,
+		       t1.create_date                   as createDate,
+		       t1.update_date                   as updateDate,
+		       t6.name                          as createUser,
+		       t7.name                          as updateUser
+		  from prd_ykt_info t1
+		  left join oss_city_info t2
+		    on t1.cityid = t2.citycode
+		  left join oss_city_info t3
+		    on t3.citycode = t2.parentcode
+	     left join  oss_sys_user t6
+			    on  t1.create_user = t6.id
+	     left join oss_sys_user t7
+			    on  t1.update_user = t7.id
+		<where>
+			<if test="yktName != null and yktName !=''">
+				t1.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+			</if>
+			<if test="activate != null and activate !=''">
+				and t1.activate = #{activate}
+			</if>
+		</where>
+		order by t1.id desc
+	</select>
+	
+	<select id="findProductYktById" resultType="ProductYKT" parameterType="java.lang.String">
+		select 
+				t1.id                   as id,
+			    t1.ykt_code             as yktCode,
+		        t1.ykt_name             as yktName,
+		       	t1.provinceId           as provinceId,
+		        t1.cityId               as cityId,
+		        t4.cityname             as provinceName,
+		        t3.cityname             as cityName,
+		        t2.cityid               as businessCityId,
+		        t5.cityname             as businessCityName,
+		        t1.ykt_address          as yktAddress,
+		        t1.ykt_pay_flag         as yktPayFlag,
+		        t1.activate             as activate,
+		        t1.ykt_is_recharge      as yktIsRecharge,
+		        t1.ykt_is_pay           as yktIsPay,
+		        t1.ykt_recharge_rate    as yktRechargeRate,
+		        t1.ykt_pay_rate         as yktPayRate,
+		        t1.ykt_recharge_settype as yktRechargeSettype,
+		        t1.ykt_pay_settype      as yktPaySettype,
+		        t1.ykt_recharge_setpara as yktRechargeSetpara,
+		        t1.ykt_pay_setpara      as yktPaySetpara,
+		        t1.ykt_ipaddress        as yktIpaddress,
+		        t1.ykt_port             as yktPort,
+		        t1.ykt_card_max_limit   as yktCardMaxLimit,
+		        t1.ykt_telephone        as yktTel,
+		        t1.ykt_link_user        as yktLinkUser,
+		        t1.ykt_mobilphone       as yktMobile,
+		        t1.remark               as remark,
+		        t1.create_date          as createDate,
+		        t1.update_date          as updateDate,
+		        t6.name                 as createUser,
+		        t7.name                 as updateUser,
+		        t1.YKT_RECHARGE_LIMIT_START_TIME as yktRechargeLimitStartTime,
+		        t1.YKT_RECHARGE_LIMIT_END_TIME as yktRechargeLimitEndTime,
+		        t1.YKT_CONSUME_LIMIT_START_TIME as yktConsumeLimitStartTime,
+		        t1.YKT_CONSUME_LIMIT_END_TIME as yktConsumeLimitEndTime,
+		        t1.MER_CODE as merCode
+		  from  prd_ykt_info t1
+	 left join  prd_ykt_city_info t2
+		    on  t1.ykt_code = t2.ykt_code
+     left join  oss_city_info t3
+		    on  t1.cityid = t3.citycode
+     left join  oss_city_info t4
+		    on  t4.citycode = t3.parentcode
+     left join oss_city_info t5
+		    on  t2.cityid = t5.citycode
+     left join  oss_sys_user t6
+		    on  t1.create_user = t6.id
+     left join oss_sys_user t7
+		    on  t1.update_user = t7.id
+		 where  t1.id=#{id}
+	</select>
+	
+	<select id="getYktCountByCode" resultType="Integer" parameterType="ProductYKT">
+		select count(*)
+		  from  prd_ykt_info 
+		 where  ykt_code=#{yktCode}
+		 	<if test="id != null and id !=''">
+				and id != #{id}
+			</if>
+	</select>
+	
+	<select id="getYktCountByName" resultType="Integer" parameterType="ProductYKT">
+		select count(*)
+		  from  prd_ykt_info 
+		 where  ykt_name=#{yktName}
+		 	<if test="id != null and id !=''">
+				and id != #{id}
+			</if>
+	</select>
+	
+	<update id="batchUpdateYktActivate">
+		update prd_ykt_info
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			<if test="productYKT != null and productYKT.activate != null and productYKT.activate !=''">
+				activate=#{productYKT.activate},
+			</if>
+			<if test="productYKT != null and productYKT.updateUser != null and productYKT.updateUser !=''">
+				update_user=#{productYKT.updateUser},
+			</if>
+		</trim>
+		<where>
+			ykt_code in
+			<foreach item="item" index="index" collection="yktCodes" open="(" separator="," close=")">
+  				#{item}
+ 			</foreach>
+ 		</where>
+	</update>
+	
+	<insert id="addProductYkt" parameterType="ProductYKT">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select prd_ykt_info_id_seq.nextval from dual
+   		</selectKey>
+		insert into prd_ykt_info(ID,YKT_CODE,YKT_NAME,PROVINCEID,CITYID,YKT_ADDRESS,YKT_PAY_FLAG,ACTIVATE,YKT_IS_RECHARGE,YKT_RECHARGE_RATE,YKT_RECHARGE_SETTYPE,
+   					YKT_RECHARGE_SETPARA,YKT_IS_PAY,YKT_PAY_RATE,YKT_PAY_SETTYPE,YKT_PAY_SETPARA,YKT_CARD_MAX_LIMIT,YKT_IPADDRESS,YKT_PORT,YKT_LINK_USER,YKT_MOBILPHONE,
+   					YKT_TELEPHONE,REMARK,CREATE_USER,CREATE_DATE,
+   					YKT_RECHARGE_LIMIT_START_TIME,YKT_RECHARGE_LIMIT_END_TIME,YKT_CONSUME_LIMIT_START_TIME,YKT_CONSUME_LIMIT_END_TIME)
+			 values (#{id,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{yktName,jdbcType=VARCHAR},#{provinceId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},
+   					 #{yktAddress,jdbcType=VARCHAR},#{yktPayFlag,jdbcType=VARCHAR},#{activate,jdbcType=VARCHAR},#{yktIsRecharge,jdbcType=VARCHAR},
+   					 #{yktRechargeRate,jdbcType=VARCHAR},#{yktRechargeSetType,jdbcType=VARCHAR},#{yktRechargeSetPara,jdbcType=VARCHAR},#{yktIsPay,jdbcType=VARCHAR},
+   					 #{yktPayRate,jdbcType=VARCHAR},#{yktPaysetType,jdbcType=VARCHAR},#{yktPaySetPara,jdbcType=VARCHAR},#{yktCardMaxLimit,jdbcType=VARCHAR},
+					 #{yktIpAddress,jdbcType=VARCHAR},#{yktPort,jdbcType=VARCHAR},#{yktLinkUser,jdbcType=VARCHAR},#{yktMobile,jdbcType=VARCHAR},
+					 #{yktTel,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate,
+					 #{yktRechargeLimitStartTime,jdbcType=VARCHAR},#{yktRechargeLimitEndTime,jdbcType=VARCHAR},
+					 #{yktConsumeLimitStartTime,jdbcType=VARCHAR},#{yktConsumeLimitEndTime,jdbcType=VARCHAR}
+					 )
+	</insert>
+	
+	<update id="updateProductYkt" parameterType="ProductYKT">
+		update  prd_ykt_info
+	       set
+				YKT_PAY_FLAG=#{yktPayFlag, jdbcType=VARCHAR},
+				ACTIVATE=#{activate, jdbcType=VARCHAR},
+				YKT_IS_RECHARGE=#{yktIsRecharge, jdbcType=VARCHAR},
+				YKT_IS_PAY=#{yktIsPay, jdbcType=VARCHAR},
+			    YKT_NAME=#{yktName, jdbcType=VARCHAR},
+				PROVINCEID=#{provinceId, jdbcType=VARCHAR},
+				CITYID=#{cityId, jdbcType=VARCHAR},
+				YKT_ADDRESS=#{yktAddress, jdbcType=VARCHAR},
+				YKT_RECHARGE_RATE=#{yktRechargeRate, jdbcType=VARCHAR},
+				YKT_RECHARGE_SETTYPE=#{yktRechargeSetType, jdbcType=VARCHAR},
+				YKT_RECHARGE_SETPARA=#{yktRechargeSetPara, jdbcType=VARCHAR},
+				YKT_PAY_RATE=#{yktPayRate, jdbcType=VARCHAR},
+				YKT_PAY_SETTYPE=#{yktPaysetType, jdbcType=VARCHAR},
+				YKT_PAY_SETPARA=#{yktPaySetPara, jdbcType=VARCHAR},
+				YKT_CARD_MAX_LIMIT=#{yktCardMaxLimit, jdbcType=VARCHAR},
+				YKT_IPADDRESS=#{yktIpAddress, jdbcType=VARCHAR},
+				YKT_PORT=#{yktPort, jdbcType=VARCHAR},
+				YKT_LINK_USER=#{yktLinkUser, jdbcType=VARCHAR},
+				YKT_MOBILPHONE=#{yktMobile, jdbcType=VARCHAR},
+				YKT_TELEPHONE=#{yktTel, jdbcType=VARCHAR},
+				REMARK=#{remark, jdbcType=VARCHAR},
+				UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+				UPDATE_DATE=sysdate,
+				YKT_RECHARGE_LIMIT_START_TIME=#{yktRechargeLimitStartTime,jdbcType=VARCHAR},
+				YKT_RECHARGE_LIMIT_END_TIME=#{yktRechargeLimitEndTime,jdbcType=VARCHAR},
+				YKT_CONSUME_LIMIT_START_TIME=#{yktConsumeLimitStartTime,jdbcType=VARCHAR},
+				YKT_CONSUME_LIMIT_END_TIME=#{yktConsumeLimitEndTime,jdbcType=VARCHAR} 
+		 where  ykt_code=#{yktCode}
+	</update>
+	
+	<select id="getIsRechargeYktMap" resultType="ProductYKT" parameterType="java.lang.String">
+		select 
+			    t1.ykt_code             as yktCode,
+		        t1.ykt_name             as yktName
+		  from  prd_ykt_info t1
+		  <where>
+		  <if test="activate != null and activate !=''">
+				and activate=#{activate}
+		  </if>
+		  </where>
+	</select>
+	
+	<select id="getAllYktBusinessRateList" resultType="ProductYKT">
+		select 
+		       	ykt_code          as yktCode,
+		       	ykt_name          as yktName,
+		       	ykt_is_recharge   as yktIsRecharge,
+		       	ykt_is_pay        as yktIsPay
+          from 	prd_ykt_info
+      order by  ykt_code
+	</select>
+	
+	<select id="getYktInfoByBusinessCityCode" resultType="ProductYKT" parameterType="java.lang.String">
+		select 
+				t1.id                   as id,
+			    t1.ykt_code             as yktCode,
+		        t1.ykt_name             as yktName,
+		       	t1.provinceId           as provinceId,
+		        t1.cityId               as cityId,
+		        t1.ykt_address          as yktAddress,
+		        t1.ykt_pay_flag         as yktPayFlag,
+		        t1.activate             as activate,
+		        t1.ykt_is_recharge      as yktIsRecharge,
+		        t1.ykt_is_pay           as yktIsPay,
+		        t1.ykt_recharge_rate    as yktRechargeRate,
+		        t1.ykt_pay_rate         as yktPayRate,
+		        t1.ykt_recharge_settype as yktRechargeSettype,
+		        t1.ykt_pay_settype      as yktPaySettype,
+		        t1.ykt_recharge_setpara as yktRechargeSetpara,
+		        t1.ykt_pay_setpara      as yktPaySetpara,
+		        t1.ykt_ipaddress        as yktIpaddress,
+		        t1.ykt_port             as yktPort,
+		        t1.ykt_card_max_limit   as yktCardMaxLimit,
+		        t1.ykt_telephone        as yktTel,
+		        t1.ykt_link_user        as yktLinkUser,
+		        t1.ykt_mobilphone       as yktMobile,
+		        t1.remark               as remark,
+		        t1.create_date          as createDate,
+		        t1.update_date          as updateDate,
+		        t1.create_user          as createUser,
+		        t1.update_user          as updateUser
+		  from  prd_ykt_info t1
+	 left join  prd_ykt_city_info t2
+		    on  t1.ykt_code = t2.ykt_code
+		 where  t2.cityid=#{cityCode}
+	</select>
+	
+	<select id="getYktInfoByYktCode" resultType="ProductYKT" parameterType="java.lang.String">
+		select t1.id                            as id,
+		       t1.ykt_code                      as yktCode,
+		       t1.ykt_name                      as yktName,
+		       t1.provinceId                    as provinceId,
+		       t1.cityId                        as cityId,
+		       t1.ykt_address                   as yktAddress,
+		       t1.ykt_pay_flag                  as yktPayFlag,
+		       t1.activate                      as activate,
+		       t1.ykt_is_recharge               as yktIsRecharge,
+		       t1.ykt_is_pay                    as yktIsPay,
+		       t1.ykt_recharge_rate             as yktRechargeRate,
+		       t1.ykt_pay_rate                  as yktPayRate,
+		       t1.ykt_recharge_settype          as yktRechargeSettype,
+		       t1.ykt_pay_settype               as yktPaySettype,
+		       t1.ykt_recharge_setpara          as yktRechargeSetpara,
+		       t1.ykt_pay_setpara               as yktPaySetpara,
+		       t1.ykt_ipaddress                 as yktIpaddress,
+		       t1.ykt_port                      as yktPort,
+		       t1.ykt_card_max_limit            as yktCardMaxLimit,
+		       t1.ykt_telephone                 as yktTel,
+		       t1.ykt_link_user                 as yktLinkUser,
+		       t1.ykt_mobilphone                as yktMobile,
+		       t1.remark                        as remark,
+		       t1.ykt_recharge_limit_start_time as yktRechargeLimitStartTime,
+		       t1.ykt_recharge_limit_end_time   as yktRechargeLimitEndTime,
+		       t1.ykt_consume_limit_start_time  as yktConsumeLimitStartTime,
+		       t1.ykt_consume_limit_end_time    as yktConsumeLimitEndTime,
+		       t1.create_date                   as createDate,
+		       t1.update_date                   as updateDate,
+		       t1.create_user                   as createUser,
+		       t1.update_user                   as updateUser
+		  from prd_ykt_info t1
+		 where t1.ykt_code=#{yktCode}
+	</select>
+	
+		<update id="updatePrdMerCode" parameterType="ProductYKT">
+		update  prd_ykt_info
+	       set
+				MER_CODE=#{merCode, jdbcType=VARCHAR}
+		 where  ykt_code=#{yktCode}
+	</update>
+</mapper>

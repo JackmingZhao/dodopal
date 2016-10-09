@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.common.dao.SysLogMapper">
+
+	<insert id="insertSysLog" parameterType="SysLog">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select LOG_INFO_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO LOG_INFO(ID,SERVER_NAME,LOG_DATE,THREAD_NAME,LOG_LEVEL,CLASS_NAME,STACK_TRACE,MESSAGE,REP_CODE,
+															 REP_MESSAGE,UNIQUE_CODE,IN_PARAS,OUT_PARAS,ORDER_NUM,TRAN_NUM,METHOD_NAME,METHOD_DES,IP_ADDR) 
+		VALUES (#{id, jdbcType=VARCHAR},
+							#{serverName,jdbcType=VARCHAR},
+							SYSDATE,
+							'',
+							'',
+							#{className,jdbcType=VARCHAR},
+							#{statckTrace,jdbcType=VARCHAR},
+							'',
+							#{respCode,jdbcType=VARCHAR},
+							#{respExplain,jdbcType=VARCHAR},
+							'',
+							#{inParas,jdbcType=VARCHAR},
+							#{outParas,jdbcType=VARCHAR},
+							#{orderNum,jdbcType=VARCHAR},
+							#{tranNum,jdbcType=VARCHAR},
+							#{methodName,jdbcType=VARCHAR},
+							#{description,jdbcType=VARCHAR},
+							#{ipAddress,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectMultipleKeys" resultType = "java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select LOG_INFO_ID_SEQ.NEXTVAL as id from dual  connect by level <= #{numberOfKeysRequired} ]]>
+	</select>
+	
+	<insert id="insertBatchSysLog" parameterType="java.util.List">  
+			INSERT INTO LOG_INFO(ID,SERVER_NAME,LOG_DATE,THREAD_NAME,LOG_LEVEL,CLASS_NAME,STACK_TRACE,MESSAGE,REP_CODE,
+															 REP_MESSAGE,UNIQUE_CODE,IN_PARAS,OUT_PARAS,ORDER_NUM,TRAN_NUM,METHOD_NAME,METHOD_DES,IP_ADDR)
+		<foreach collection="list" item="item" index="index" separator=" union all " > 
+		      (select  
+							#{item.id, jdbcType=VARCHAR},
+							#{item.serverName,jdbcType=VARCHAR},SYSDATE,
+							'',
+							'',
+							#{item.className,jdbcType=VARCHAR},
+							#{item.statckTrace,jdbcType=VARCHAR},
+							'',
+							#{item.respCode,jdbcType=VARCHAR},
+							#{item.respExplain,jdbcType=VARCHAR},
+							'',
+							#{item.inParas,jdbcType=VARCHAR},
+							#{item.outParas,jdbcType=VARCHAR},
+							#{item.orderNum,jdbcType=VARCHAR},
+							#{item.tranNum,jdbcType=VARCHAR},
+							#{item.methodName,jdbcType=VARCHAR},
+							#{item.description,jdbcType=VARCHAR},
+							#{item.ipAddress,jdbcType=VARCHAR}
+		       from dual)
+		    </foreach>
+	</insert>  
+	
+</mapper>

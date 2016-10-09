@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.PayTraTransactionMapper">
+	<resultMap type="PayTraTransaction" id="PayTraTransactionResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		
+		<result property="tranCode" column="TRAN_CODE" />
+		<result property="tranName" column="TRAN_NAME" />
+		<result property="tranOutStatus" column="TRAN_OUT_STATUS" />
+		<result property="tranInStatus" column="TRAN_IN_STATUS" />
+		<result property="comments" column="COMMENTS" />
+		<result property="pageCallbackUrl" column="PAGE_CALLBACK_URL" />
+		<result property="serviceNoticeUrl" column="SERVICE_NOTICE_URL" />
+		<result property="amountMoney" column="AMOUNT_MONEY" />
+		<result property="tranType" column="TRAN_TYPE" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="merOrUserCode" column="MER_OR_USER_CODE" />
+		
+		<result property="merOrUserName" column="MER_OR_USER_NAME" />
+		<result property="orderNumber" column="ORDER_NUMBER" />
+		<result property="commodity" column="COMMODITY" />
+		<result property="source" column="SOURCE" />
+		<result property="orderDate" column="ORDER_DATE" />
+		<result property="businessType" column="BUSINESS_TYPE" />
+		<result property="payType" column="PAY_TYPE" />
+		<result property="payWay" column="PAY_WAY" />
+		<result property="payServiceRate" column="PAY_SERVICE_RATE" />
+		<result property="payServiceFee" column="PAY_SERVICE_FEE" />
+		<result property="payProceRate" column="PAY_PROCE_RATE" />
+		<result property="payProceFee" column="PAY_PROCE_FEE" />
+		<result property="realTranMoney" column="REAL_TRAN_MONEY" />
+		<result property="turnOutMerCode" column="TURN_OUT_MER_CODE" />
+		<result property="turnIntoMerCode" column="TURN_INTO_MER_CODE" />
+		<result property="oldTranCode" column="OLD_TRAN_CODE" />
+		<result property="clearFlag" column="CLEAR_FLAG" />
+		<result property="acceptCiphertext" column="ACCEPT_CIPHERTEXT" />
+		<result property="sendCiphertext" column="SEND_CIPHERTEXT" />
+		<result property="finishDate" column="FINISH_DATE" />
+		
+		<result property="merCode" column="MER_CODE" />
+		<result property="merParentCode" column="MER_PARENT_CODE" />
+		
+		<result property="merParentName" column="MER_PARENT_NAME" />
+		<result property="merCityName" column="MER_CITY_NAME" />		
+		<result property="merPayMoneyUser" column="MER_PAY_MONEY_USER" />		
+		
+		<result property="payGateway" column="PAY_GATEWAY" />
+		<result property="payServiceType" column="PAY_SERVICE_TYPE" />
+		<result property="payWayName" column="PAY_WAY_NAME" />
+		<result property="operatorId" column="OPERATOR_ID" />
+	</resultMap>
+	
+</mapper>

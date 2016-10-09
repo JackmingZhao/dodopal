@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure id="wac" class="org.mortbay.jetty.webapp.WebAppContext">
+	<New id="ds_cardDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<Set name="driverClass">oracle.jdbc.OracleDriver</Set>
+		<!--开发192.168.1.230:1521-->
+		<!--外网开发sh.dodopal.com:1522-->
+		<!--测试 192.168.1.210:1521-->
+		<Set name="jdbcUrl">jdbc:oracle:thin:@192.168.1.210:1521:icdcpay</Set>
+		<Set name="user">icdcpay</Set>
+		<Set name="password">icdcpay</Set>
+		<Set name="initialPoolSize">2</Set>
+		<Set name="minPoolSize">2</Set>
+		<Set name="maxPoolSize">5</Set>
+	</New>
+
+	<New id="cardDataSource" class="org.mortbay.jetty.plus.naming.EnvEntry">
+		<Arg>cardDataSource</Arg>
+		<Arg>
+			<Ref id="ds_cardDataSource"></Ref>
+		</Arg>
+	</New>
+</Configure>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.AccountCouponMapper">
+
+<insert id="addAccountCoupon" parameterType="AccountCoupon">
+		<selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE">
+    		select ACCOUNT_COUPON_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		insert into ACCOUNT_COUPON 
+			(ID,
+			ACCOUNT_CODE,
+			COUPON_ACCOUNT_CODE,
+			COUPON_ACCOUNT_COUNT,
+			USE_ACCOUNT_COUNT,
+			SURPLUS_ACCOUNT_COUNT
+			)
+		values (
+			#{id, jdbcType=VARCHAR}, 
+			#{accountCode, jdbcType=VARCHAR},
+			#{couponAccountCode, jdbcType=VARCHAR},
+			#{couponAccountCount, jdbcType=INTEGER},
+			#{useAccountCount, jdbcType=INTEGER}, 
+			#{surplusAccountCount,jdbcType=INTEGER}
+			)
+	</insert>
+</mapper>

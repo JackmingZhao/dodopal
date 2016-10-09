@@ -1,0 +1,100 @@
+package com.dodopal.portal.business.bean;
+
+import com.dodopal.common.model.BaseEntity;
+
+/**
+ * @author DingKuiyuan@dodopal.com
+ * @version 创建时间：2015年8月20日 下午5:07:02
+ */
+public class PrdProductYktBean extends BaseEntity{
+    private static final long serialVersionUID = 2765374595171597381L;
+    /*产品编号*/
+    private String proCode;
+    /*产品名称*/
+    private String proName;
+    /*一卡通编号*/
+    private String yktCode;
+    /*一卡通名称*/
+    private String yktName;
+    /*业务城市ID*/
+    private String cityId;
+    /*业务城市名称*/
+    private String cityName;
+    /*面价*/
+    private int proPrice;
+    /*状态0：上架、1：下架*/
+    private String proStatus;
+    /*备注*/
+    private String remark;
+    /*费率*/
+    private String proRate;
+    /*成本价*/
+    private int proPayPrice;
+    public String getProCode() {
+        return proCode;
+    }
+    public void setProCode(String proCode) {
+        this.proCode = proCode;
+    }
+    public String getProName() {
+        return proName;
+    }
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+    public String getYktCode() {
+        return yktCode;
+    }
+    public void setYktCode(String yktCode) {
+        this.yktCode = yktCode;
+    }
+    public String getYktName() {
+        return yktName;
+    }
+    public void setYktName(String yktName) {
+        this.yktName = yktName;
+    }
+    public String getCityId() {
+        return cityId;
+    }
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+    public String getCityName() {
+        return cityName;
+    }
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+    public int getProPrice() {
+        return proPrice;
+    }
+    public void setProPrice(int proPrice) {
+        this.proPrice = proPrice;
+    }
+    public String getProStatus() {
+        return proStatus;
+    }
+    public void setProStatus(String proStatus) {
+        this.proStatus = proStatus;
+    }
+    public String getRemark() {
+        return remark;
+    }
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    public String getProRate() {
+        return proRate;
+    }
+    public void setProRate(String proRate) {
+        this.proRate = proRate;
+    }
+    public int getProPayPrice() {
+        return proPayPrice;
+    }
+    public void setProPayPrice(int proPayPrice) {
+        this.proPayPrice = proPayPrice;
+    }
+    
+}

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductYktLimitInfoMapper">
+
+	<insert id="addProductYktLimitInfo" parameterType="ProductYktLimitInfo">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select prd_ykt_limitinfo_id_seq.nextval from dual
+   		</selectKey>
+		insert into prd_ykt_limitinfo(ID,YKT_CODE,YKT_WARN_LIMIT,YKT_STOP_LIMIT,YKT_EXPIRE_DATE,YKT_TOTAL_AMT_LIMIT,
+										YKT_SURPLUS_LIMIT,REMARK,CREATE_USER,CREATE_DATE)
+							   values(#{id,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{yktWarnLimit,jdbcType=VARCHAR},
+   									  #{yktStopLimit,jdbcType=VARCHAR},#{yktExpireDate,jdbcType=VARCHAR},#{totalAmtLimit,jdbcType=VARCHAR},
+   									  #{surPlusLimit,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},
+   									  #{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<select id="findProductYktLimitInfoByPage" resultType="ProductYktLimitInfo" parameterType="ProductYktLimitInfoQuery">
+				select  t1.ID                              as id,
+		       			t1.YKT_CODE                        as yktCode,
+		       			t2.YKT_NAME                        as yktName,
+		       			nvl(t1.YKT_WARN_LIMIT, 0)          as yktWarnLimit,
+		       			nvl(t1.YKT_STOP_LIMIT, 0)          as yktStopLimit,
+		       			t1.YKT_EXPIRE_DATE                 as yktExpireDate,
+		       			nvl(t1.YKT_TOTAL_AMT_LIMIT, 0)     as totalAmtLimit,
+		       			nvl(t1.YKT_SURPLUS_LIMIT, 0)       as surPlusLimit,
+		       			(nvl(t1.YKT_TOTAL_AMT_LIMIT, 0) - nvl(t1.YKT_SURPLUS_LIMIT, 0)) as usedLimit
+		  		   from prd_ykt_limitinfo t1
+		left outer join prd_ykt_info t2
+		    		 on t1.ykt_code = t2.ykt_code
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t2.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+				</where>
+				order by t1.id desc
+	</select>
+	
+	<select id="getCountForProductYktLimitExportExcel" resultType="Integer" parameterType="ProductYktLimitInfoQuery">
+				 select count(*)
+		  		   from prd_ykt_limitinfo t1
+		left outer join prd_ykt_info t2
+		    		 on t1.ykt_code = t2.ykt_code
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t2.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+				</where>
+	</select>
+	
+	<select id="getListForProductYktLimitExportExcel" resultType="ProductYktLimitInfo" parameterType="ProductYktLimitInfoQuery">
+				select  t1.ID                              as id,
+		       			t1.YKT_CODE                        as yktCode,
+		       			t2.YKT_NAME                        as yktName,
+		       			nvl(t1.YKT_WARN_LIMIT, 0)          as yktWarnLimit,
+		       			nvl(t1.YKT_STOP_LIMIT, 0)          as yktStopLimit,
+		       			t1.YKT_EXPIRE_DATE                 as yktExpireDate,
+		       			nvl(t1.YKT_TOTAL_AMT_LIMIT, 0)     as totalAmtLimit,
+		       			nvl(t1.YKT_SURPLUS_LIMIT, 0)       as surPlusLimit,
+		       			(nvl(t1.YKT_TOTAL_AMT_LIMIT, 0) - nvl(t1.YKT_SURPLUS_LIMIT, 0)) as usedLimit,
+		       			t1.REMARK              		       as remark,
+		       		    t3.NAME                            as createUser,
+		       			t1.CREATE_DATE                     as createDate,
+		       			t4.NAME                            as updateUser,
+		       			t1.UPDATE_DATE                     as updateDate
+		  		   from prd_ykt_limitinfo t1
+	    left outer join prd_ykt_info t2
+		    		 on t1.ykt_code = t2.ykt_code
+	    left outer join oss_sys_user t3
+			        on  t1.create_user = t3.id
+	    left outer join oss_sys_user t4
+			        on  t1.update_user = t4.id
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t2.ykt_name like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+				</where>
+				order by t1.id desc
+	</select>
+	
+	
+	<select id="findProductYktLimitInfoById" resultType="ProductYktLimitInfo" parameterType="java.lang.String">
+				select  t1.ID                              as id,
+		       			t1.YKT_CODE                        as yktCode,
+		       			t2.YKT_NAME                        as yktName,
+		       			nvl(t1.YKT_WARN_LIMIT, 0)          as yktWarnLimit,
+		       			nvl(t1.YKT_STOP_LIMIT, 0)          as yktStopLimit,
+		       			t1.YKT_EXPIRE_DATE                 as yktExpireDate,
+		       			nvl(t1.YKT_TOTAL_AMT_LIMIT, 0)     as totalAmtLimit,
+		       			nvl(t1.YKT_SURPLUS_LIMIT, 0)       as surPlusLimit,
+		       			t1.REMARK              		       as remark,
+		       			t3.NAME                            as createUser,
+		       			t1.CREATE_DATE                     as createDate,
+		       			t4.NAME                            as updateUser,
+		       			t1.UPDATE_DATE                     as updateDate
+		  		  from  prd_ykt_limitinfo t1
+	   left outer join  prd_ykt_info t2
+		    		on  t1.ykt_code = t2.ykt_code
+	   left outer join  oss_sys_user t3
+			        on  t1.create_user = t3.id
+	   left outer join oss_sys_user t4
+			        on  t1.update_user = t4.id
+			     where  t1.id=#{id}
+	</select>
+	
+	<update id="updateProductYktLimitInfo" parameterType="ProductYktLimitInfo">
+		update prd_ykt_limitinfo
+	       set
+			   YKT_WARN_LIMIT=#{yktWarnLimit, jdbcType=VARCHAR},
+			   YKT_STOP_LIMIT=#{yktStopLimit, jdbcType=VARCHAR},
+			   YKT_EXPIRE_DATE=to_date(to_char(#{yktExpireDate, jdbcType=VARCHAR},'YYYY-MM-DD'),'YYYY-MM-DD'),
+			   REMARK=#{remark, jdbcType=VARCHAR},
+			   UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			   UPDATE_DATE=sysdate
+		 where id=#{id}
+	</update>
+	
+	<select id="getNextBatchCodeByYktCode" resultType="Integer" parameterType="java.lang.String">
+			select nvl(max(nvl(batch_code, 0)), 0)+1 
+			  from prd_ykt_limit_batch_info
+		     where ykt_code=#{yktCode, jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfo">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select prd_ykt_limitbatch_info_id_seq.nextval from dual
+   		</selectKey>
+			insert into prd_ykt_limit_batch_info
+			        (ID,YKT_CODE,YKT_NAME,BATCH_CODE,APPLY_AMT_LIMIT,APPLY_USER,APPLY_USERNAME,APPLY_DATE,APPLY_EXPLAINATION,FINANCIAL_PAY_AMT,
+			         FINANCIAL_PAY_FEE,FINANCIAL_PAY_DATE,PAYMENT_CHANNEL,AUDIT_USER,AUDIT_USERNAME,AUDIT_DATE,AUDIT_EXPLAINATION,AUDIT_STATE,
+			         YKT_ADD_LIMIT,YKT_ADD_LIMIT_DATE,CHECK_USER,CHECK_USERNAME,CHECK_DATE,CHECK_EXPLAINATION,CHECK_STATE,
+			         REMARK,CREATE_USER,CREATE_DATE)
+			      values
+			        (#{id,jdbcType=VARCHAR},#{yktCode,jdbcType=VARCHAR},#{yktName,jdbcType=VARCHAR},#{batchCode,jdbcType=VARCHAR},
+			         #{applyAmtLimit,jdbcType=NUMERIC},#{applyUser,jdbcType=VARCHAR},#{applyUserName,jdbcType=VARCHAR},
+			         to_date(to_char(#{applyDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+			         #{applyExplaination,jdbcType=VARCHAR},#{financialPayAmt,jdbcType=NUMERIC},#{financialPayFee,jdbcType=NUMERIC},
+			         to_date(to_char(#{financialPayDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+			         #{paymentChannel,jdbcType=VARCHAR},#{auditUser,jdbcType=VARCHAR},#{auditUserName,jdbcType=VARCHAR},
+			         to_date(to_char(#{auditDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+			         #{auditExplaination,jdbcType=VARCHAR},#{auditState,jdbcType=VARCHAR},#{yktAddLimit,jdbcType=NUMERIC},
+			         to_date(to_char(#{yktAddLimitDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+			         #{checkUser,jdbcType=VARCHAR},#{checkUserName,jdbcType=VARCHAR},
+			         to_date(to_char(#{checkDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+			         #{checkExplaination,jdbcType=VARCHAR},#{checkState,jdbcType=VARCHAR},
+			         #{remark,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<select id="findProductYktLimitBatchInfoByPage" resultType="ProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfoQuery">
+				select t.ID                          as id,
+				       t.YKT_CODE                    as yktCode,
+				       t.YKT_NAME                    as yktName,
+				       t.BATCH_CODE                  as batchCode,
+				       nvl(t.APPLY_AMT_LIMIT,0)      as applyAmtLimit,
+				       t.APPLY_USER                  as applyUser,
+				       t.APPLY_USERNAME              as applyUserName,
+				       t.APPLY_DATE                  as applyDate,
+				       t.APPLY_EXPLAINATION          as applyExplaination,
+				       t.AUDIT_USER                  as auditUser,
+				       t.AUDIT_USERNAME              as auditUserName,
+				       t.AUDIT_DATE                  as auditDate,
+				       t.AUDIT_EXPLAINATION          as auditExplaination,
+				       t.AUDIT_STATE                 as auditState,
+				       t.PAYMENT_CHANNEL             as paymentChannel,
+				       nvl(t.YKT_ADD_LIMIT,0)        as yktAddLimit,
+				       t.FINANCIAL_PAY_DATE          as financialPayDate,
+				       nvl(t.FINANCIAL_PAY_FEE,0)    as financialPayFee,
+				       t.REMARK                      as remark,
+				       t.FINANCIAL_PAY_AMT           as financialPayAmt,
+				       t.YKT_ADD_LIMIT_DATE          as yktAddLimitDate,
+				       t.CHECK_USER                  as checkUser,
+				       t.CHECK_USERNAME              as checkUserName,
+				       t.CHECK_DATE                  as checkDate,
+				       t.CHECK_EXPLAINATION          as checkExplaination,
+				       t.CHECK_STATE                 as checkState
+				  from prd_ykt_limit_batch_info t
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t.YKT_NAME like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+					<if test="auditState != null and auditState !=''">
+						and t.AUDIT_STATE =  #{auditState}
+					</if>
+					<if test="checkState != null and checkState !=''">
+						and t.CHECK_STATE =  #{checkState}
+					</if>
+					<if test="applyDateStart != null and applyDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{applyDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyDateEnd != null and applyDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{applyDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateStart != null and auditDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{auditDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateEnd != null and auditDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{auditDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateStart != null and checkDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{checkDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateEnd != null and checkDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{checkDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyAmtStart != null and applyAmtStart !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 >=  #{applyAmtStart} ]]>
+					</if>
+					<if test="applyAmtEnd != null and applyAmtEnd !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 <=  #{applyAmtEnd} ]]>
+					</if>
+					<if test="yktAddLimitStart != null and yktAddLimitStart !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 >=  #{yktAddLimitStart} ]]>
+					</if>
+					<if test="yktAddLimitEnd != null and yktAddLimitEnd !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 <=  #{yktAddLimitEnd} ]]>
+					</if>
+					<if test="financialPayAmtStart != null and financialPayAmtStart !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 >=  #{financialPayAmtStart} ]]>
+					</if>
+					<if test="financialPayAmtEnd != null and financialPayAmtEnd !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 <=  #{financialPayAmtEnd} ]]>
+					</if>
+					<if test="applyUserName != null and applyUserName !=''">
+						and t.APPLY_USERNAME like CONCAT('%', CONCAT(#{applyUserName}, '%'))
+					</if>
+					<if test="auditUserName != null and auditUserName !=''">
+						and t.AUDIT_USERNAME like CONCAT('%', CONCAT(#{auditUserName}, '%'))
+					</if>	
+					<if test="checkUserName != null and checkUserName !=''">
+						and t.CHECK_USERNAME like CONCAT('%', CONCAT(#{checkUserName}, '%'))
+					</if>	
+				</where>
+		       order by t.audit_state,t.create_date desc, t.audit_date desc, t.ykt_code, t.batch_code desc
+	</select>
+	
+	<select id="getCountForProductYktBatchLimitExportExcel" resultType="Integer" parameterType="ProductYktLimitBatchInfoQuery">
+				select count(*)
+				  from prd_ykt_limit_batch_info t
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t.YKT_NAME like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+					<if test="auditState != null and auditState !=''">
+						and t.AUDIT_STATE =  #{auditState}
+					</if>
+					<if test="checkState != null and checkState !=''">
+						and t.CHECK_STATE =  #{checkState}
+					</if>
+					<if test="applyDateStart != null and applyDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{applyDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyDateEnd != null and applyDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{applyDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateStart != null and auditDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{auditDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateEnd != null and auditDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{auditDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateStart != null and checkDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{checkDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateEnd != null and checkDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{checkDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyAmtStart != null and applyAmtStart !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 >=  #{applyAmtStart} ]]>
+					</if>
+					<if test="applyAmtEnd != null and applyAmtEnd !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 <=  #{applyAmtEnd} ]]>
+					</if>
+					<if test="yktAddLimitStart != null and yktAddLimitStart !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 >=  #{yktAddLimitStart} ]]>
+					</if>
+					<if test="yktAddLimitEnd != null and yktAddLimitEnd !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 <=  #{yktAddLimitEnd} ]]>
+					</if>
+					<if test="financialPayAmtStart != null and financialPayAmtStart !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 >=  #{financialPayAmtStart} ]]>
+					</if>
+					<if test="financialPayAmtEnd != null and financialPayAmtEnd !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 <=  #{financialPayAmtEnd} ]]>
+					</if>
+					<if test="applyUserName != null and applyUserName !=''">
+						and t.APPLY_USERNAME like CONCAT('%', CONCAT(#{applyUserName}, '%'))
+					</if>
+					<if test="auditUserName != null and auditUserName !=''">
+						and t.AUDIT_USERNAME like CONCAT('%', CONCAT(#{auditUserName}, '%'))
+					</if>	
+					<if test="checkUserName != null and checkUserName !=''">
+						and t.CHECK_USERNAME like CONCAT('%', CONCAT(#{checkUserName}, '%'))
+					</if>	
+				</where>
+	</select>
+	
+	<select id="getListForProductYktBatchLimitExportExcel" resultType="ProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfoQuery">
+				select t.YKT_CODE                    as yktCode,
+				       t.YKT_NAME                    as yktName,
+				       t.BATCH_CODE                  as batchCode,
+				       nvl(t.APPLY_AMT_LIMIT,0)      as applyAmtLimit,
+				       t.APPLY_USER                  as applyUser,
+				       t.APPLY_USERNAME              as applyUserName,
+				       t.APPLY_DATE                  as applyDate,
+				       t.APPLY_EXPLAINATION          as applyExplaination,
+				       t.AUDIT_USER                  as auditUser,
+				       t.AUDIT_USERNAME              as auditUserName,
+				       t.AUDIT_DATE                  as auditDate,
+				       t.AUDIT_EXPLAINATION          as auditExplaination,
+				       t.AUDIT_STATE                 as auditState,
+				       t.PAYMENT_CHANNEL             as paymentChannel,
+				       nvl(t.YKT_ADD_LIMIT,0)        as yktAddLimit,
+				       t.FINANCIAL_PAY_DATE          as financialPayDate,
+				       nvl(t.FINANCIAL_PAY_FEE,0)    as financialPayFee,
+				       t.REMARK                      as remark,
+  					   nvl(t.FINANCIAL_PAY_AMT,0)    as financialPayAmt,
+				       t.YKT_ADD_LIMIT_DATE          as yktAddLimitDate,
+				       t.CHECK_USER                  as checkUser,
+				       t.CHECK_USERNAME              as checkUserName,
+				       t.CHECK_DATE                  as checkDate,
+				       t.CHECK_EXPLAINATION          as checkExplaination,
+				       t.CHECK_STATE                 as checkState,
+					   c.NAME                        as createUser,
+					   t.CREATE_DATE                 as createDate,
+					   u.NAME                        as updateUser,
+					   t.UPDATE_DATE                 as updateDate
+				  from prd_ykt_limit_batch_info t
+		   left outer join oss_sys_user c
+		                on t.create_user = c.id
+		   left outer join oss_sys_user u
+		                on t.update_user = u.id
+				<where>
+					<if test="yktName != null and yktName !=''">
+						t.YKT_NAME like CONCAT('%', CONCAT(#{yktName}, '%'))
+					</if>
+					<if test="auditState != null and auditState !=''">
+						and t.AUDIT_STATE =  #{auditState}
+					</if>
+					<if test="checkState != null and checkState !=''">
+						and t.CHECK_STATE =  #{checkState}
+					</if>
+					<if test="applyDateStart != null and applyDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{applyDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyDateEnd != null and applyDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.APPLY_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{applyDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateStart != null and auditDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{auditDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="auditDateEnd != null and auditDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.AUDIT_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{auditDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateStart != null and checkDateStart !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{checkDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="checkDateEnd != null and checkDateEnd !=''">
+						<![CDATA[ and TO_DATE(TO_CHAR(t.CHECK_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{checkDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+					</if>
+					<if test="applyAmtStart != null and applyAmtStart !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 >=  #{applyAmtStart} ]]>
+					</if>
+					<if test="applyAmtEnd != null and applyAmtEnd !=''">
+						<![CDATA[ and APPLY_AMT_LIMIT/100 <=  #{applyAmtEnd} ]]>
+					</if>
+					<if test="yktAddLimitStart != null and yktAddLimitStart !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 >=  #{yktAddLimitStart} ]]>
+					</if>
+					<if test="yktAddLimitEnd != null and yktAddLimitEnd !=''">
+						<![CDATA[ and YKT_ADD_LIMIT/100 <=  #{yktAddLimitEnd} ]]>
+					</if>
+					<if test="financialPayAmtStart != null and financialPayAmtStart !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 >=  #{financialPayAmtStart} ]]>
+					</if>
+					<if test="financialPayAmtEnd != null and financialPayAmtEnd !=''">
+						<![CDATA[ and FINANCIAL_PAY_AMT/100 <=  #{financialPayAmtEnd} ]]>
+					</if>
+					<if test="applyUserName != null and applyUserName !=''">
+						and t.APPLY_USERNAME like CONCAT('%', CONCAT(#{applyUserName}, '%'))
+					</if>
+					<if test="auditUserName != null and auditUserName !=''">
+						and t.AUDIT_USERNAME like CONCAT('%', CONCAT(#{auditUserName}, '%'))
+					</if>	
+					<if test="checkUserName != null and checkUserName !=''">
+						and t.CHECK_USERNAME like CONCAT('%', CONCAT(#{checkUserName}, '%'))
+					</if>	
+				</where>
+		       order by t.audit_state,t.create_date desc, t.audit_date desc, t.ykt_code, t.batch_code desc
+	</select>
+	
+	<!-- 额度购买批次申请单详细信息 -->
+	<select id="findProductYktLimitBatchInfoById" resultType="ProductYktLimitBatchInfo" parameterType="java.lang.String">
+					select t.ID                          as id,
+					       t.YKT_CODE                    as yktCode,
+					       t.YKT_NAME                    as yktName,
+					       t.BATCH_CODE                  as batchCode,
+					       nvl(t.APPLY_AMT_LIMIT,0)      as applyAmtLimit,
+					       t.APPLY_USER                  as applyUser,
+					       t.APPLY_USERNAME              as applyUserName,
+					       t.APPLY_DATE                  as applyDate,
+					       t.APPLY_EXPLAINATION          as applyExplaination,
+					       t.AUDIT_USER                  as auditUser,
+					       t.AUDIT_USERNAME              as auditUserName,
+					       t.AUDIT_DATE                  as auditDate,
+					       t.AUDIT_EXPLAINATION          as auditExplaination,
+					       t.AUDIT_STATE                 as auditState,
+					       t.PAYMENT_CHANNEL             as paymentChannel,
+					       nvl(t.YKT_ADD_LIMIT,0)        as yktAddLimit,
+					       t.FINANCIAL_PAY_DATE          as financialPayDate,
+					       nvl(t.FINANCIAL_PAY_FEE,0)    as financialPayFee,
+					       t.REMARK                      as remark,
+					       t.FINANCIAL_PAY_AMT           as financialPayAmt,
+				           t.YKT_ADD_LIMIT_DATE          as yktAddLimitDate,
+				           t.CHECK_USER                  as checkUser,
+				           t.CHECK_USERNAME              as checkUserName,
+				           t.CHECK_DATE                  as checkDate,
+				           t.CHECK_EXPLAINATION          as checkExplaination,
+				           t.CHECK_STATE                 as checkState,
+					       c.NAME                        as createUser,
+					       t.CREATE_DATE                 as createDate,
+					       U.NAME                        as updateUser,
+					       t.UPDATE_DATE                 as updateDate
+					  from prd_ykt_limit_batch_info t
+		   left outer join oss_sys_user c
+		                on t.create_user = c.id
+		   left outer join oss_sys_user u
+		                on t.update_user = u.id
+		    	     where t.ID=#{id}
+	</select>
+	
+	<delete id="deleteProductYktLimitBatchInfo" parameterType="java.lang.String">
+		delete from prd_ykt_limit_batch_info where audit_state = '0' and id = #{id}
+	</delete>
+	
+	<update id="updateProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfo">
+		update prd_ykt_limit_batch_info
+		   set APPLY_AMT_LIMIT    = #{applyAmtLimit, jdbcType=NUMERIC},
+		       APPLY_DATE         = to_date(to_char(#{applyDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+		       APPLY_EXPLAINATION = #{applyExplaination, jdbcType=VARCHAR},
+		       REMARK             = #{remark, jdbcType=VARCHAR},
+			   UPDATE_USER        = #{updateUser, jdbcType=VARCHAR},
+			   UPDATE_DATE        = sysdate
+		where id=#{id}
+	</update>
+	
+	<update id="auditProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfo">
+		update prd_ykt_limit_batch_info
+		   set 
+		       BATCH_CODE          = #{batchCode, jdbcType=VARCHAR},
+		       AUDIT_USER          = #{auditUser, jdbcType=VARCHAR},
+		       AUDIT_USERNAME      = #{auditUserName, jdbcType=VARCHAR},
+		       AUDIT_DATE          = to_date(to_char(#{auditDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+		       AUDIT_EXPLAINATION  = #{auditExplaination, jdbcType=VARCHAR},
+		       AUDIT_STATE         = #{auditState, jdbcType=VARCHAR},
+		       CHECK_STATE         = #{checkState, jdbcType=VARCHAR},
+		       PAYMENT_CHANNEL     = #{paymentChannel, jdbcType=VARCHAR},
+		       FINANCIAL_PAY_AMT   = #{financialPayAmt, jdbcType=NUMERIC},
+		       FINANCIAL_PAY_DATE  = to_date(to_char(#{financialPayDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+		       FINANCIAL_PAY_FEE   = #{financialPayFee, jdbcType=NUMERIC},
+		       REMARK              = #{remark, jdbcType=VARCHAR},
+			   UPDATE_USER         = #{updateUser, jdbcType=VARCHAR},
+			   UPDATE_DATE         = sysdate
+		where id=#{id}
+	</update>
+	
+	<update id="checkProductYktLimitBatchInfo" parameterType="ProductYktLimitBatchInfo">
+		update prd_ykt_limit_batch_info
+		   set 
+		       CHECK_USER          = #{checkUser, jdbcType=VARCHAR},
+		       CHECK_USERNAME      = #{checkUserName, jdbcType=VARCHAR},
+		       CHECK_DATE          = to_date(to_char(#{checkDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+		       CHECK_EXPLAINATION  = #{checkExplaination, jdbcType=VARCHAR},
+		       CHECK_STATE         = #{checkState, jdbcType=VARCHAR},
+		       YKT_ADD_LIMIT       = #{yktAddLimit, jdbcType=NUMERIC},
+		       YKT_ADD_LIMIT_DATE  = to_date(to_char(#{yktAddLimitDate, jdbcType=VARCHAR}, 'YYYY-MM-DD'),'YYYY-MM-DD'),
+		       REMARK              = #{remark, jdbcType=VARCHAR},
+			   UPDATE_USER         = #{updateUser, jdbcType=VARCHAR},
+			   UPDATE_DATE         = sysdate
+		where id=#{id}
+	</update>
+	
+	<select id="findYktLimitInfoByYktCode" resultType="ProductYktLimitInfo" parameterType="java.lang.String">
+				select  t1.ID                              as id,
+		       			t1.YKT_CODE                        as yktCode,
+		       			nvl(t1.YKT_WARN_LIMIT, 0)          as yktWarnLimit,
+		       			nvl(t1.YKT_STOP_LIMIT, 0)          as yktStopLimit,
+		       			t1.YKT_EXPIRE_DATE                 as yktExpireDate,
+		       			nvl(t1.YKT_TOTAL_AMT_LIMIT, 0)     as totalAmtLimit,
+		       			nvl(t1.YKT_SURPLUS_LIMIT, 0)       as surPlusLimit,
+		       			t1.REMARK              		       as remark
+		  		  from  prd_ykt_limitinfo t1
+			     where  t1.ykt_code=#{yktCode}
+	</select>
+	
+	<update id="updateYktLimitInfoAfterAuditBatch" parameterType="ProductYktLimitInfo">
+		update prd_ykt_limitinfo
+           set YKT_TOTAL_AMT_LIMIT = #{totalAmtLimit, jdbcType=VARCHAR},
+			   YKT_SURPLUS_LIMIT   = #{surPlusLimit, jdbcType=VARCHAR},
+			   UPDATE_USER         = #{updateUser, jdbcType=VARCHAR},
+			   UPDATE_DATE         = sysdate
+		where YKT_CODE=#{yktCode}
+	</update>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfernew.business.dao.AccountMapper">
+	<!--获取序列下一个值 -->
+	<select id="getSequenceNextId" resultType="java.lang.String">
+		select ACCOUNT_CODE_SEQ.nextval from dual
+	</select>
+
+	<insert id="addAccount" parameterType="Account">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select ACCOUNT_ID_SEQ.nextval from dual
+		</selectKey>
+		INSERT INTO
+		ACCOUNT(ID,ACCOUNT_CODE,FUND_TYPE,CUSTOMER_TYPE,CUSTOMER_NO,CREATE_USER,CREATE_DATE)
+		VALUES
+		(#{id,jdbcType=VARCHAR},#{accountCode,jdbcType=VARCHAR},#{fundType,jdbcType=VARCHAR},#{customerType,jdbcType=VARCHAR},
+		#{customerNo,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},sysdate)
+	</insert>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.AccountFundMapper">
+
+	<!--根据主账户编号查询资金授信账户信息-->
+	<select id="getFundAccountInfo" resultType="AccountFund"  parameterType="java.lang.String">
+		select ID                                    as id,
+		       FUND_ACCOUNT_CODE                     as fundAccountCode,
+		       FUND_TYPE                             as fundType,
+		       ACCOUNT_CODE                          as accountCode,
+		       nvl(SUM_TOTAL_AMOUNT,0)               as sumTotalAmount,
+		       nvl(TOTAL_BALANCE,0)                  as totalBalance,
+		       nvl(AVAILABLE_BALANCE,0)              as availableBalance,
+		       nvl(FROZEN_AMOUNT,0)                  as frozenAmount,
+		       nvl(LAST_CHANGE_AMOUNT,0)             as lastChangeAmount,
+		       nvl(BEFORE_CHANGE_TOTAL_AMOUNT,0)     as beforeChangeTotalAmount,
+		       nvl(BEFORE_CHANGE_AVAILABLE_AMOUNT,0) as beforeChangeAvailableAmount,
+		       nvl(BEFORE_CHANGE_FROZEN_AMOUNT,0)    as beforeChangeFrozenAmount,
+		       STATE                                 as state,
+		       PAY_PASSWORD                          as payPassword,
+		       USEABLE                               as useable,
+		       CIPHERTEXT                            as ciphertext,
+		       CREATE_USER                           as createUser,
+		       CREATE_DATE                           as createDate,
+		       UPDATE_USER                           as updateUser,
+		       UPDATE_DATE                           as updateDate
+		  FROM ACCOUNT_FUND
+		 WHERE ACCOUNT_CODE=#{accountCode} 
+		   AND FUND_TYPE = #{fundType}
+	</select>
+
+	<update id="updateFundAccount" parameterType="AccountFund">
+		update ACCOUNT_FUND t set
+			t.BEFORE_CHANGE_AVAILABLE_AMOUNT=#{beforeChangeAvailableAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_FROZEN_AMOUNT=#{beforeChangeFrozenAmount,jdbcType=BIGINT},
+			t.BEFORE_CHANGE_TOTAL_AMOUNT=#{beforeChangeTotalAmount,jdbcType=BIGINT},
+			t.FROZEN_AMOUNT	 =#{frozenAmount,jdbcType=BIGINT},
+			t.AVAILABLE_BALANCE	 =#{availableBalance,jdbcType=BIGINT},
+			t.TOTAL_BALANCE	 =#{totalBalance,jdbcType=BIGINT},
+			t.SUM_TOTAL_AMOUNT =#{sumTotalAmount,jdbcType=BIGINT},
+			t.LAST_CHANGE_AMOUNT=#{lastChangeAmount,jdbcType=BIGINT},
+			t.UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			t.UPDATE_DATE=sysdate
+		where t.FUND_ACCOUNT_CODE = #{fundAccountCode}
+	</update>
+			
+</mapper>

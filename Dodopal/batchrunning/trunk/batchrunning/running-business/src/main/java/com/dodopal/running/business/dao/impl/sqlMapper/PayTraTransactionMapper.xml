@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.running.business.dao.PayTraTransactionMapper">
+
+	<!-- 根据交易流水号查找交易信息 -->
+	<select id="getPayTraTransactionByTranCode" resultType="PayTraTransaction" parameterType="java.lang.String">
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where TRAN_CODE = #{tranCode}
+	</select>
+
+	<!-- 根据充值订单信息查找交易信息 -->
+	<select id="getPayTraTransactionByOrder" resultType="PayTraTransaction" parameterType="java.lang.String">
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where ORDER_NUMBER = #{orderNumber}
+		   and MER_OR_USER_CODE = #{merOrUserCode}
+		   and USER_TYPE = #{userType}
+		   and TRAN_TYPE = #{tranType}
+		   and BUSINESS_TYPE = #{businessType}
+	</select>
+	
+	<!--根据交易流水号 修改交易内、外部交易状态 -->
+	<update id="updateTranStatus" parameterType="PayTraTransaction">
+		update PAY_TRATRANSACTION 
+		   set TRAN_OUT_STATUS=#{tranOutStatus},
+		       TRAN_IN_STATUS=#{tranInStatus},
+		       UPDATE_USER=#{updateUser},
+		       UPDATE_DATE=sysdate,
+		       COMMENTS=#{comments}
+		 where TRAN_CODE=#{tranCode}
+	</update>
+
+	<!-- 根据充值订单信息查找交易信息 -->
+	<select id="findPayTraTransactionByList" resultType="PayTraTransaction" >
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where TRAN_OUT_STATUS   = '3'
+		   and TRAN_IN_STATUS = '11'
+		   and TRAN_TYPE = '1'
+		   and BUSINESS_TYPE = '99'
+		   and ((SYSDATE - CREATE_DATE) * 24 * 60 * 60) >= #{threshold}
+	</select>
+</mapper>

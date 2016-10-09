@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.PayTraTransactionMapper">
+<!-- 交易流水号、商户|用户号、商户|用户名、业务、交易名称、应付金额、实际交易金额、状态、内部状态、创建时间 -->
+    <sql id="payTraTransactionPageColumn">
+	t.ID,t.CREATE_DATE,t.UPDATE_DATE,t.CREATE_USER,t.UPDATE_USER,
+	t.TRAN_CODE,t.TRAN_NAME,t.TRAN_OUT_STATUS,t.TRAN_IN_STATUS,t.COMMENTS,t.PAGE_CALLBACK_URL,
+	t.SERVICE_NOTICE_URL,t.AMOUNT_MONEY,t.TRAN_TYPE,t.USER_TYPE,t.MER_OR_USER_CODE,t.ORDER_NUMBER,
+	t.COMMODITY,t.SOURCE,t.ORDER_DATE,t.BUSINESS_TYPE,t.PAY_TYPE,t.PAY_WAY,t.PAY_SERVICE_RATE,
+	t.PAY_SERVICE_FEE,t.PAY_PROCE_RATE,t.PAY_PROCE_FEE,t.REAL_TRAN_MONEY,t.TURN_OUT_MER_CODE,
+	t.TURN_INTO_MER_CODE,t.OLD_TRAN_CODE,t.CLEAR_FLAG,t.FINISH_DATE,t.PAY_WAY_NAME,t.PAY_SERVICE_TYPE,
+	t.PAY_GATEWAY
+</sql>
+	<!-- 根据交易流水号查找交易信息 -->
+	<select id="getPayTraTransactionByTranCode" resultType="PayTraTransaction" parameterType="java.lang.String">
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where TRAN_CODE = #{tranCode}
+	</select>
+
+	<!-- 根据充值订单信息查找交易信息 -->
+	<select id="getPayTraTransactionByOrder" resultType="PayTraTransaction" parameterType="java.lang.String">
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where ORDER_NUMBER = #{orderNumber}
+		   and MER_OR_USER_CODE = #{merOrUserCode}
+		   and USER_TYPE = #{userType}
+		   and TRAN_TYPE = #{tranType}
+		   and BUSINESS_TYPE = #{businessType}
+	</select>
+	
+	<!--根据交易流水号 修改交易内、外部交易状态 -->
+	<update id="updateTranStatus" parameterType="PayTraTransaction">
+		update PAY_TRATRANSACTION 
+		   set TRAN_OUT_STATUS=#{tranOutStatus},
+		       TRAN_IN_STATUS=#{tranInStatus},
+		       UPDATE_USER=#{updateUser},
+		       UPDATE_DATE=sysdate,
+		       COMMENTS=#{comments}
+		 where TRAN_CODE=#{tranCode}
+	</update>
+
+	<!-- 根据充值订单信息查找交易信息 -->
+	<select id="findPayTraTransactionByList" resultType="PayTraTransaction" >
+		select ID                 as id,
+		       TRAN_CODE          as tranCode,
+		       TRAN_NAME          as tranName,
+		       TRAN_OUT_STATUS    as tranOutStatus,
+		       TRAN_IN_STATUS     as tranInStatus,
+		       PAGE_CALLBACK_URL  as pageCallbackUrl,
+		       SERVICE_NOTICE_URL as serviceNoticeUrl,
+		       AMOUNT_MONEY       as amountMoney,
+		       TRAN_TYPE          as tranType,
+		       USER_TYPE          as userType,
+		       MER_OR_USER_CODE   as merOrUserCode,
+		       ORDER_NUMBER       as orderNumber,
+		       COMMODITY          as commodity,
+		       BUSINESS_TYPE      as businessType,
+		       SOURCE             as source,
+		       ORDER_DATE         as orderDate,
+		       PAY_TYPE           as payType,
+		       PAY_WAY            as payWay,
+		       PAY_SERVICE_RATE   as payServiceRate,
+		       PAY_SERVICE_FEE    as payServiceFee,
+		       PAY_PROCE_RATE     as payProceRate,
+		       PAY_PROCE_FEE      as payProceFee,
+		       REAL_TRAN_MONEY    as realTranMoney,
+		       TURN_OUT_MER_CODE  as turnOutMerCode,
+		       TURN_INTO_MER_CODE as turnIntoMerCode,
+		       OLD_TRAN_CODE      as oldTranCode,
+		       CLEAR_FLAG         as clearFlag,
+		       ACCEPT_CIPHERTEXT  as acceptCiphertext,
+		       SEND_CIPHERTEXT    as sendCiphertext,
+		       FINISH_DATE        as finishDate,
+		       COMMENTS           as comments,
+		       CREATE_USER        as createUser,
+		       CREATE_DATE        as createDate,
+		       UPDATE_USER        as updateUser,
+		       UPDATE_DATE        as updateDate,
+		       PAY_SERVICE_TYPE   as payServiceType,
+		       OPERATOR_ID        as operatorId,
+		       PAY_GATEWAY        as PAY_GATEWAY
+		  from Pay_TraTransaction
+		 where TRAN_OUT_STATUS   = '3'
+		   and TRAN_IN_STATUS = '11'
+		   and TRAN_TYPE = '1'
+		   and BUSINESS_TYPE = '99'
+		   and ((SYSDATE - CREATE_DATE) * 24 * 60 * 60) >= #{threshold}
+	</select>
+    <!-- 提取商户额度报表查询分页 -->
+	<select id="findMerCreditsByPage" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName MER_OR_USER_NAME,area.CITYNAME MER_CITY_NAME ,p.MER_PARENT_NAME,p.MER_PAY_MONEY_USER from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName,tempuser.MER_CODE,'' as MER_PARENT_CODE,'' as MER_PARENT_NAME,tempuser.CITY_CODE as CITYCODE,'' as MER_PAY_MONEY_USER        from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,tempmer.MER_CODE,tempmer.MER_PARENT_CODE,pmer.mer_name as MER_PARENT_NAME,tempmer.MER_CITY as CITYCODE,tempmer.MER_PAY_MONEY_USER as MER_PAY_MONEY_USER
+        from merchant tempmer left join merchant pmer on tempmer.MER_PARENT_CODE = pmer.mer_code
+        ))) p 
+        on p.userMerCode = t.MER_OR_USER_CODE
+        left join oss_city_info area on p.CITYCODE = area.CITYCODE
+         left join merchant mer on mer.id=t.turn_out_mer_code
+        and t.user_type = p.USER_TYPE
+        <where>
+        	t.TRAN_TYPE = '1'  and t.TRAN_OUT_STATUS ='3'
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="userType != null and userType !=''">
+                and t.user_type = #{userType}
+            </if>
+            <if test="payType != null and payType !=''">
+                and t.PAY_TYPE = #{payType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+    
+       <!-- 提取商户额度报表查询导出 -->
+	<select id="findMerCreditsExport" resultType="PayTraTransaction" resultMap="PayTraTransactionResultMap"
+            parameterType="PayTraTransactionQuery">
+        select<include refid="payTraTransactionPageColumn"/>,p.userMerName MER_OR_USER_NAME,area.CITYNAME MER_CITY_NAME ,p.MER_PARENT_NAME,p.MER_PAY_MONEY_USER from Pay_TraTransaction t
+        left join (select *
+        from ((select tempuser.user_code userMerCode,
+        '0' as USER_TYPE,
+        tempuser.MER_USER_NICKNAME userMerName,tempuser.MER_CODE,'' as MER_PARENT_CODE,'' as MER_PARENT_NAME,tempuser.CITY_CODE as CITYCODE ,'' as MER_PAY_MONEY_USER    from merchant_user tempuser
+        )
+        UNION (select tempmer.mer_code userMerCode,
+        '1' as USER_TYPE,
+        tempmer.mer_name userMerName,tempmer.MER_CODE,tempmer.MER_PARENT_CODE,pmer.mer_name as MER_PARENT_NAME,tempmer.MER_CITY as CITYCODE,tempmer.MER_PAY_MONEY_USER as MER_PAY_MONEY_USER
+        from merchant tempmer left join merchant pmer on tempmer.MER_PARENT_CODE = pmer.mer_code
+        ))) p 
+        on p.userMerCode = t.MER_OR_USER_CODE
+        left join oss_city_info area on p.CITYCODE = area.CITYCODE
+         left join merchant mer on mer.id=t.turn_out_mer_code
+        and t.user_type = p.USER_TYPE
+        <where>
+        	t.TRAN_TYPE = '1'  and t.TRAN_OUT_STATUS ='3'
+            <if test="merOrUserName != null and merOrUserName !=''">
+                and p.userMerName like '%'||#{merOrUserName}||'%'
+            </if>
+            <if test="orderNumber != null and orderNumber !=''">
+                and t.ORDER_NUMBER like '%'||#{orderNumber}||'%'
+            </if>
+
+            <if test="userType != null and userType !=''">
+                and t.user_type = #{userType}
+            </if>
+            <if test="payType != null and payType !=''">
+                and t.PAY_TYPE = #{payType}
+            </if>
+            <if test="createDateStart != null and createDateStart !=''">
+                <![CDATA[
+           	 	AND t.CREATE_DATE >=#{createDateStart,jdbcType=DATE} 
+           	 ]]>
+            </if>
+            <if test="createDateEnd != null and createDateEnd !=''">
+                <![CDATA[
+           	   	AND t.CREATE_DATE < #{createDateEnd,jdbcType=DATE}+1
+           	  
+           	 ]]>
+            </if>
+        </where>
+        order by t.id desc
+    </select>
+</mapper>

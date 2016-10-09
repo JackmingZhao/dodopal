@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.oss.business.dao.CrdSysLogMapper">
+    <resultMap type="CrdSysLog" id="crdSysLogResultMap">
+        <result property ="id" column="ID"/><!--自增id-->
+        <result property ="serverName" column="SERVER_NAME"/><!--服务名称-->
+       	<result property ="crdOrderNum" column="CRD_ORDER_NUM"/><!--卡服务订单号-->
+       	<result property ="proOrderNum" column="PRO_ORDER_NUM"/><!--产品库订单号-->
+        <result property ="tradeType" column="TRADE_TYPE"/><!--产品库订单号-->
+     	<result property ="className" column="CLASS_NAME"/><!--类名称-->
+        <result property ="methodName" column="METHOD_NAME"/><!--方法名称-->
+       	<result property ="txnType" column="TXN_TYPE"/><!--交易类型 -->
+       	<result property ="tradeStart" column="TRADE_START"/><!--开始时间-->
+      	<result property ="tradeEnd" column="TRADE_END"/><!--结束时间-->
+       	<result property ="tradeTrack" column="TRADE_TRACK"/><!--操作时长-->
+       	<result property ="inParas" column="IN_PARAS"/><!--入参-->
+       	<result property ="inParaLength" column="IN_PARA_LENGTH"/><!--入参长度-->
+       	<result property ="outParas" column="OUT_PARAS"/><!--出参-->
+       	<result property ="respCode" column="RESP_CODE"/><!--响应码-->
+       	<result property ="respExplain" column="RESP_EXPLAIN"/><!--响应码描述-->
+       	<result property ="description" column="DESCRIPTION"/><!--方法描述-->
+       	<result property ="endDate" column="END_DATE"/><!--结束日期-->
+       	<result property="createDate" column="CREATE_DATE" />
+       		
+    </resultMap>
+</mapper>

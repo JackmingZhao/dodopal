@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.dodopal</groupId>
+    <artifactId>users-parent</artifactId>
+    <version>0.0.5-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>users-web</artifactId>
+  <packaging>war</packaging>
+  <name>users-web</name>  
+  <description>users-web</description>
+  
+  <dependencies>
+		<dependency>
+			<groupId>com.dodopal</groupId>
+			<artifactId>users-business</artifactId>
+			<version>0.0.5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.bull.javamelody</groupId>
+			<artifactId>javamelody-core</artifactId>
+			<version>1.55.0</version>
+		</dependency>
+	</dependencies>
+	
+  <build>
+		<finalName>users-web</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+					<compilerArgument>-XDignore.symbol.file</compilerArgument>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<configuration>
+				<uriEncoding>UTF-8</uriEncoding>
+				<path>/users-web</path>
+							   <!--在这里定义端口号 -->
+							   <port>8099</port>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  
+</project>

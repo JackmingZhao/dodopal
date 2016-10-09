@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MerUserCardBDLogMapper">
+	<sql id="merUserCardLogColumn">
+		c.ID,
+		c.CREATE_USER,
+		c.CREATE_DATE,
+		c.UPDATE_USER,
+		c.UPDATE_DATE,
+		c.CARD_NO,
+		c.CARD_NAME,
+		c.USER_CODE,
+		c.MER_USER_NICKNAME,
+		c.OPER_STATUS,
+		c.OPER_NAME,
+		c.SOURCE,
+		c.CARD_CITY_NAME,
+		c.CARD_TYPE
+	</sql>
+
+	<insert id="addUserCodeCordBindlog" parameterType="MerUserCardBDLog">
+		<selectKey resultType="java.lang.String" keyProperty="id"
+			order="BEFORE">
+			select CARD_LOG_ID_SEQ.NEXTVAL from dual
+		</selectKey>
+		insert into CARD_LOG
+		(ID,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+		CARD_NO,CARD_NAME,USER_CODE,MER_USER_NICKNAME,OPER_STATUS,OPER_NAME,SOURCE,
+		CARD_CITY_NAME,CARD_TYPE
+		)
+		values (
+		#{id,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
+		sysdate,
+		#{updateUser,jdbcType=VARCHAR},
+		sysdate,
+		#{code, jdbcType=VARCHAR},
+		#{cardName, jdbcType=VARCHAR},
+		#{userCode, jdbcType=VARCHAR},
+		#{merUserNickName, jdbcType=VARCHAR},
+		#{operStatus, jdbcType=VARCHAR},
+		#{operName, jdbcType=VARCHAR},
+		#{source, jdbcType=VARCHAR},
+		#{cardCityName, jdbcType=VARCHAR},
+		#{cardType, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="findUserCardBDLogByPage" resultType="MerUserCardBDLog" resultMap="merUserCardBDLogResultMap" 
+	parameterType="UserCardLogQuery">
+		select <include refid="merUserCardLogColumn" />,m.mer_user_name as MER_USER_NAME
+		from
+		CARD_LOG c ,merchant_user m
+		<where>
+		      c.user_code = m.user_code
+        	<if test="code !=null and code !=''">   
+             and c.CARD_NO LIKE '%'||#{code}||'%' 
+        	</if>
+        	<if test="userCode !=null and userCode !=''">   
+             and c.USER_CODE LIKE '%'||#{userCode}||'%' 
+        	</if>   
+        	<if test="merUserName !=null and merUserName !=''">   
+             and m.mer_user_name LIKE '%'||#{merUserName}||'%' 
+        	</if>      
+        	<if test="operName != null and operName !=''">   
+           	 AND c.OPER_NAME LIKE '%'||#{operName}||'%' 
+       		</if>
+            <if test="source != null and source !=''">   
+           	 AND c.SOURCE = #{source}
+       		</if>
+       		 <if test="cardType != null and cardType !=''">   
+           	 AND c.CARD_TYPE = #{cardType, jdbcType=VARCHAR}
+       		</if>
+       		
+    	</where>  
+    	ORDER by c.ID DESC 
+	</select>
+	<select id="getExportExcelUserCardLog" resultType="MerUserCardBDLog" resultMap="merUserCardBDLogResultMap" 
+	parameterType="UserCardLogQuery">
+		select <include refid="merUserCardLogColumn" />,m.mer_user_name as MER_USER_NAME
+		from
+		CARD_LOG c,merchant_user m
+		<where>
+		       c.user_code = m.user_code
+        	<if test="code !=null and code !=''">   
+            	and c.CARD_NO LIKE '%'||#{code}||'%' 
+        	</if>
+        	<if test="userCode !=null and userCode !=''">   
+             and c.USER_CODE LIKE '%'||#{userCode}||'%' 
+        	</if> 
+        	<if test="merUserName !=null and merUserName !=''">   
+             and m.mer_user_name LIKE '%'||#{merUserName}||'%' 
+        	</if>       
+        	<if test="operName != null and operName !=''">   
+           	 AND c.OPER_NAME LIKE '%'||#{operName}||'%' 
+       		</if>
+            <if test="source != null and source !=''">   
+           	 AND c.SOURCE = #{source}
+       		</if>
+       		 <if test="cardType != null and cardType !=''">   
+           	 AND c.CARD_TYPE = #{cardType, jdbcType=VARCHAR}
+       		</if>
+       		
+    	</where>  
+    	ORDER by ID DESC 
+	</select>
+</mapper>

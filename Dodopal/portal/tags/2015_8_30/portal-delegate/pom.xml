@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.dodopal</groupId>
+    <artifactId>portal-parent</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+  </parent>
+  <artifactId>portal-delegate</artifactId>
+  <dependencies>
+		<dependency>
+			<groupId>com.dodopal.api</groupId>
+			<artifactId>portal-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dodopal.api</groupId>
+			<artifactId>users-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dodopal.api</groupId>
+			<artifactId>product-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dodopal.api</groupId>
+			<artifactId>payment-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dodopal.api</groupId>
+			<artifactId>account-api</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>			
+	</dependencies>
+
+	<build>
+		<finalName>portal-delegate</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+					<!-- <compilerArgument>-proc:only</compilerArgument> -->
+					<compilerArgument>-XDignore.symbol.file</compilerArgument>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.IcdcBusinessCityMapper">
+
+	<select id="findAllCityByCityabridge"  resultType="BusinessCity" parameterType="java.lang.String">
+		select
+			cityCode as cityCode,
+			cityName as cityName,
+			parentCode as parentCode,
+			SUBSTR(cityabridge,1,1) as sort
+		from oss_city_info
+		where
+		<foreach item="item" index="index" collection="array">
+			cityabridge like #{item}||'%' or
+		</foreach>
+		1=0
+	</select>
+	
+	<select id="findBusinessCityByCityabridge" resultType="BusinessCity" parameterType="java.lang.String">
+		select
+			T1.cityCode as cityCode,
+			T1.cityName as cityName,
+			T2.ykt_code as yktCode,
+			SUBSTR(T1.cityabridge,1,1) as sort
+		from oss_city_info T1
+		inner join prd_ykt_city_info T2 on T1.cityCode = T2.cityId
+		where
+		<foreach item="item" index="index" collection="array">
+			T1.cityabridge like #{item}||'%' or
+		</foreach>
+		1=0
+	</select>
+	
+	<select id="findAllCityByName"  resultType="BusinessCity" parameterType="java.lang.String">
+		select
+			cityCode as cityCode,
+			cityName as cityName,
+			parentCode as parentCode
+		from oss_city_info
+		where cityName like '%'||#{cityName}||'%' or cityabridge like #{cityName}||'%'
+	</select>
+	
+	<select id="findBusinessCityByName" resultType="BusinessCity" parameterType="java.lang.String">
+		select
+			T1.cityCode as cityCode,
+			T1.cityName as cityName,
+			T2.ykt_code  as yktCode
+		from oss_city_info T1
+		inner join prd_ykt_city_info T2 on T1.cityCode = T2.cityId
+		where  T1.cityName like '%'||#{cityName}||'%' or T1.cityabridge like #{cityName}||'%'
+	</select>
+
+</mapper>

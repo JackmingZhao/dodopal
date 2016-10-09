@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.LogInfoMapper">
+	<sql id="logInfoSqlColumn">
+		ID,SERVER_NAME,LOG_DATE,THREAD_NAME,LOG_LEVEL,CLASS_NAME,STACK_TRACE,
+		MESSAGE,REP_CODE,REP_MESSAGE,UNIQUE_CODE,IN_PARAS,OUT_PARAS,ORDER_NUM,TRAN_NUM,METHOD_NAME,
+		METHOD_DES,IP_ADDR,TRADE_TYPE,TRADE_START,TRADE_END,TRADE_TRACK,SOURCE
+		
+	</sql>
+	<select id="findLogInfoByPage" resultType="LogInfo" resultMap="logInfoResultMap" parameterType="LogInfoQuery">
+		select <include refid="logInfoSqlColumn" /> from LOG_INFO 
+		<where>
+			<if test="source != null and source !=''">
+			SOURCE like '%'||#{source}||'%'
+			</if>
+			<if test="orderNum != null and orderNum !=''">
+			AND ORDER_NUM like '%'||#{orderNum}||'%'
+			</if>
+			<if test="tranNum != null and tranNum !=''">
+			AND TRAN_NUM like '%'||#{tranNum}||'%'
+			</if>
+			<if test="tradeType != null and tradeType !=''">
+			AND TRADE_TYPE = #{tradeType}
+			</if>
+			<if test="serverName != null and serverName !=''">
+			AND SERVER_NAME like '%'||#{serverName}||'%'
+			</if>
+		</where>
+		ORDER BY ID DESC
+	</select>
+</mapper>

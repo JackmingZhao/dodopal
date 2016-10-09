@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ChildRechargeOrderSumMapper">
+	<sql id="prdOrderDetail">
+		       P.PRO_ORDER_NUM          as proOrderNum,
+		       P.PRO_CODE               as proCode,
+		       P.PRO_NAME               as proName,
+		       P.TXN_AMT                as txnAmt,
+		       P.CITY_NAME              as cityName,
+		       P.PRD_ORDER_DATE         as proOrderDate,
+		       P.PRD_ORDER_DAY          as proOrderDay,
+		       P.ORDER_CARDNO           as orderCardno,
+		       P.CARD_FACENO            as cardFaceno,
+		       P.POS_CODE               as posCode,
+		       P.BEFBAL                 as befbal,
+		       P.BLACK_AMT              as blackAmt,
+		       P.PRO_ORDER_STATES       as proOrderState,
+		       P.PRO_INNER_STATES       as proInnerState,
+		       P.PRO_BEFOREINNER_STATES as proBeforInnerState,
+		       P.PRO_SUSPICIOUS_STATES  as proSuspiciousState,
+		       P.PRO_SUSPICIOUS_EXPLAIN as proSuspiciousExplain,
+		       P.MER_CODE               as merCode,
+		       P.MER_NAME               as merName,
+		       P.MER_ORDER_NUM          as merOrderNum,
+		       P.LOAD_ORDER_NUM         as loadOrderNum,
+		       P.SOURCE                 as source,
+		       P.USER_ID                as userId,
+		       P.USER_NAME              as userName,
+		       P.CREATE_DATE            as createDate,
+		       P.UPDATE_DATE            as updateDate
+	</sql>
+	
+	<select id="queryChildRechargeOrderByPage" resultType="childRechargeOrderSum" resultMap="childRechargeOrderSumMap"  parameterType="ChildRechargeOrderSumQuery">
+		select count(*)  as RECHARGE_COUNT,
+		sum(TXN_AMT)     as RECHARGE_AMT,
+		MER_NAME,
+		MER_CODE
+		from 
+        (select  pr.mer_name as mer_name,pr.MER_CODE as MER_CODE,pr.MER_GAIN as MER_GAIN,pr.CITY_NAME as CITY_NAME,pr.PRD_ORDER_DAY as TRADE_DATE ,pr.txn_amt as txn_amt,pr.PRD_ORDER_DATE as PRD_ORDER_DATE
+          from PRD_ORDER pr ,MERCHANT M,pos o
+          	<where>  M.mer_code = pr.mer_code
+          	and pr.POS_CODE = o.code(+)
+          	<if test="merCode != null and merCode !=''">
+        	AND M.MER_PARENT_CODE = #{merCode} 
+       		</if>
+			<if test="merName != null and merName !=''">   
+           	 AND pr.MER_NAME like '%'||#{merName}||'%' 
+       		</if>
+      
+       		<if test="proOrderState != null and proOrderState !=''">
+       		    <if test="proOrderState==5">
+				   and pr.PRO_ORDER_STATES in (3,5)
+				</if>
+				<if test="proOrderState==2 or proOrderState==4">
+				   and pr.PRO_ORDER_STATES =  #{proOrderState}
+				</if>
+			</if>
+       		<if test="stratDate != null and stratDate !=''">
+				<![CDATA[ and to_date( pr.PRD_ORDER_DAY,'yyyy-mm-dd') >=  to_date(#{stratDate},'yyyy-mm-dd') ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ and to_date( pr.PRD_ORDER_DAY,'yyyy-mm-dd') <=  to_date(#{endDate},'yyyy-mm-dd') ]]>
+			</if>
+			</where>
+			
+          ) 
+        group by MER_CODE,MER_NAME
+	</select>
+	
+</mapper>

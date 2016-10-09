@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.DdicCategoryMapper">
+	<select id="findDdicCategorys" resultType="DdicCategory" resultMap="ddicCategoryResultMap"
+		parameterType="DdicCategory">
+		select * from OSS_DDIC_CATEGORY
+		<where>
+			<if test="categoryCode != null and categoryCode !=''">
+				category_Code = #{categoryCode}
+			</if>
+			
+			<if test="categoryName != null and categoryName !=''">
+				and category_Name = #{categoryName}
+			</if>
+
+			<if test="activate != null and activate !=''">
+				and activate = #{activate}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+	<select id="findDdicCategorysByPage" resultType="DdicCategoryQuery" resultMap="ddicCategoryResultMap"
+		parameterType="DdicCategory">
+		select w.ID,w.ACTIVATE,a.nick_name as create_user,w.CREATE_DATE,b.nick_name as update_user,w.UPDATE_DATE,
+				w.CATEGORY_CODE,w.CATEGORY_NAME,w.DESCRIPTION 
+		  from OSS_DDIC_CATEGORY w
+		  left join v_user_info a on w.create_user=a.id
+		  left join v_user_info b on w.update_user=b.id
+		<where>
+			<if test="categoryCode != null and categoryCode !=''">
+				w.category_Code like '%'||#{categoryCode}||'%'
+			</if>
+			<if test="categoryName != null and categoryName !=''">
+				and w.category_Name like '%'||#{categoryName}||'%'
+			</if>
+			<if test="activate != null and activate !=''">
+				and w.activate = #{activate}
+			</if>
+		</where>
+		order by w.id desc
+	</select>
+
+	<select id="findDdicCategoryById" resultType="DdicCategory" resultMap="ddicCategoryResultMap"
+		parameterType="java.lang.String">
+		select * from OSS_DDIC_CATEGORY where id = #{id} 
+	</select>
+
+	<insert id="insertDdicCategory" parameterType="DdicCategory">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select OSS_DDIC_CATEGORY_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO OSS_DDIC_CATEGORY(ID, CATEGORY_CODE, CATEGORY_NAME, DESCRIPTION, ACTIVATE, CREATE_DATE, UPDATE_DATE, CREATE_USER, UPDATE_USER)
+		VALUES (#{id}, #{categoryCode}, #{categoryName}, #{description,jdbcType=VARCHAR}, '0', sysdate, null, #{createUser,jdbcType=VARCHAR}, null)
+	</insert>
+
+	<update id="updateDdicCategory" parameterType="DdicCategory">
+		update OSS_DDIC_CATEGORY
+		<trim prefix="SET" suffixOverrides=",">
+				category_Code=#{categoryCode},
+				category_Name=#{categoryName},
+				description=#{description,jdbcType=VARCHAR},
+				update_date=sysdate,
+				update_user=#{updateUser,jdbcType=VARCHAR},
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteDdicCategory" parameterType="java.lang.String">
+		delete from OSS_DDIC_CATEGORY where id in
+		 <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	<select id="countDdicCategory" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select count(*) from OSS_DDIC_CATEGORY where category_code = #{categoryCode}
+	</select>
+	
+	<select id="findDdicCategoryByCode" resultType="DdicCategory" resultMap="ddicCategoryResultMap"
+		parameterType="java.lang.String">
+		select * from OSS_DDIC_CATEGORY where category_code = #{code} 
+	</select>
+
+	<update id="batchActivateDdicCategory">
+		update OSS_DDIC_CATEGORY
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			activate=#{activate}
+		</trim>
+		where category_code in
+		<foreach item="item" index="index" collection="categoryCodes" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</update>
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.card.business.dao.ParameterMapper">
+	<!-- 01黑名单参数  -->
+	<select id="findBlankListParameterByPage" resultType="com.dodopal.api.card.dto.BlankListParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.CARDCODE cardcode,t.USEDDATE useddate FROM BLANKLIST t  
+		 WHERE t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 02消费可用卡类型参数  -->
+	<select id="findConsumeCardTypeParameterByPage" resultType="com.dodopal.api.card.dto.ConsumeCardTypeParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.CARDPHYTYPE cardphytype,t.CARDTYPE cardtype,t.CARDTYPENAME cardtypename,t.CARDPROPERTY cardproperty,t.FHLIMITMANA fhlimitmana,t.RESV resv FROM CONSUMECARDTYPE t
+	    WHERE  t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 03终端运营参数（机具运营参数）  -->
+	<select id="findTerminalParameterByPage" resultType="com.dodopal.api.card.dto.TerminalParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.UNITID unitid,t.SENDUNITID sendunitid,t.RECEUNITID receunitid,
+		t.MCHNTCODE mchntcode,t.MCHNTID mchntid,t.MCHNTNAME mchntname,t.NETNAME netname,t.POSID posid,
+		t.FHTXNCRITICAL fhtxncritical,t.KEYTYPE keytype,t.DATAUPMODE dataupmode,t.TIMINGUPMODE TIMINGUPMODE,t.REFUNDTYPE refundtype
+		 FROM TERMINAL t  WHERE t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 04区域黑名单参数   -->
+	<select id="findAreaBlankListParameterByPage" resultType="com.dodopal.api.card.dto.AreaBlankListParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.STARTCARDNO startcardno,t.ENDCARDNO endcardno,t.USEDDATE useddate FROM AREABLANKLIST t
+		 WHERE t.SAMNO  = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 05增量黑名单参数   -->
+	<select id="findIncrementBlankListParameterByPage" resultType="com.dodopal.api.card.dto.IncrementBlankListParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.CARDNO cardno,t.BLANKTYPE blankType,t.USEDDATE useddate  FROM INCREMENTBLANKLIST t
+		 WHERE t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 06终端菜单参数   -->
+	<select id="findTerminalMenuParameterByPage" resultType="com.dodopal.api.card.dto.TerminalMenuParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.MENULEVEL menulevel,t.MENUNAME menuname,t.TXNTYPE txntype,
+		t.TXNSTATUS txnstatus,t.MENUFRISTACTIONSET menufristactionset,t.SEQ seq
+		 FROM TERMINALMENU t  WHERE t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 07灰名单参数  -->
+	<select id="findGrayListParameterByPage" resultType="com.dodopal.api.card.dto.GrayListParameter" parameterType="ParameterQuery">
+		SELECT t.SAMNO samno,t.GRAYLISTFLAG graylistflag,t.GRAYLISTVAL graylistval FROM GRAYLIST t  WHERE t.SAMNO = #{samno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 33消费折扣参数  -->
+	<select id="findConsumeDiscountParameterByPage" resultType="com.dodopal.api.card.dto.ConsumeDiscountParameter" parameterType="ParameterQuery">
+		SELECT t.TRANDISCOUNT trandiscount,t.settdiscount SETTDISCOUNT FROM CONSUMEDISCOUNT t 
+	</select>
+	 
+	<!--  34分时段消费折扣参数  -->
+	<select id="findSubPeriodDiscountParameterByPage" resultType="com.dodopal.api.card.dto.SubPeriodDiscountParameter" parameterType="ParameterQuery">
+		SELECT * from (
+		 <![CDATA[
+			SELECT tod.*,to_char(#{today,jdbcType=DATE},'YYYYMMDD') as discountdate FROM (
+			SELECT replace(tran.BEGIN_TIME,':','') begintime,replace(tran.END_TIME,':','') endtime,tran.DISCOUNT_THRESHOLD trandiscount,tran.SET_DISCOUNT settdiscount
+			FROM TRAN_DISCOUNT tran left join 	
+			MERCHANT_TRAN_DISCOUNT disc on disc.DISCOUNT_ID = tran.ID
+			where  
+	           	 tran.BEGIN_DATE  <= #{today,jdbcType=DATE} 
+	           	 AND tran.END_DATE >= #{today,jdbcType=DATE}
+	           	 AND INSTR(tran.WEEK, #{todayWeek})>0 
+	           	 AND disc.MER_CODE = #{merCode,jdbcType=VARCHAR} 
+	          ) tod union all 
+	       SELECT tom.*,to_char(#{tomorrow,jdbcType=DATE},'YYYYMMDD') as discountdate FROM 
+	       (SELECT replace(tran.BEGIN_TIME,':','') begintime,replace(tran.END_TIME,':','') endtime,tran.DISCOUNT_THRESHOLD trandiscount,tran.SET_DISCOUNT settdiscount 
+	       FROM TRAN_DISCOUNT tran left join
+	        MERCHANT_TRAN_DISCOUNT disc on disc.DISCOUNT_ID = tran.ID
+			where  
+	           	 tran.BEGIN_DATE  <= #{tomorrow,jdbcType=DATE} 
+	           	 AND tran.END_DATE >= #{tomorrow,jdbcType=DATE}
+	           	 AND INSTR(tran.WEEK, #{tomorrowWeek})>0
+	           	 AND disc.MER_CODE = #{merCode,jdbcType=VARCHAR})
+	          ]]> tom)
+	</select>
+	
+	<!--  分时段消费折扣的总计  -->
+	<select id="findSubPeriodDiscountParameterCount" resultType="java.lang.String" parameterType="ParameterQuery">
+		SELECT count(1) from (
+ 			<![CDATA[
+			SELECT tod.*,to_char(#{today,jdbcType=DATE},'YYYYMMDD') as discountdate FROM (
+			SELECT replace(tran.BEGIN_TIME,':','') begintime,replace(tran.END_TIME,':','') endtime,tran.DISCOUNT_THRESHOLD trandiscount,tran.SET_DISCOUNT settdiscount
+			FROM TRAN_DISCOUNT tran left join 	
+			MERCHANT_TRAN_DISCOUNT disc on disc.DISCOUNT_ID = tran.ID
+			where  
+	           	 tran.BEGIN_DATE  <= #{today,jdbcType=DATE} 
+	           	 AND tran.END_DATE >= #{today,jdbcType=DATE}
+	           	 AND INSTR(tran.WEEK, #{todayWeek})>0 
+	           	 AND disc.MER_CODE = #{merCode,jdbcType=VARCHAR} 
+	          ) tod union all 
+	       SELECT tom.*,to_char(#{tomorrow,jdbcType=DATE},'YYYYMMDD') as discountdate FROM 
+	       (SELECT replace(tran.BEGIN_TIME,':','') begintime,replace(tran.END_TIME,':','') endtime,tran.DISCOUNT_THRESHOLD trandiscount,tran.SET_DISCOUNT settdiscount 
+	       FROM TRAN_DISCOUNT tran left join
+	        MERCHANT_TRAN_DISCOUNT disc on disc.DISCOUNT_ID = tran.ID
+			where  
+	           	 tran.BEGIN_DATE  <= #{tomorrow,jdbcType=DATE} 
+	           	 AND tran.END_DATE >= #{tomorrow,jdbcType=DATE}
+	           	 AND INSTR(tran.WEEK, #{tomorrowWeek})>0
+	           	 AND disc.MER_CODE = #{merCode,jdbcType=VARCHAR})
+	          ]]> tom)
+	</select>
+	<!-- 更新下载参数标志位 -->
+	<update id="updateDownloadFlag" parameterType="java.util.HashMap">
+		UPDATE SAMSIGNINOFFTB T SET T.DOWNLOADFLAG = #{downloadFlag,jdbcType=VARCHAR}
+		WHERE T.POSID = #{posId,jdbcType=VARCHAR}
+	</update>
+</mapper>

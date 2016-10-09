@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.transfer.business.dao.MerchantUserMapper">
+	<resultMap type="MerchantUser" id="merchantUserResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="merUserFlag" column="MER_USER_FLG" />
+		<result property="merUserType" column="MER_USER_TYPE" />
+		<result property="merCode" column="MER_CODE" />
+		<result property="merUserName" column="MER_USER_NAME" />
+		<result property="merUserPWD" column="MER_USER_PWD" />
+		<result property="merUserIdentityType" column="MER_USER_IDENTITY_TYPE" />
+		<result property="merUserIdentityNumber" column="MER_USER_IDENTITY_NUM" />
+		<result property="merUserNickName" column="MER_USER_NICKNAME" />
+		<result property="merUserSex" column="MER_USER_SEX" />
+		<result property="merUserMobile" column="MER_USER_MOBILE" />
+		<result property="merUserTelephone" column="MER_USER_TELEPHONE" />
+		<result property="merUserAdds" column="MER_USER_ADDS" />
+		<result property="merUserBirthday" column="MER_USER_BIRTHDAY" />
+		<result property="merUserEmail" column="MER_USER_EMALL" />
+		<result property="merUserEmployeeDate" column="MER_USER_EMPLOYEE_DATE" />
+		<result property="merUserLastLoginDate" column="MER_USER_LAST_LOGIN_DATE" />
+		<result property="merUserLastLoginIp" column="MER_USER_LAST_LOGIN_IP" />
+		<result property="merUserLoginFaiCount" column="MER_USER_LOGIN_FAI_COUNT" />
+		<result property="merUserLockedDate" column="MER_USER_LOCKED_DATE" />
+		<result property="merUserRemark" column="MER_USER_REMARK" />
+		<result property="activate" column="ACTIVATE" />
+		<result property="delFlag" column="DEL_FLG" />
+		<result property="userCode" column="USER_CODE" />
+		<result property="merUserSource" column="SOURCE" />
+		<result property="payInfoFlg" column="PAYINFO_FLG" />
+		<result property="cityCode" column="CITY_CODE" />
+		<result property="merUserState" column="MER_USER_STATE" />
+		<result property="education" column="EDUCATION" />
+		<result property="income" column="INCOME" />
+		<result property="birthday" column="BIRTHDAY" />
+		<result property="isMarried" column="IS_MARRIED" />
+		<result property="tradeArea" column="TRADE_AREA" />
+		<result property="merUserPro" column="MER_USER_PRO" />
+		<result property="merUserCity" column="MER_USER_CITY" />
+	</resultMap>
+</mapper>

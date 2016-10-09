@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.account.business.dao.AccountChangeChildMerMapper">
+	<sql id="allColumn">
+		t.ID , t.CREATE_USER, t.CREATE_DATE, t.UPDATE_USER, t.UPDATE_DATE,
+		t.MER_CODE,t.MER_NAME,t.MER_TYPE, t.MER_PARENT_CODE,
+		t.FUND_ACCOUNT_CODE, t.FUND_TYPE, t.ACCOUNT_CHANGE_TIME, t.TRAN_CODE,
+		t.CHANGE_TYPE, t.CHANGE_AMOUNT, t.BEFORE_CHANGE_AMOUNT,
+		t.BEFORE_CHANGE_AVAILABLE_AMOUNT, t.BEFORE_CHANGE_FROZEN_AMOUNT,
+		t.CHANGE_DATE
+	</sql>
+	
+	<sql id="accountChangeColumn">
+		a.ID , a.CREATE_USER, a.CREATE_DATE, a.UPDATE_USER, a.UPDATE_DATE,
+		a.FUND_ACCOUNT_CODE, a.FUND_TYPE, a.ACCOUNT_CHANGE_TIME, a.TRAN_CODE,
+		a.CHANGE_TYPE, a.CHANGE_AMOUNT, a.BEFORE_CHANGE_AMOUNT,
+		a.BEFORE_CHANGE_AVAILABLE_AMOUNT, a.BEFORE_CHANGE_FROZEN_AMOUNT,
+		a.CHANGE_DATE
+	</sql>
+	
+	<select id="findAccountChangeChildMerByPage" resultType="ChildMerchantAccountChange"
+		resultMap="accountChangeChildMerResultMapper" parameterType="ChildMerFundChangeQuery">
+		select <include refid="allColumn" /> from(select
+		a.* ,b.MER_CODE,b.MER_NAME,b.MER_TYPE, b.MER_PARENT_CODE
+		from  ACCOUNT_CHANGE a, MERCHANT b, ACCOUNT c, ACCOUNT_FUND d 
+		where b.MER_CODE = c.CUSTOMER_NO
+		and b.MER_TYPE='13'
+		and c.ACCOUNT_CODE = d.ACCOUNT_CODE
+		and d.FUND_ACCOUNT_CODE = a.FUND_ACCOUNT_CODE )t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+				and t.MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merCode != null and merCode !=''">
+				and t.MER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="aId != null and aId !=''">
+			    and	t.ID = #{aId}
+			</if>
+			<if test="createUser != null and createUser !=''">
+				and  t.CREATE_USER = #{createUser}
+			</if>
+			<if test="fundType != null and fundType !=''">
+				and  t.FUND_TYPE like '%'||#{fundType}||'%'
+			</if>
+			<if test="changeType != null and changeType !=''">
+				and t.CHANGE_TYPE like '%'||#{changeType}||'%'
+			</if>
+			<if test="changeAmountMin != null and changeAmountMin !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT>= #{changeAmountMin}      
+           	 ]]>
+			</if>
+			<if test="changeAmountMax != null and changeAmountMax !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT<= #{changeAmountMax}      
+           	 ]]>
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >=TO_DATE(TO_CHAR(#{startDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	   AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <=TO_DATE(TO_CHAR(#{endDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	  
+           	 ]]>
+			</if>
+			order by t.ID desc 
+		</where>
+	</select>
+	
+	<select id="findAccountChangeChildMerByList" resultType="ChildMerchantAccountChange"
+		resultMap="accountChangeChildMerResultMapper" parameterType="ChildMerFundChangeQuery">
+		select <include refid="allColumn" /> from(select
+		a.* ,b.MER_CODE,b.MER_NAME,b.MER_TYPE, b.MER_PARENT_CODE
+		from  ACCOUNT_CHANGE a, MERCHANT b, ACCOUNT c, ACCOUNT_FUND d 
+		where b.MER_CODE = c.CUSTOMER_NO
+		and b.MER_TYPE='13'
+		and c.ACCOUNT_CODE = d.ACCOUNT_CODE
+		and d.FUND_ACCOUNT_CODE = a.FUND_ACCOUNT_CODE )t
+		<where>
+			t.MER_PARENT_CODE = #{merParentCode}
+			<if test="merName != null and merName !=''">
+				and t.MER_NAME like '%'||#{merName}||'%'
+			</if>
+			<if test="merCode != null and merCode !=''">
+				and t.MER_CODE like '%'||#{merCode}||'%'
+			</if>
+			<if test="aId != null and aId !=''">
+			    and	t.ID = #{aId}
+			</if>
+			<if test="createUser != null and createUser !=''">
+				and  t.CREATE_USER = #{createUser}
+			</if>
+			<if test="fundType != null and fundType !=''">
+				and  t.FUND_TYPE like '%'||#{fundType}||'%'
+			</if>
+			<if test="changeType != null and changeType !=''">
+				and t.CHANGE_TYPE like '%'||#{changeType}||'%'
+			</if>
+			<if test="changeAmountMin != null and changeAmountMin !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT>= #{changeAmountMin}      
+           	 ]]>
+			</if>
+			<if test="changeAmountMax != null and changeAmountMax !=''">
+			  <![CDATA[
+           	   and t.CHANGE_AMOUNT<= #{changeAmountMax}      
+           	 ]]>
+			</if>
+			<if test="startDate != null and startDate !=''">   
+           	  <![CDATA[
+           	 AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  >=TO_DATE(TO_CHAR(#{startDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	 ]]>
+			</if>
+			<if test="endDate != null and endDate !=''">   
+           	  <![CDATA[
+           	   AND TO_DATE(TO_CHAR(t.CREATE_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')  <=TO_DATE(TO_CHAR(#{endDate},'yyyy-mm-dd'),'yyyy-mm-dd')    
+           	  
+           	 ]]>
+			</if>
+			order by t.ID desc 
+		</where>
+	</select>
+</mapper>

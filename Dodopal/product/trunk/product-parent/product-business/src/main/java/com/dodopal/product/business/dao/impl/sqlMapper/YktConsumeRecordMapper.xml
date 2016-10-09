@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dodopal.product.business.dao.YktConsumeRecordMapper">
+	<resultMap id="BaseResultMap" type="com.dodopal.product.business.model.YktConsumeRecord">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="ORDER_NUM" property="orderNum" jdbcType="VARCHAR" />
+		<result column="YKT_CODE" property="yktCode" jdbcType="VARCHAR" />
+		<result column="YKT_NAME" property="yktName" jdbcType="VARCHAR" />
+		<result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+		<result column="CITY_NAME" property="cityName" jdbcType="VARCHAR" />
+		<result column="MER_CODE" property="merCode" jdbcType="VARCHAR" />
+		<result column="MER_NAME" property="merName" jdbcType="VARCHAR" />
+		<result column="MER_TYPE" property="merType" jdbcType="VARCHAR" />
+		<result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+		<result column="CARD_NUM" property="cardNum" jdbcType="VARCHAR" />
+		<result column="POS_CODE" property="posCode" jdbcType="VARCHAR" />
+		<result column="POS_TYPE" property="posType" jdbcType="VARCHAR" />
+		<result column="YKT_ACOUNT_AMT" property="yktAcountAmt" jdbcType="DECIMAL" />
+		<result column="YKT_POINT_AMT" property="yktPointAmt" jdbcType="DECIMAL" />
+		<result column="STATES" property="states" jdbcType="VARCHAR" />
+		<result column="BEFORE_STATES" property="beforeStates" jdbcType="VARCHAR" />
+		<result column="ORDER_DATE" property="orderDate" jdbcType="TIMESTAMP" />
+		<result column="ORDER_DAY" property="orderDay" jdbcType="VARCHAR" />
+		<result column="OPERID" property="operId" jdbcType="VARCHAR" />
+		<result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+		<result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR" />
+		<result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ID, ORDER_NUM, YKT_CODE, YKT_NAME, CITY_CODE, CITY_NAME, MER_CODE, MER_NAME, MER_TYPE,
+		BUSINESS_TYPE, CARD_NUM, POS_CODE, POS_TYPE, YKT_ACOUNT_AMT,
+		YKT_POINT_AMT, STATES, BEFORE_STATES, ORDER_DATE, ORDER_DAY, OPERID, CREATE_USER,
+		CREATE_DATE,UPDATE_USER, UPDATE_DATE
+	</sql>
+
+	<!-- 五位数据库cycle sequence（循环使用） -->
+	<select id="getOrderNumSeq" resultType="java.lang.String" parameterType="java.lang.Integer">
+		<![CDATA[select PRD_YKT_CONSUME_ORDER_NUM_SEQ.NEXTVAL as orderNum from dual ]]>
+	</select>
+
+	<select id="selectByOrderNum" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from PRD_YKT_CONSUME_RECORD
+		where ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addOrderRecord" parameterType="com.dodopal.product.business.model.YktConsumeRecord">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select PRD_YKT_CONSUME_RECORD_ID_SEQ.nextval from dual
+   		</selectKey>
+			insert into PRD_YKT_CONSUME_RECORD (ID, ORDER_NUM, YKT_CODE,
+					YKT_NAME, CITY_CODE, CITY_NAME,
+					MER_CODE, MER_NAME, MER_TYPE,
+					BUSINESS_TYPE, CARD_NUM, POS_CODE, POS_TYPE,
+					YKT_ACOUNT_AMT, YKT_POINT_AMT, STATES,
+					BEFORE_STATES, ORDER_DATE, ORDER_DAY, OPERID,
+					CREATE_USER, CREATE_DATE, UPDATE_USER,
+					UPDATE_DATE)
+			values (#{id,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR},
+					#{yktCode,jdbcType=VARCHAR},
+					#{yktName,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR},
+					#{merCode,jdbcType=VARCHAR}, #{merName,jdbcType=VARCHAR},
+					#{merType,jdbcType=VARCHAR},
+					#{businessType,jdbcType=VARCHAR}, #{cardNum,jdbcType=VARCHAR}, #{posCode,jdbcType=VARCHAR},
+					#{posType,jdbcType=VARCHAR},
+					#{yktAcountAmt,jdbcType=DECIMAL}, #{yktPointAmt,jdbcType=DECIMAL}, #{states,jdbcType=VARCHAR},
+					#{beforeStates,jdbcType=VARCHAR}, #{orderDate,jdbcType=TIMESTAMP},
+					#{orderDay,jdbcType=VARCHAR}, #{operId,jdbcType=VARCHAR},
+					#{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
+					#{updateDate,jdbcType=TIMESTAMP})
+
+	</insert>
+	
+	<update id="updateByOrderNum" parameterType="com.dodopal.product.business.model.YktConsumeRecord">
+		update PRD_YKT_CONSUME_RECORD
+		<set>
+			<if test="orderNum != null">
+				ORDER_NUM = #{orderNum,jdbcType=VARCHAR},
+			</if>
+			<if test="yktCode != null">
+				YKT_CODE = #{yktCode,jdbcType=VARCHAR},
+			</if>
+			<if test="yktName != null">
+				YKT_NAME = #{yktName,jdbcType=VARCHAR},
+			</if>
+			<if test="cityCode != null">
+				CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+			</if>
+			<if test="cityName != null">
+				CITY_NAME = #{cityName,jdbcType=VARCHAR},
+			</if>
+			<if test="merCode != null">
+				MER_CODE = #{merCode,jdbcType=VARCHAR},
+			</if>
+			<if test="merName != null">
+				MER_NAME = #{merName,jdbcType=VARCHAR},
+			</if>
+			<if test="merType != null">
+				MER_TYPE = #{merType,jdbcType=VARCHAR},
+			</if>
+			<if test="businessType != null">
+				BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+			</if>
+			<if test="cardNum != null">
+				CARD_NUM = #{cardNum,jdbcType=VARCHAR},
+			</if>
+			<if test="posCode != null">
+				POS_CODE = #{posCode,jdbcType=VARCHAR},
+			</if>
+			<if test="posType != null">
+				POS_TYPE = #{posType,jdbcType=VARCHAR},
+			</if>
+			<if test="yktAcountAmt != null">
+				YKT_ACOUNT_AMT = #{yktAcountAmt,jdbcType=DECIMAL},
+			</if>
+			<if test="yktPointAmt != null">
+				YKT_POINT_AMT = #{yktPointAmt,jdbcType=DECIMAL},
+			</if>
+			<if test="states != null">
+				STATES = #{states,jdbcType=VARCHAR},
+			</if>
+			<if test="beforeStates != null">
+				BEFORE_STATES = #{beforeStates,jdbcType=VARCHAR},
+			</if>
+			<if test="orderDate != null">
+				ORDER_DATE = #{orderDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderDay != null">
+				ORDER_DAY = #{orderDay,jdbcType=VARCHAR},
+			</if>
+			<if test="operId != null">
+				OPERID = #{operId,jdbcType=VARCHAR},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateUser != null">
+				UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

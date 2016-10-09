@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.users.business.dao.MobileCodeCheckMapper">
+
+	<select id="findMobileCodeCheckes" resultType="MobileCodeCheck" resultMap="moblieCodeCheckResultMap"
+		parameterType="MobileCodeCheck">
+		select ID,MOBILTEL,DYPWD,EXPIRATION_TIME,SERIAL_NUMBER from MOBILE_CODE_CHECK  t
+		<where>
+           	     t.MOBILTEL = #{mobilTel}
+           	 AND t.DYPWD = #{dypwd}
+           	 AND t.SERIAL_NUMBER = #{serialNumber}
+           	 <if test="expirationTime != null and expirationTime !=''">
+           	 <![CDATA[
+           	 AND t.EXPIRATION_TIME >= #{expirationTime,jdbcType=TIMESTAMP}
+           	 ]]>
+           	 </if>
+    	</where>
+    	order by t.ID desc
+	</select>
+	
+	<select id="findMobileCodeCount" resultType="java.lang.Integer" parameterType="MobileCodeCheck">
+		select Count(*) from MOBILE_CODE_CHECK  t
+		<where>
+           	 	 t.MOBILTEL = #{mobilTel,jdbcType=VARCHAR}
+           	 AND t.DYPWD = #{dypwd,jdbcType=VARCHAR}
+           	 AND t.SERIAL_NUMBER = #{serialNumber,jdbcType=VARCHAR}
+    	</where>  
+	</select>
+
+	<insert id="insertMobileCode" parameterType="MobileCodeCheck">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select MOB_CODE_CHECK_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO MOBILE_CODE_CHECK
+		(ID,MOBILTEL,DYPWD,EXPIRATION_TIME,SERIAL_NUMBER)
+		VALUES (
+		#{id, jdbcType=VARCHAR}, 
+		#{mobilTel, jdbcType=VARCHAR}, 
+		#{dypwd, jdbcType=VARCHAR},
+		#{expirationTime, jdbcType=TIMESTAMP}, 
+		#{serialNumber, jdbcType=VARCHAR})
+	</insert>
+</mapper>

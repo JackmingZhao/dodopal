@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.oss.business.dao.PosCompanyMapper">
+	
+	<sql id="sqlColumn">
+		        P.ID,
+		        P.CODE,
+		        P.NAME,
+		        P.CHARGER,
+		        P.PHONE,
+		        P.FAX,
+		        P.MAIL,
+		        P.ADDRESS,
+		        P.ZIP_CODE,
+		        P.COMMENTS,
+		        P.ACTIVATE,
+		        P.ADDRESS,
+		        
+				V.nick_name as CREATE_USER,				
+				P.CREATE_DATE,			
+				V2.nick_name as UPDATE_USER,			
+				P.UPDATE_DATE
+	</sql>
+	
+	<select id="findPosCompanys" resultType="PosCompany" resultMap="posCompanyResultMap" parameterType="PosCompany">
+		select * from POS_COMPANY
+		<where>
+			<if test="code != null and code !=''">
+				code = #{code}
+			</if>
+			<if test="name != null and name !=''">
+				and name = #{name}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findPosCompanysByPage" resultType="PosCompany" resultMap="posCompanyResultMap" parameterType="PosCompany">
+		select * from POS_COMPANY
+		<where>
+			<if test="code != null and code !=''">
+				code like '%'||#{code}||'%'
+			</if>
+			<if test="name != null and name !=''">
+				and name like '%'||#{name}||'%'
+			</if>
+			<if test="charger != null and charger !=''">
+				and charger like '%'||#{charger}||'%'
+			</if>
+			<!--
+			<if test="activate != null and activate !=''">  
+	            and activate = #{activate}  
+	        </if> --> 
+		</where>
+		order by CREATE_DATE desc
+	</select>
+
+	<select id="findPosCompanyById" resultType="PosCompany" resultMap="posCompanyResultMap" parameterType="java.lang.String">
+		select <include refid="sqlColumn" /> from POS_COMPANY P, V_USER_INFO V, V_USER_INFO V2 
+		where P.id = #{id} and P.CREATE_USER = V.id(+) and P.UPDATE_USER = V2.id(+)
+	</select>
+
+	<insert id="insertPosCompany" parameterType="PosCompany">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+    		select POS_COMPANY_ID_SEQ.NEXTVAL from dual
+   		</selectKey>
+		INSERT INTO POS_COMPANY(ID, CODE, NAME, CHARGER, PHONE, FAX, MAIL, ADDRESS, ZIP_CODE, COMMENTS, ACTIVATE, CREATE_DATE, CREATE_USER)
+		VALUES (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{charger,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{fax,jdbcType=VARCHAR}, #{mail,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{zipCode,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{activate},  sysdate, #{createUser,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updatePosCompany" parameterType="PosCompany">
+		update POS_COMPANY
+		<trim prefix="SET" suffixOverrides=",">
+				code=#{code,jdbcType=VARCHAR},
+				name=#{name,jdbcType=VARCHAR},
+				charger=#{charger,jdbcType=VARCHAR},
+				phone=#{phone,jdbcType=VARCHAR},
+				fax=#{fax,jdbcType=VARCHAR},
+				mail=#{mail,jdbcType=VARCHAR},
+				address = #{address,jdbcType=VARCHAR},
+				zip_code = #{zipCode,jdbcType=VARCHAR},
+				comments = #{comments,jdbcType=VARCHAR},
+				activate = #{activate},
+				update_user = #{updateUser,jdbcType=VARCHAR},
+				update_date = sysdate
+		</trim>
+		where id=#{id}
+	</update>
+
+	<delete id="deletePosCompany" parameterType="java.lang.String">
+		delete from POS_COMPANY where id in
+         <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")">
+                #{item}
+        </foreach>
+	</delete>
+	
+	<select id="countPosCompany" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from POS_COMPANY where code = #{code}
+	</select>
+
+	<select id="loadPosCompany" resultType="PosCompany" resultMap="posCompanyResultMap" parameterType="java.lang.String">
+		select code, name from POS_COMPANY where ACTIVATE = 0 order by name
+	</select>
+	
+	<update id="batchActivateCompany">
+		update POS_COMPANY
+		<trim prefix="set" suffixOverrides=",">
+			update_date=sysdate,
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			activate=#{activate}
+		</trim>
+		where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+  		#{item}
+ 		</foreach>
+	</update>
+	
+</mapper>

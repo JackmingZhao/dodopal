@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodopal.product.business.dao.ProductOrderForPortalMapper">
+
+	<select id="sumRechargeOrder" resultType="RechargeOrder" parameterType="RechargeOrderQuery">
+		select count(1)      as sum,
+		      sum(P.TXN_AMT) as sumAmt
+		from PRD_ORDER P
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.MER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.PRO_ORDER_STATES = '4'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.PRO_ORDER_STATES = '2'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.PRO_ORDER_STATES = '5' or (P.PRO_ORDER_STATES = '3' and P.PRO_INNER_STATES = '31'))
+			</if>
+		</where>
+	</select>
+	
+	<select id="findRechargeOrderByPage" resultType="RechargeOrder" parameterType="RechargeOrderQuery">
+		select P.PRO_ORDER_NUM as proOrderNum,
+		       P.CITY_NAME     as cityName,
+		       P.TXN_AMT       as txnAmt,
+		       P.RECEIVED_PRICE        as receivedPrice,
+		       P.MER_GAIN as merGain,
+		       P.POS_CODE as posCode,
+		       P.PRO_ORDER_STATES as proOrderState,
+		       TO_CHAR(P.CREATE_DATE, 'yyyy-MM-dd HH24:mi:ss') as proOrderCreateDate
+		from PRD_ORDER P
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.MER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.PRO_ORDER_STATES = '4'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.PRO_ORDER_STATES = '2'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.PRO_ORDER_STATES = '5' or (P.PRO_ORDER_STATES = '3' and P.PRO_INNER_STATES = '31'))
+			</if>
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+
+
+	<select id="findRechargeOrderForExport" resultType="RechargeOrder" parameterType="RechargeOrderQuery">
+		select P.PRO_ORDER_NUM as proOrderNum,
+		       P.CITY_NAME     as cityName,
+		       P.TXN_AMT       as txnAmt,
+		       P.RECEIVED_PRICE        as receivedPrice,
+		       P.MER_GAIN as merGain,
+		       P.POS_CODE as posCode,
+		       P.PRO_ORDER_STATES as proOrderState,
+		       TO_CHAR(P.CREATE_DATE, 'yyyy-MM-dd HH24:mi:ss') as proOrderCreateDate
+		from PRD_ORDER P
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.MER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.PRD_ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.PRO_ORDER_STATES = '4'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.PRO_ORDER_STATES = '2'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.PRO_ORDER_STATES = '5' or (P.PRO_ORDER_STATES = '3' and P.PRO_INNER_STATES = '31'))
+			</if>
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+
+
+	<select id="sumPurchaseOrder" resultType="PurchaseOrder" parameterType="PurchaseOrderQuery">
+		select count(1)              as sum,
+		       sum(P.RECEIVED_PRICE) as sumAmt
+		  from PRD_PURCHASE_ORDER P
+		 inner join PRD_PURCHASE_ORDER_RECORD R
+		    on P.ORDER_NUM = R.ORDER_NUM
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.CUSTOMER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.STATES = '2'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.STATES = '1'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.STATES = '3' or (P.STATES = '0' and R.INNER_STATES = '02'))
+			</if>
+		</where>
+	</select>
+	
+	<select id="findPurchaseOrderByPage" resultType="PurchaseOrder" parameterType="PurchaseOrderQuery">
+		select P.ORDER_NUM      as proOrderNum,
+		       R.CITY_NAME      as cityName,
+		       R.CARD_NUM       as cardNum,
+		       R.POS_CODE       as posCode,
+		       P.ORIGINAL_PRICE as originalPrice,
+		       P.RECEIVED_PRICE as receivedPrice,
+		       R.BEFBAL         as befbal,
+		       R.BLACK_AMT      as blackAmt,
+		       P.STATES         as proOrderState,
+		       TO_CHAR(P.CREATE_DATE, 'yyyy-MM-dd HH24:mi:ss') as proOrderCreateDate
+		  from PRD_PURCHASE_ORDER P
+		 inner join PRD_PURCHASE_ORDER_RECORD R
+		    on P.ORDER_NUM = R.ORDER_NUM
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.CUSTOMER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.STATES = '2'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.STATES = '1'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.STATES = '3' or (P.STATES = '0' and R.INNER_STATES = '02'))
+			</if>
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+
+
+	<select id="findPurchaseOrderForExport" resultType="PurchaseOrder" parameterType="PurchaseOrderQuery">
+		select P.ORDER_NUM      as proOrderNum,
+		       R.CITY_NAME      as cityName,
+		       R.CARD_NUM       as cardNum,
+		       R.POS_CODE       as posCode,
+		       P.ORIGINAL_PRICE as originalPrice,
+		       P.RECEIVED_PRICE as receivedPrice,
+		       R.BEFBAL         as befbal,
+		       R.BLACK_AMT      as blackAmt,
+		       P.STATES         as proOrderState,
+		       TO_CHAR(P.CREATE_DATE, 'yyyy-MM-dd HH24:mi:ss') as proOrderCreateDate
+		  from PRD_PURCHASE_ORDER P
+		 inner join PRD_PURCHASE_ORDER_RECORD R
+		    on P.ORDER_NUM = R.ORDER_NUM
+		<where>
+			<if test="merCode != null and merCode !=''">
+				P.CUSTOMER_CODE = #{merCode}
+			</if>
+			<if test="orderDateStart != null and orderDateStart !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')>= TO_DATE(TO_CHAR(#{orderDateStart},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="orderDateEnd != null and orderDateEnd !=''">
+				<![CDATA[ and TO_DATE(TO_CHAR(P.ORDER_DATE,'yyyy-mm-dd'),'yyyy-mm-dd')<= TO_DATE(TO_CHAR(#{orderDateEnd},'yyyy-mm-dd'),'yyyy-mm-dd')]]>
+			</if>
+			<if test="proOrderState == '0'.toString()">
+				and P.STATES = '2'
+			</if>
+			<if test="proOrderState == '1'.toString()">
+				and P.STATES = '1'
+			</if>
+			<if test="proOrderState == '2'.toString()">
+				and (P.STATES = '3' or (P.STATES = '0' and R.INNER_STATES = '02'))
+			</if>
+		</where>
+		order by P.CREATE_DATE desc
+	</select>
+</mapper>

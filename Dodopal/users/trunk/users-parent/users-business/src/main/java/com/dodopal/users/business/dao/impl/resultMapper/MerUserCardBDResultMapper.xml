@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodopal.users.business.dao.MerUserCardBDMapper">
+	<resultMap type="MerUserCardBD" id="merUserCardBDResultMap">
+		<result property="id" column="ID" />
+		<result property="createDate" column="CREATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="merUserName" column="MER_USER_NAME" />
+		<result property="cardCode" column="CARD_CODE" />
+		<result property="cardName" column="CARD_NAME" />
+		<result property="bundLingType" column="BUNDLING_TYPE" />
+		<result property="unBundLingUser" column="UNBUNDLING_USER" />
+		<result property="unBundLingDate" column="UNBUNDLING_DATE" jdbcType="TIMESTAMP" />
+		<result property="remark" column="REMARK" />
+		<result property="merUserNameName" column="USER_NAME" />
+		<result property="unBundLingUserName" column="UN_BDING_NAME" />
+		<result property="userCode" column="USER_CODE" />
+		<result property="cardType" column="CARD_TYPE" />
+		<result property="cardCityName" column="CARD_CITY_NAME" />
+	</resultMap>
+</mapper>
